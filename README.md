@@ -1,2 +1,1 @@
-# service-mongo
-Mongo implementation of an iReceptor database node, including the service
+iReceptor API service with PHP implementation for MongoDB repository.
