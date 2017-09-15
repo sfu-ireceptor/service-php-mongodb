@@ -2,8 +2,6 @@
 
 namespace App;
 
-use Log;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
 class Sequence extends Model
@@ -12,7 +10,6 @@ class Sequence extends Model
 
     public static function list($params)
     {
-
         return [];
     }
 
