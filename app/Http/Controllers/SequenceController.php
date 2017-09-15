@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Analysis;
 use App\Sequence;
+use App\CloneData;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
-use App\Analysis;
-use App\CloneData;
 
 class SequenceController extends Controller
 {
@@ -25,6 +24,7 @@ class SequenceController extends Controller
             default:
                 $t['items'] = Sequence::list($params);
                 $t['total'] = Sequence::count($params);
+
                 return json_encode($t);
         }
     }
@@ -37,6 +37,7 @@ class SequenceController extends Controller
         if (empty($params['output']) || ($params['output'] != 'csv')) {
             $t['items'] = [];
             $t['total'] = 0;
+
             return json_encode($t);
         } else {
             // return Response::download(CloneData::csv($params));
