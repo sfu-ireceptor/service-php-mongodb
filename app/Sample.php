@@ -10,8 +10,8 @@ class Sample extends Model
 
     public static function list($params)
     {
-    	$l = static::all();
-    	
+        $l = static::all();
+
         return $l;
     }
 }
