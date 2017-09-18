@@ -11,7 +11,7 @@ class Sequence extends Model
 
     public static function list($params)
     {
-        $l = static::take(50)->get();;
+        $l = static::take(50)->get();
 
         return $l;
     }
