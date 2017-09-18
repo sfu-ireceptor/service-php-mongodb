@@ -2,14 +2,16 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 class Sample extends Model
 {
-    protected $table = 'samples';
+    protected $collection = 'samples';
 
     public static function list($params)
     {
-        return [];
+    	$l = static::all();
+    	
+        return $l;
     }
 }

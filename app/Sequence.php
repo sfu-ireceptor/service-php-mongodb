@@ -2,15 +2,18 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 class Sequence extends Model
 {
-    protected $table = 'sequences';
+    protected $collection = 'sequences';
+    public $timestamps = false;
 
     public static function list($params)
     {
-        return [];
+        $l = static::take(50)->get();;
+
+        return $l;
     }
 
     public static function count($params)
