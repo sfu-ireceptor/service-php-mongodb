@@ -3,14 +3,13 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Sequence extends Model
 {
     protected $collection = 'sequences';
     public $timestamps = false;
     protected $max_results = 25;
-    
+
     public static $coltype = [
     'seq_id' => 'int',
     'seq_name' => 'string',
@@ -125,7 +124,7 @@ class Sequence extends Model
     'cdr2region_mutation_string' => 'string',
     'cdr3region_mutation_string' => 'string',
     ];
-    
+
     public static function parseFilter(&$query, $f)
     {
     	if (isset ($f['project_sample_id_list']))
@@ -156,20 +155,14 @@ class Sequence extends Model
     		$query = $query->where('functionality', 'like', 'productive%');
     	}
     }
-    
+
     public static function aggregate($filter)
     {
-    	$query = new self();
-    	$psa_list = [];
-    	$counts = [];
-    	self::parseFilter($query, $filter);
-    	/*$result = $query::raw()->aggregate(array(
-                
-                    array('$group' =>  array('_id' =>  '$project_sample_id', 'count'=> array('$sum' =>1 )))
-                       
-                         ));        */         
-            
-    	//var_dump($result);
+        $query = new self();
+        $psa_list = [];
+        $counts = [];
+        self::parseFilter($query, $filter);
+
     	$result = $query->groupBy('project_sample_id')->get();
     	 
     	foreach ($result as $psa) {
@@ -190,37 +183,37 @@ class Sequence extends Model
     	}
     
     	return $sample_metadata;
-    }
-    public static function list($f)
-    {
-   
-    	$query = new self();
-    
-    	$num_results = 25;
-    	$start_at = 0;
-    
-    	self::parseFilter($query, $f);
-    
-    	if (! empty($f['page_number']) && ($f['page_number'] > 0)) {
-    		$start_at = $f['page_number'] - 1;
-    	}
-    	if (! empty($f['num_results']) && ($f['num_results'] > 0)) {
-    		$num_results = $f['num_results'];
-    	}
-    
-    	return $query->skip($start_at * $num_results)->take($num_results)->get();
-    }
-    
-    public static function count($f)
-    {
-    	$query = new self();
-    
-    	self::parseFilter($query, $f);
-    
-    	return $query->count();
+
     }
 
- 
+    public static function list($f)
+    {
+        $query = new self();
+
+        $num_results = 25;
+        $start_at = 0;
+
+        self::parseFilter($query, $f);
+
+        if (! empty($f['page_number']) && ($f['page_number'] > 0)) {
+            $start_at = $f['page_number'] - 1;
+        }
+        if (! empty($f['num_results']) && ($f['num_results'] > 0)) {
+            $num_results = $f['num_results'];
+        }
+
+        return $query->skip($start_at * $num_results)->take($num_results)->get();
+    }
+
+    public static function count($f)
+    {
+        $query = new self();
+
+        self::parseFilter($query, $f);
+
+        return $query->count();
+    }
+
     public static function csv($params)
     {
         set_time_limit(300);
