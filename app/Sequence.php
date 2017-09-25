@@ -127,31 +127,28 @@ class Sequence extends Model
 
     public static function parseFilter(&$query, $f)
     {
-    	if (isset ($f['project_sample_id_list']))
-    	{
-    		$int_ids = Array();
+        if (isset($f['project_sample_id_list'])) {
+            $int_ids = [];
 
-    		$query = $query->whereIn('project_sample_id',array_map('intval', $f['project_sample_id_list']));
-    		
-    	}
-    	foreach ($f as $filtername => $filtervalue) {
-    		if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
-    			continue;
-    		}
-    		if ($filtername == 'project_sample_id_list') {
-    			continue;
-    		}
-    		if (self::$coltype[$filtername] == 'string') {
-    			$query = $query->where($filtername, 'like', '%' . $filtervalue . '%');
-    		}
-    		if (self::$coltype[$filtername] == 'int') {
-    			$query = $query->where($filtername, '=', (int)$filtervalue);
-    		}
-    	}
-    	if (empty($f['show_unproductive'])) {
-    		$query = $query->where('functionality', 'like', 'productive%');
-    	}
-
+            $query = $query->whereIn('project_sample_id', array_map('intval', $f['project_sample_id_list']));
+        }
+        foreach ($f as $filtername => $filtervalue) {
+            if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
+                continue;
+            }
+            if ($filtername == 'project_sample_id_list') {
+                continue;
+            }
+            if (self::$coltype[$filtername] == 'string') {
+                $query = $query->where($filtername, 'like', '%' . $filtervalue . '%');
+            }
+            if (self::$coltype[$filtername] == 'int') {
+                $query = $query->where($filtername, '=', (int) $filtervalue);
+            }
+        }
+        if (empty($f['show_unproductive'])) {
+            $query = $query->where('functionality', 'like', 'productive%');
+        }
     }
 
     public static function aggregate($filter)
