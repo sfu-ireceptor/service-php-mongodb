@@ -130,10 +130,7 @@ class Sequence extends Model
     	if (isset ($f['project_sample_id_list']))
     	{
     		$int_ids = Array();
-    		/*foreach ($f['project_sample_id_list'] as $id)
-    		{
-    			$int_ids[] = (int)$id;
-    		}*/
+
     		$query = $query->whereIn('project_sample_id',array_map('intval', $f['project_sample_id_list']));
     		
     	}
@@ -163,28 +160,26 @@ class Sequence extends Model
         $psa_list = [];
         $counts = [];
         self::parseFilter($query, $filter);
-    	$result = $query->groupBy('project_sample_id')->get();
-    	 
-    	foreach ($result as $psa) {
-    		//var_dump($psa);
-    		$count_query = new self();
-    		self::parseFilter($count_query, $filter);
-    		$count_query = $count_query->where('project_sample_id', '=', $psa['project_sample_id']);
-    		$total = $count_query->count();
-    		$psa_list[] = $psa['project_sample_id'];
-    		$counts[$psa['project_sample_id']] = $total;
-    	}
-    	$sample_query = new Sample();
-    	$sample_rows = $sample_query->whereIn('project_sample_id', $psa_list)->get();
-    	$sample_metadata = [];
-    	foreach ($sample_rows as $sample) {
-    		$sample['sequences'] = $counts[$sample['project_sample_id']];
-    		$sample_metadata[$sample['project_sample_id']] = $sample;
-    	}
-    
-    	return $sample_metadata;
+        $result = $query->groupBy('project_sample_id')->get();
 
+        foreach ($result as $psa) {
+            //var_dump($psa);
+            $count_query = new self();
+            self::parseFilter($count_query, $filter);
+            $count_query = $count_query->where('project_sample_id', '=', $psa['project_sample_id']);
+            $total = $count_query->count();
+            $psa_list[] = $psa['project_sample_id'];
+            $counts[$psa['project_sample_id']] = $total;
+        }
+        $sample_query = new Sample();
+        $sample_rows = $sample_query->whereIn('project_sample_id', $psa_list)->get();
+        $sample_metadata = [];
+        foreach ($sample_rows as $sample) {
+            $sample['sequences'] = $counts[$sample['project_sample_id']];
+            $sample_metadata[$sample['project_sample_id']] = $sample;
+        }
 
+        return $sample_metadata;
     }
 
     public static function list($f)
