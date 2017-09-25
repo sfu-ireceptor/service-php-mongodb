@@ -18,8 +18,8 @@ class Sequence extends Model
     'id' => 'int',
     'sequence_id' => 'int',
     'vgene_string' => 'string',
-    'vgene_family' => 'int',
-    'vgene_gene' => 'int',
+    'vgene_family' => 'string',
+    'vgene_gene' => 'string',
     'vgene_allele' => 'string',
     'jgene_string' => 'string',
     'jgene_family' => 'string',
@@ -130,7 +130,13 @@ class Sequence extends Model
     {
     	if (isset ($f['project_sample_id_list']))
     	{
-    		$query = $query->whereIn('project_sample_id', $f['project_sample_id_list']);
+    		$int_ids = Array();
+    		foreach ($f['project_sample_id_list'] as $id)
+    		{
+    			$int_ids[] = (int)$id;
+    		}
+    		$query = $query->whereIn('project_sample_id',$int_ids);
+    		
     	}
     	foreach ($f as $filtername => $filtervalue) {
     		if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
@@ -168,8 +174,12 @@ class Sequence extends Model
     	 
     	foreach ($result as $psa) {
     		//var_dump($psa);
+    		$count_query = new self();
+    		self::parseFilter($count_query, $filter);
+    		$count_query = $count_query->where('project_sample_id', '=', $psa['project_sample_id']);
+    		$total = $count_query->count();
     		$psa_list[] = $psa['project_sample_id'];
-    		$counts[$psa['project_sample_id']] = $psa['total'];
+    		$counts[$psa['project_sample_id']] = $total;
     	}
     	$sample_query = new Sample();
     	$sample_rows = $sample_query->whereIn('project_sample_id', $psa_list)->get();
