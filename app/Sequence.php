@@ -130,11 +130,11 @@ class Sequence extends Model
     	if (isset ($f['project_sample_id_list']))
     	{
     		$int_ids = Array();
-    		foreach ($f['project_sample_id_list'] as $id)
+    		/*foreach ($f['project_sample_id_list'] as $id)
     		{
     			$int_ids[] = (int)$id;
-    		}
-    		$query = $query->whereIn('project_sample_id',$int_ids);
+    		}*/
+    		$query = $query->whereIn('project_sample_id',array_map('intval', $f['project_sample_id_list']));
     		
     	}
     	foreach ($f as $filtername => $filtervalue) {
@@ -148,7 +148,7 @@ class Sequence extends Model
     			$query = $query->where($filtername, 'like', '%' . $filtervalue . '%');
     		}
     		if (self::$coltype[$filtername] == 'int') {
-    			$query = $query->where($filtername, '=', $filtervalue);
+    			$query = $query->where($filtername, '=', (int)$filtervalue);
     		}
     	}
     	if (empty($f['show_unproductive'])) {
