@@ -154,6 +154,7 @@ class Sequence extends Model
     	if (empty($f['show_unproductive'])) {
     		$query = $query->where('functionality', 'like', 'productive%');
     	}
+
     }
 
     public static function aggregate($filter)
@@ -162,7 +163,6 @@ class Sequence extends Model
         $psa_list = [];
         $counts = [];
         self::parseFilter($query, $filter);
-
     	$result = $query->groupBy('project_sample_id')->get();
     	 
     	foreach ($result as $psa) {
@@ -183,6 +183,7 @@ class Sequence extends Model
     	}
     
     	return $sample_metadata;
+
 
     }
 
