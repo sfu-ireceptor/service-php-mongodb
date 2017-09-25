@@ -12,6 +12,7 @@ class SequenceController extends Controller
 {
     public function index(Request $request)
     {
+        $params = $request->all();
         $t = [];
 
         if (! isset($params['output'])) {
