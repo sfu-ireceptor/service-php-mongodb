@@ -11,8 +11,8 @@ class SampleController extends Controller
     {
         $params = $request->all();
 
-        $l = Sample::list($params);
-
+        //$l = Sample::list($params);
+        $l = Sample::getSamples($params);
         return json_encode($l);
     }
 }
