@@ -156,17 +156,21 @@ class Sequence extends Model
         $query = new self();
         $psa_list = [];
         $counts = [];
-        self::parseFilter($query, $filter);
-        $result = $query->groupBy('project_sample_id')->get();
-
+        //self::parseFilter($query, $filter);
+        //$result = $query->groupBy('project_sample_id')->get();
+		$sample_id_query = new Sample();
+		$result = $sample_id_query->get();
         foreach ($result as $psa) {
             //var_dump($psa);
             $count_query = new self();
             self::parseFilter($count_query, $filter);
             $count_query = $count_query->where('project_sample_id', '=', $psa['project_sample_id']);
             $total = $count_query->count();
-            $psa_list[] = $psa['project_sample_id'];
-            $counts[$psa['project_sample_id']] = $total;
+            if ($total > 0)
+            {
+              $psa_list[] = $psa['project_sample_id'];
+              $counts[$psa['project_sample_id']] = $total;
+            }
         }
         $sample_query = new Sample();
         $sample_rows = $sample_query->whereIn('project_sample_id', $psa_list)->get();
