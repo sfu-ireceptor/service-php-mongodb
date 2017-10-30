@@ -14,7 +14,6 @@ class Sample extends Model
 
         $query = new self();
 
-    
         if (isset($f['ir_lab_id']) && $f['ir_lab_id'] != '') {
             $query = $query->where('ir_lab_id', '=', $f['ir_lab_id']);
         }
@@ -109,7 +108,7 @@ class Sample extends Model
         if (isset($f['cell_subset']) && ! empty($f['cell_subset'])) {
             $query = $query->whereIn('cell_subset', $f['cell_subset']);
         }
-        
+
         $list = $query->get();
 
         foreach ($list as $element) {
