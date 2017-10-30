@@ -3,8 +3,6 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
-use Log;
-use DB;
 
 class Sequence extends Model
 {
@@ -146,7 +144,7 @@ class Sequence extends Model
                 $query = $query->where($filtername, 'like', '%' . $filtervalue . '%');
             }
             if (self::$coltype[$filtername] == 'int') {
-                $query = $query->where($filtername, '=',  (int) $filtervalue);
+                $query = $query->where($filtername, '=', (int) $filtervalue);
             }
         }
         if (empty($f['show_unproductive'])) {
