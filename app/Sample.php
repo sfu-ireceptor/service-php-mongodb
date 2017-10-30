@@ -80,10 +80,10 @@ class Sample extends Model
 
         $list = $query->get();
 
-	foreach ($list as $element)
-	{
-		$element['ir_project_sample_id'] = $element['_id'];
-	}
+        foreach ($list as $element) {
+            $element['ir_project_sample_id'] = $element['_id'];
+        }
+
         return $list;
     }
 
