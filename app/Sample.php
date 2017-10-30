@@ -6,7 +6,7 @@ use Jenssegers\Mongodb\Eloquent\Model;
 
 class Sample extends Model
 {
-    protected $collection = 'samples';
+    protected $collection = 'sampleDataNew';
 
     public static function getSamples($f)
     {
@@ -67,7 +67,11 @@ class Sample extends Model
         }
 
         if (isset($f['dna_type']) && ! empty($f['dna_type'])) {
-            $query = $query->whereIn('dna_type', $f['dna_type']);
+            $query = $query->whereIn('DNA_type', $f['dna_type']);
+        }
+
+        if (isset($f['cell_subset']) && ! empty($f['cell_subset'])) {
+            $query = $query->whereIn('cell_subset', $f['cell_subset']);
         }
 
         if (isset($f['ireceptor_cell_subset_name']) && ! empty($f['ireceptor_cell_subset_name'])) {
@@ -76,6 +80,10 @@ class Sample extends Model
 
         $list = $query->get();
 
+	foreach ($list as $element)
+	{
+		$element['ir_project_sample_id'] = $element['_id'];
+	}
         return $list;
     }
 

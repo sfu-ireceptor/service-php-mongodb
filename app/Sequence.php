@@ -3,17 +3,20 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
+use Log;
+use DB;
 
 class Sequence extends Model
 {
-    protected $collection = 'sequences';
+    protected $collection = 'sequence_data_newnames';
     public $timestamps = false;
     protected $max_results = 25;
 
     public static $coltype = [
+    'vgene' => 'string',
     'seq_id' => 'int',
     'seq_name' => 'string',
-    'project_sample_id' => 'int',
+    'ir_project_sample_id' => 'int',
     'id' => 'int',
     'sequence_id' => 'int',
     'vgene_string' => 'string',
@@ -28,7 +31,7 @@ class Sequence extends Model
     'dgene_family' => 'string',
     'dgene_gene' => 'string',
     'dgene_allele' => 'string',
-    'functionality' => 'string',
+    'functional' => 'string',
     'functionality_comment' => 'string',
     'orientation' => 'string',
     'vgene_score' => 'int',
@@ -127,27 +130,27 @@ class Sequence extends Model
 
     public static function parseFilter(&$query, $f)
     {
-        if (isset($f['project_sample_id_list'])) {
+        if (isset($f['ir_project_sample_id_list'])) {
             $int_ids = [];
 
-            $query = $query->whereIn('project_sample_id', array_map('intval', $f['project_sample_id_list']));
+            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $f['ir_project_sample_id_list']));
         }
         foreach ($f as $filtername => $filtervalue) {
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
                 continue;
             }
-            if ($filtername == 'project_sample_id_list') {
+            if ($filtername == 'ir_project_sample_id_list') {
                 continue;
             }
             if (self::$coltype[$filtername] == 'string') {
                 $query = $query->where($filtername, 'like', '%' . $filtervalue . '%');
             }
             if (self::$coltype[$filtername] == 'int') {
-                $query = $query->where($filtername, '=', (int) $filtervalue);
+                $query = $query->where($filtername, '=',  (int) $filtervalue);
             }
         }
         if (empty($f['show_unproductive'])) {
-            $query = $query->where('functionality', 'like', 'productive%');
+            $query = $query->where('functional', 'like', 'productive%');
         }
     }
 
@@ -161,21 +164,20 @@ class Sequence extends Model
         $sample_id_query = new Sample();
         $result = $sample_id_query->get();
         foreach ($result as $psa) {
-            //var_dump($psa);
             $count_query = new self();
             self::parseFilter($count_query, $filter);
-            $count_query = $count_query->where('project_sample_id', '=', $psa['project_sample_id']);
+            $count_query = $count_query->where('ir_sample_entry_id', '=', $psa['_id']);
             $total = $count_query->count();
             if ($total > 0) {
-                $psa_list[] = $psa['project_sample_id'];
-                $counts[$psa['project_sample_id']] = $total;
+                $psa_list[] = $psa['_id'];
+                $counts[$psa['_id']] = $total;
             }
         }
         $sample_query = new Sample();
-        $sample_rows = $sample_query->whereIn('project_sample_id', $psa_list)->get();
+        $sample_rows = $sample_query->whereIn('_id', $psa_list)->get();
         $sample_metadata = [];
         foreach ($sample_rows as $sample) {
-            $sample['sequences'] = $counts[$sample['project_sample_id']];
+            $sample['sequences'] = $counts[$sample['_id']];
             $sample_metadata[] = $sample;
         }
 
