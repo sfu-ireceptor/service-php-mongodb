@@ -77,8 +77,8 @@ class Sample extends Model
             $query = $query->where('cell_phenotype', 'like', '%' . $f['cell_phenotype'] . '%');
         }
 
-        if (isset($f['platform']) && $f['platform'] != '') {
-            $query = $query->where('platform', 'like', '%' . $f['platform'] . '%');
+        if (isset($f['sequencing_platform']) && $f['sequencing_platform'] != '') {
+            $query = $query->where('sequencing_platform', 'like', '%' . $f['sequencing_platform'] . '%');
         }
 
         if (isset($f['ir_sample_source_id']) && ! empty($f['ir_sample_source_id'])) {
@@ -97,12 +97,12 @@ class Sample extends Model
             $query = $query->whereIn('ir_dna_id', $f['ir_dna_id']);
         }
 
-        if (isset($f['library_source']) && ! empty($f['library_source'])) {
-            $query = $query->whereIn('library_source', $f['library_source']);
+        if (isset($f['template_class']) && ! empty($f['template_class'])) {
+            $query = $query->whereIn('template_class', $f['template_class']);
         }
 
         if (isset($f['dna_type']) && ! empty($f['dna_type'])) {
-            $query = $query->whereIn('library_source', $f['dna_type']);
+            $query = $query->whereIn('template_class', $f['dna_type']);
         }
 
         if (isset($f['cell_subset']) && ! empty($f['cell_subset'])) {
