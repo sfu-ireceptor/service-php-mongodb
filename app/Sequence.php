@@ -164,7 +164,7 @@ class Sequence extends Model
         foreach ($result as $psa) {
             $count_query = new self();
             self::parseFilter($count_query, $filter);
-            $count_query = $count_query->where('ir_sample_entry_id', '=', $psa['_id']);
+            $count_query = $count_query->where('ir_project_sample_id', '=', $psa['_id']);
             $total = $count_query->count();
             if ($total > 0) {
                 $psa_list[] = $psa['_id'];
