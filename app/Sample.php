@@ -25,6 +25,10 @@ class Sample extends Model
         if (isset($f['sex']) && $f['sex'] != '') {
             $query = $query->where('sex', '=', $f['sex']);
         }
+        if (isset($f['study_id']) && $f['study_id'] != '') {
+            $query = $query->where('study_id', 'like', '%' . $f['study_id'] . '%');
+        }
+
         if (isset($f['study_title']) && $f['study_title'] != '') {
             $query = $query->where('study_title', 'like', '%' . $f['study_title'] . '%');
         }
@@ -65,8 +69,8 @@ class Sample extends Model
             $query = $query->where('study_group_description', '=', $f['study_group_description']);
         }
 
-        if (isset($f['sample_name']) && $f['sample_name'] != '') {
-            $query = $query->where('sample_id', 'like', '%' . $f['sample_name'] . '%');
+        if (isset($f['sample_id']) && $f['sample_id'] != '') {
+            $query = $query->where('sample_id', 'like', '%' . $f['sample_id'] . '%');
         }
 
         if (isset($f['disease_state_sample']) && $f['disease_state_sample'] != '') {
