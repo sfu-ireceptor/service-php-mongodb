@@ -140,17 +140,18 @@ class Sequence extends Model
             if ($filtername == 'ir_project_sample_id_list') {
                 continue;
             }
-	   if ($filtername == 'junction_aa')
-	   {
-		$query = $query->where($filtername, '=', $filtervalue);
-		continue;
-	   }
+            if ($filtername == 'junction_aa') {
+                $query = $query->where($filtername, '=', $filtervalue);
+                continue;
+            }
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
                 continue;
             }
             if (self::$coltype[$filtername] == 'string') {
                 $query = $query->where($filtername, 'like', '%' . $filtervalue . '%');
-		if ($filtername == 'junction_aa'){die();}
+                if ($filtername == 'junction_aa') {
+                    die();
+                }
             }
             if (self::$coltype[$filtername] == 'int') {
                 $query = $query->where($filtername, '=', (int) $filtervalue);
@@ -169,10 +170,9 @@ class Sequence extends Model
         //self::parseFilter($query, $filter);
         //$result = $query->groupBy('project_sample_id')->get();
         $sample_id_query = new Sample();
-	if (isset ($filter['ir_project_sample_id_list']))
-	{
-		$sample_id_query = $sample_id_query->whereIn('_id', $filter['ir_project_sample_id_list']);
-	}
+        if (isset($filter['ir_project_sample_id_list'])) {
+            $sample_id_query = $sample_id_query->whereIn('_id', $filter['ir_project_sample_id_list']);
+        }
         $result = $sample_id_query->get();
         foreach ($result as $psa) {
             $count_query = new self();
@@ -212,22 +212,19 @@ class Sequence extends Model
         }
 
         $result = $query->skip($start_at * $num_results)->take($num_results)->get();
-	foreach ($result as $row)
-	{
-		if (is_array ($row["v_call"]))
-		{
-		  $row["v_call"] = implode(", or ", $row["v_call"]);
-		}
-		if (is_array ($row["j_call"]))
-		{
-		  $row["j_call"] = implode(", or ", $row["j_call"]);
-		}
-		if (is_array ($row["d_call"]))
-		{
-		  $row["d_call"] = implode(", or ", $row["d_call"]);
-		}
-	} 
-	return $result;
+        foreach ($result as $row) {
+            if (is_array($row['v_call'])) {
+                $row['v_call'] = implode(', or ', $row['v_call']);
+            }
+            if (is_array($row['j_call'])) {
+                $row['j_call'] = implode(', or ', $row['j_call']);
+            }
+            if (is_array($row['d_call'])) {
+                $row['d_call'] = implode(', or ', $row['d_call']);
+            }
+        }
+
+        return $result;
     }
 
     public static function count($f)
