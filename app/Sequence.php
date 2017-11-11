@@ -129,7 +129,7 @@ class Sequence extends Model
     'cdr3region_mutation_string' => 'string',
     'junction_length' => 'int',
     'junction_length_aa' => 'int',
-    'productive' => 'int'
+    'productive' => 'int',
     ];
 
     public static function parseFilter(&$query, $f)
