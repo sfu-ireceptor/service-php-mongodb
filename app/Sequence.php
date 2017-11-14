@@ -191,7 +191,7 @@ class Sequence extends Model
         $sample_rows = $sample_query->whereIn('_id', $psa_list)->get();
         $sample_metadata = [];
         foreach ($sample_rows as $sample) {
-            $sample['sequences'] = $counts[$sample['_id']];
+            $sample['ir_filtered_sequence_count'] = $counts[$sample['_id']];
             $sample_metadata[] = $sample;
         }
 
