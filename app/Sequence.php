@@ -144,7 +144,7 @@ class Sequence extends Model
                 continue;
             }
             if ($filtername == 'junction_aa') {
-                $query = $query->where($filtername, '=', $filtervalue);
+                $query = $query->where($filtername, 'like', "%$filtervalue%");
                 continue;
             }
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
@@ -174,7 +174,7 @@ class Sequence extends Model
         //$result = $query->groupBy('project_sample_id')->get();
         $sample_id_query = new Sample();
         if (isset($filter['ir_project_sample_id_list'])) {
-            $sample_id_query = $sample_id_query->whereIn('_id', $filter['ir_project_sample_id_list']);
+            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval',$filter['ir_project_sample_id_list']));
         }
         $result = $sample_id_query->get();
         foreach ($result as $psa) {
