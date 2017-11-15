@@ -67,4 +67,10 @@ class SequenceController extends Controller
 
         return json_encode($t);
     }
+
+    public function data(Request $request)
+    {
+        $params = $request->all();
+        return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
+    }
 }

@@ -132,6 +132,177 @@ class Sequence extends Model
     'productive' => 'int',
     ];
 
+    public static $header_fields = Array (
+        'seq_id',
+        'sequence_nt',
+        'seq_name',
+        'id',
+        'sequence_id',
+        'vgene_string',
+        'vgene_family',
+        'vgene_gene',
+        'v_call',
+        'jgene_string',
+        'jgene_family',
+        'jgene_gene',
+        'j_call',
+        'dgene_string',
+        'dgene_family',
+        'dgene_gene',
+        'd_call',
+        'functional',
+        'v_score',
+        'vgene_probablity',
+        'dregion_reading_frame',
+        'cdr1_length',
+        'cdr2_length',
+        'cdr3_length',
+        'vdjregion_sequence_nt',
+        'vjregion_sequence_nt',
+        'djregion_sequence_nt',
+        'vregion_sequence_nt',
+        'jregion_sequence_nt',
+        'dregion_sequence_nt',
+        'fr1region_sequence_nt',
+        'fr2region_sequence_nt',
+        'fr3region_sequence_nt',
+        'fr4region_sequence_nt',
+        'cdr1region_sequence_nt',
+        'cdr2region_sequence_nt',
+        'cdr3region_sequence_nt',
+        'junction_nt',
+        'vdjregion_sequence_nt_gapped',
+        'vjregion_sequence_nt_gapped',
+        'djregion_sequence_nt_gapped',
+        'vregion_sequence_nt_gapped',
+        'jregion_sequence_nt_gapped',
+        'dregion_sequence_nt_gapped',
+        'fr1region_sequence_nt_gapped',
+        'fr2region_sequence_nt_gapped',
+        'fr3region_sequence_nt_gapped',
+        'fr4region_sequence_nt_gapped',
+        'cdr1region_sequence_nt_gapped',
+        'cdr2region_sequence_nt_gapped',
+        'cdr3region_sequence_nt_gapped',
+        'junction_sequence_nt_gapped',
+        'vdjregion_sequence_aa',
+        'vjregion_sequence_aa',
+        'djregion_sequence_aa',
+        'vregion_sequence_aa',
+        'jregion_sequence_aa',
+        'dregion_sequence_aa',
+        'fr1region_sequence_aa',
+        'fr2region_sequence_aa',
+        'fr3region_sequence_aa',
+        'fr4region_sequence_aa',
+        'cdr1region_sequence_aa',
+        'cdr2region_sequence_aa',
+        'cdr3region_sequence_aa',
+        'junction_aa',
+        'vdjregion_sequence_aa_gapped',
+        'vjregion_sequence_aa_gapped',
+        'djregion_sequence_aa_gapped',
+        'vregion_sequence_aa_gapped',
+        'jregion_sequence_aa_gapped',
+        'dregion_sequence_aa_gapped',
+        'fr1region_sequence_aa_gapped',
+        'fr2region_sequence_aa_gapped',
+        'fr3region_sequence_aa_gapped',
+        'fr4region_sequence_aa_gapped',
+        'cdr1region_sequence_aa_gapped',
+        'cdr2region_sequence_aa_gapped',
+        'cdr3region_sequence_aa_gapped',
+        'junction_sequence_aa_gapped',
+        'vdjregion_start',
+        'vdjregion_end',
+        'vjregion_start',
+        'vjregion_end',
+        'v_start',
+        'v_end',
+        'j_start',
+        'j_end',
+        'd_start',
+        'd_end',
+        'fwr1_start',
+        'fwr1_end',
+        'fwr2_start',
+        'fwr2_end',
+        'fwr3_start',
+        'fwr3_end',
+        'fwr4_start',
+        'fwr4_end',
+        'cdr1_start',
+        'cdr1_end',
+        'cdr2_start',
+        'cdr2_end',
+        'cdr3_start',
+        'cdr3_end',
+        'junction_start',
+        'junction_end',
+        'vregion_mutation_string',
+        'fr1region_mutation_string',
+        'fr2region_mutation_string',
+        'fr3region_mutation_string',
+        'cdr1region_mutation_string',
+        'cdr2region_mutation_string',
+        'cdr3region_mutation_string',
+        'created_by',
+        'created_at',
+        'updated_by',
+        'updated_at',
+        'functionality_comment',
+        'rev_comp',
+        'vgene_probability',
+        'djregion_start',
+        'djregion_end',
+        'annotation_tool',
+        'annotation_date',
+        'tool_version',
+        'reference_version',
+        'species',
+        'receptor_type',
+        'reference_directory_set',
+        'search_insert_delete',
+        'no_nucleotide_to_add',
+        'no_nucleotide_to_exclude',
+        'ir_project_sample_id',
+        'junction_aa_length',
+        'junction_nt_length',
+        'productive',
+        'subject_id',
+        'ir_subject_id',
+        'sex',
+        'organism',
+        'ethnicity',
+        'ir_project_id',
+        'study_title',
+        'ir_project_parent_id',
+        'study_id',
+        'study_description',
+        'ir_lab_id',
+        'lab_name',
+        'ir_disease_state_id',
+        'disease_state_sample',
+        'ir_case_control_id',
+        'study_group_description',
+        'ir_sequence_count',
+        'ir_project_sample_note',
+        'ir_sra_run_id',
+        'sample_id',
+        'ir_subject_age',
+        'ir_sample_subject_id',
+        'ir_dna_id',
+        'template_class',
+        'ir_sample_source_id',
+        'tissue',
+        'ir_lab_cell_subset_name',
+        'cell_subset',
+        'sequencing_platform',
+        'cell_phenotype',
+        'db_name'
+    );
+
+
     public static function parseFilter(&$query, $f)
     {
         if (isset($f['ir_project_sample_id_list'])) {
@@ -239,7 +410,7 @@ class Sequence extends Model
         return $query->count();
     }
 
-    public static function csv($params)
+    public static function data($params)
     {
         set_time_limit(300);
         ini_set('memory_limit', '1G');
@@ -247,8 +418,49 @@ class Sequence extends Model
         $filename = sys_get_temp_dir() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.csv';
 
         $file = fopen($filename, 'w');
-        fclose($file);
 
+        $query = new self();
+        $psa_list = [];
+        $sample_id_query = new Sample();
+        if (isset($params['ir_project_sample_id_list'])) {
+            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval',$filter['ir_project_sample_id_list']));
+        }
+        $result = $sample_id_query->get();
+        foreach ($result as $psa) {
+                $psa_list[] = $psa;
+            }
+
+        fputcsv($file, self::$header_fields, ',');
+            
+        $query = new self();
+        self::parseFilter($query, $params);
+        $result = $query->get();
+
+        foreach ($result as $row)
+        {
+            $sequence_list = $row->toArray();
+
+            $sample_array = $psa_list[$sequence_list["ir_project_sample_id"]];
+            $results_array = array_merge($sequence_list, $sample_array);
+
+            $new_line = Array();
+            foreach (self::$header_fields as $current_header)
+            {
+                if (isset ($results_array[$current_header]))
+                {
+                    $new_line[$current_header] = $results_aray[$current_header];
+
+                }
+                else
+                {
+                    $new_line = "";
+                }
+            }
+            fputcsv($file, $new_line, ',');
+        }
+           
+        fclose($file);
         return $filename;
+        
     }
 }
