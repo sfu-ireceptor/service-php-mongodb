@@ -71,6 +71,7 @@ class SequenceController extends Controller
     public function data(Request $request)
     {
         $params = $request->all();
+
         return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
     }
 }
