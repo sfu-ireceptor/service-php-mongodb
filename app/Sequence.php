@@ -426,7 +426,7 @@ class Sequence extends Model
         }
         $result = $sample_id_query->get();
         foreach ($result as $psa) {
-            $psa_list[] = $psa;
+            $psa_list[$psa["_id"]] = $psa;
         }
 
         fputcsv($file, self::$header_fields, ',');
