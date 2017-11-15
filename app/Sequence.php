@@ -437,20 +437,18 @@ class Sequence extends Model
 
         foreach ($result as $row) {
             $sequence_list = $row->toArray();
-		$results_array = Array();
+            $results_array = [];
             $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
             $results_array = array_merge($sequence_list, $sample_array->toArray());
 
-            $new_line = Array();
+            $new_line = [];
             foreach (self::$header_fields as $current_header) {
                 if (isset($results_array[$current_header])) {
-		    if (is_array($results_array[$current_header]))
-			{
-                            $new_line[$current_header] = implode($results_array[$current_header], ", or");
-			}
-	            else {
-                    $new_line[$current_header] = $results_array[$current_header];
-			}
+                    if (is_array($results_array[$current_header])) {
+                        $new_line[$current_header] = implode($results_array[$current_header], ', or');
+                    } else {
+                        $new_line[$current_header] = $results_array[$current_header];
+                    }
                 } else {
                     $new_line[$current_header] = '';
                 }
