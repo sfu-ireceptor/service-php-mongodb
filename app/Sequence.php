@@ -132,7 +132,7 @@ class Sequence extends Model
     'productive' => 'int',
     ];
 
-    public static $header_fields = Array (
+    public static $header_fields = [
         'seq_id',
         'sequence_nt',
         'seq_name',
@@ -299,9 +299,8 @@ class Sequence extends Model
         'cell_subset',
         'sequencing_platform',
         'cell_phenotype',
-        'db_name'
-    );
-
+        'db_name',
+    ];
 
     public static function parseFilter(&$query, $f)
     {
@@ -423,44 +422,38 @@ class Sequence extends Model
         $psa_list = [];
         $sample_id_query = new Sample();
         if (isset($params['ir_project_sample_id_list'])) {
-            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval',$filter['ir_project_sample_id_list']));
+            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
         }
         $result = $sample_id_query->get();
         foreach ($result as $psa) {
-                $psa_list[] = $psa;
-            }
+            $psa_list[] = $psa;
+        }
 
         fputcsv($file, self::$header_fields, ',');
-            
+
         $query = new self();
         self::parseFilter($query, $params);
         $result = $query->get();
 
-        foreach ($result as $row)
-        {
+        foreach ($result as $row) {
             $sequence_list = $row->toArray();
 
-            $sample_array = $psa_list[$sequence_list["ir_project_sample_id"]];
+            $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
             $results_array = array_merge($sequence_list, $sample_array);
 
-            $new_line = Array();
-            foreach (self::$header_fields as $current_header)
-            {
-                if (isset ($results_array[$current_header]))
-                {
+            $new_line = [];
+            foreach (self::$header_fields as $current_header) {
+                if (isset($results_array[$current_header])) {
                     $new_line[$current_header] = $results_aray[$current_header];
-
-                }
-                else
-                {
-                    $new_line = "";
+                } else {
+                    $new_line = '';
                 }
             }
             fputcsv($file, $new_line, ',');
         }
-           
+
         fclose($file);
+
         return $filename;
-        
     }
 }
