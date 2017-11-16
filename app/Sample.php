@@ -127,6 +127,7 @@ class Sample extends Model
         foreach ($list as $element) {
             $element['ir_project_sample_id'] = $element['_id'];
         }
+
         return $list;
     }
 
