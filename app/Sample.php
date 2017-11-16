@@ -11,9 +11,9 @@ class Sample extends Model
     public function __construct()
     {
         if (isset($_ENV['DB_SAMPLES_COLLECTION'])) {
-            $collection = $_ENV['DB_SAMPLES_COLLECTION'];
+            $this->collection = $_ENV['DB_SAMPLES_COLLECTION'];
         } else {
-            $collection = 'samples';
+            $this->collection = 'samples';
         }
     }
 
@@ -127,7 +127,6 @@ class Sample extends Model
         foreach ($list as $element) {
             $element['ir_project_sample_id'] = $element['_id'];
         }
-
         return $list;
     }
 
