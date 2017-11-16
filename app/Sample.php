@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
@@ -9,15 +10,13 @@ class Sample extends Model
 
     public function __construct()
     {
-        if (isset ($_ENV['DB_SAMPLES_COLLECTION']))
-        {
-            $collection  = $_ENV['DB_SAMPLES_COLLECTION'];
-        }
-        else
-        {
-            $collection = "samples";
+        if (isset($_ENV['DB_SAMPLES_COLLECTION'])) {
+            $collection = $_ENV['DB_SAMPLES_COLLECTION'];
+        } else {
+            $collection = 'samples';
         }
     }
+
     public static function getSamples($f)
     {
         //Log::debug($f);
@@ -135,6 +134,7 @@ class Sample extends Model
     public static function list($params)
     {
         $l = static::all();
+
         return $l;
     }
 }
