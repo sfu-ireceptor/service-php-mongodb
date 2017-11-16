@@ -6,7 +6,19 @@ use Jenssegers\Mongodb\Eloquent\Model;
 
 class Sequence extends Model
 {
-    protected $collection = 'sequence_data_newnames';
+    protected $collection;
+
+    public function __construct()
+    {
+        if (isset ($_ENV['DB_SEQUENCES_COLLECTION']))
+        {
+            $collection  = $_ENV['DB_SEQUENCES_COLLECTION'];
+        }
+        else
+        {
+            $collection = "sequences";
+        }
+    }
     public $timestamps = false;
     protected $max_results = 25;
 
