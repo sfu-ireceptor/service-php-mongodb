@@ -10,15 +10,13 @@ class Sequence extends Model
 
     public function __construct()
     {
-        if (isset ($_ENV['DB_SEQUENCES_COLLECTION']))
-        {
-            $collection  = $_ENV['DB_SEQUENCES_COLLECTION'];
-        }
-        else
-        {
-            $collection = "sequences";
+        if (isset($_ENV['DB_SEQUENCES_COLLECTION'])) {
+            $collection = $_ENV['DB_SEQUENCES_COLLECTION'];
+        } else {
+            $collection = 'sequences';
         }
     }
+
     public $timestamps = false;
     protected $max_results = 25;
 
