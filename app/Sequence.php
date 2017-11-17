@@ -336,7 +336,6 @@ class Sequence extends Model
             }
             if (self::$coltype[$filtername] == 'string') {
                 $query = $query->where($filtername, 'like', '%' . $filtervalue . '%');
-            
             }
             if (self::$coltype[$filtername] == 'int') {
                 $query = $query->where($filtername, '=', (int) $filtervalue);
