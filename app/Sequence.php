@@ -89,7 +89,7 @@ class Sequence extends Model
     'cdr1region_sequence_aa' => 'string',
     'cdr2region_sequence_aa' => 'string',
     'cdr3region_sequence_aa' => 'string',
-    //'junction_aa' => 'string',
+    'junction_aa' => 'string',
     'vdjregion_sequence_aa_gapped' => 'string',
     'vjregion_sequence_aa_gapped' => 'string',
     'vregion_sequence_aa_gapped' => 'string',
@@ -138,7 +138,7 @@ class Sequence extends Model
     'cdr2region_mutation_string' => 'string',
     'cdr3region_mutation_string' => 'string',
     'junction_length' => 'int',
-    'junction_length_aa' => 'int',
+    'junction_aa_length' => 'int',
     'productive' => 'int',
     ];
 
@@ -323,6 +323,11 @@ class Sequence extends Model
             if ($filtername == 'ir_project_sample_id_list') {
                 continue;
             }
+            if ($filtername == 'functional')
+            {
+                $query = $query->whereIn('productive', 'is', 'true');
+                contunie;
+            }
             if ($filtername == 'junction_aa') {
                 $query = $query->where($filtername, 'like', "%$filtervalue%");
                 continue;
@@ -340,8 +345,8 @@ class Sequence extends Model
                 $query = $query->where($filtername, '=', (int) $filtervalue);
             }
         }
-        if (empty($f['show_unproductive'])) {
-            $query = $query->where('functional', 'like', 'productive%');
+        if (empty($f['functional'])) {
+            $query = $query->where('productive', 'is', 'true');
         }
     }
 
