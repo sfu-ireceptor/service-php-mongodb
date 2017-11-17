@@ -345,6 +345,7 @@ class Sequence extends Model
         if (empty($f['functional'])) {
             $query = $query->where('functional', 'like', 'productive%');
         }
+        
     }
 
     public static function aggregate($filter)
