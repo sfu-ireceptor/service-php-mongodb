@@ -323,8 +323,7 @@ class Sequence extends Model
             if ($filtername == 'ir_project_sample_id_list') {
                 continue;
             }
-            if ($filtername == 'functional')
-            {
+            if ($filtername == 'functional') {
                 $query = $query->whereIn('productive', 'is', 'true');
                 contunie;
             }
