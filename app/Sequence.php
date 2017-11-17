@@ -324,8 +324,8 @@ class Sequence extends Model
                 continue;
             }
             if ($filtername == 'functional') {
-                $query = $query->whereIn('productive', 'is', 'true');
-                contunie;
+                $query = $query->where('functional', 'like', "$filtervalue%");
+                continue;
             }
             if ($filtername == 'junction_aa') {
                 $query = $query->where($filtername, 'like', "%$filtervalue%");
@@ -336,8 +336,6 @@ class Sequence extends Model
             }
             if (self::$coltype[$filtername] == 'string') {
                 $query = $query->where($filtername, 'like', '%' . $filtervalue . '%');
-                if ($filtername == 'junction_aa') {
-                    die();
                 }
             }
             if (self::$coltype[$filtername] == 'int') {
