@@ -345,7 +345,7 @@ class Sequence extends Model
             }
         }
         if (empty($f['functional'])) {
-            $query = $query->where('productive', 'is', 'true');
+            $query = $query->where('functional', 'like', 'productive%');
         }
     }
 
