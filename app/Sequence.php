@@ -315,18 +315,19 @@ class Sequence extends Model
     public static function parseFilter(&$query, $f)
     {
         if (isset($f['ir_project_sample_id_list'])) {
-            $int_ids = [];
+            //$int_ids = [];
 
-            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $f['ir_project_sample_id_list']));
+            //$query = $query->whereIn('ir_project_sample_id', array_map('intval', $f['ir_project_sample_id_list']));
         }
         foreach ($f as $filtername => $filtervalue) {
             if ($filtername == 'ir_project_sample_id_list') {
                 continue;
             }
+/*
             if ($filtername == 'functional') {
                 $query = $query->where('functional', 'like', "$filtervalue%");
                 continue;
-            }
+            }*/
             if ($filtername == 'junction_aa') {
                 $query = $query->where($filtername, 'like', "%$filtervalue%");
                 continue;
@@ -343,7 +344,8 @@ class Sequence extends Model
             }
         }
         if (empty($f['functional'])) {
-            $query = $query->where('functional', 'like', 'productive%');
+            //$query = $query->where('functional', 'like', 'productive%');
+            //$query = $query->where('functional', '=', '1');
         }
     }
 
@@ -361,7 +363,7 @@ class Sequence extends Model
         $result = $sample_id_query->get();
         foreach ($result as $psa) {
             $count_query = new self();
-            self::parseFilter($count_query, $filter);
+            //self::parseFilter($count_query, $filter);
             $count_query = $count_query->where('ir_project_sample_id', '=', $psa['_id']);
             $total = $count_query->count();
             if ($total > 0) {
@@ -386,7 +388,11 @@ class Sequence extends Model
 
         $num_results = 25;
         $start_at = 0;
+        if (isset($f['ir_project_sample_id_list'])) {
+            $int_ids = [];
 
+            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $f['ir_project_sample_id_list']));
+        }
         self::parseFilter($query, $f);
 
         if (! empty($f['page_number']) && ($f['page_number'] > 0)) {
@@ -444,6 +450,11 @@ class Sequence extends Model
         fputcsv($file, self::$header_fields, ',');
 
         $query = new self();
+        if (isset($f['ir_project_sample_id_list'])) {
+            $int_ids = [];
+
+            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $f['ir_project_sample_id_list']));
+        }
         self::parseFilter($query, $params);
         $result = $query->get();
 
