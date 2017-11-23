@@ -323,11 +323,11 @@ class Sequence extends Model
             if ($filtername == 'ir_project_sample_id_list') {
                 continue;
             }
-/*
-            if ($filtername == 'functional') {
-                $query = $query->where('functional', 'like', "$filtervalue%");
-                continue;
-            }*/
+            /*
+                        if ($filtername == 'functional') {
+                            $query = $query->where('functional', 'like', "$filtervalue%");
+                            continue;
+                        }*/
             if ($filtername == 'junction_aa') {
                 $query = $query->where($filtername, 'like', "%$filtervalue%");
                 continue;
