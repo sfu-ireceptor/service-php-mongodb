@@ -18,6 +18,10 @@ class Sequence extends Model
         }
     }
 
+    public  function getCollection()
+    {
+        return $this->collection;
+    }
     public $timestamps = false;
     protected $max_results = 25;
 
@@ -359,9 +363,17 @@ class Sequence extends Model
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
                 continue;
             }
+            if (in_array ($filtername , ["v_call", "j_call", "d_call"]))
+            {
+                $return_match[$filtername]['$regex'] = $filtervalue . '.*';
+                $return_match[$filtername]['$options']  = 'i';
+                continue;
+  
+            }
 
             if (self::$coltype[$filtername] == 'string') {
-                $return_match[$filtername]['$regexp'] = '/.*' . $filtervalue . '.*/i';
+                $return_match[$filtername]['$regex'] = '.*' . $filtervalue . '.*';
+                $return_match[$filtername]['$options']  = 'i';
                 continue;
             }
             if (self::$coltype[$filtername] == 'int') {
@@ -372,35 +384,31 @@ class Sequence extends Model
         if (! isset($f['functional'])) {
             $return_match['functional'] = 1;
         }
-
         return $return_match;
     }
 
     public static function aggregate($filter)
     {
-        $query = new self();
+        $query = new Sequence();
         $psa_list = [];
         $counts = [];
         $sample_metadata = [];
-        //self::parseFilter($query, $filter);
-        //$result = $query->groupBy('project_sample_id')->get();
         $match = [];
+        $sample_id_query = new Sample();
         if (isset($filter['ir_project_sample_id_list'])) {
-            //$sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
-            $sample_id_list = array_map('intval', $filter['ir_project_sample_id_list']);
+            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
+            //$sample_id_list = array_map('intval', $filter['ir_project_sample_id_list']);
             //$match .= "{ir_project_sample_id:{\$in:[".$sample_id_list."]}}";
-            $match['ir_project_sample_id']['$in'] = $sample_id_list;
+            //$match['ir_project_sample_id']['$in'] = $sample_id_list;
         }
-        //$result = $sample_id_query->get();v
-        $result = DB::collection('samples')->raw()->find($match);
+        $sample_id_query = $sample_id_query->where('ir_sequence_count', '>', 0);
+        $result = $sample_id_query->get();
+        //$result = DB::collection('samples')->raw()->find($match);
         foreach ($result as $psa) {
-            //$count_query = new self();
-            //self::parseFilter($count_query, $filter);
+            //DB::enableQueryLog();
             $sequence_match = self::SequenceMatch($psa['ir_project_sample_id'], $filter);
-            //$count_query = $count_query->where('ir_project_sample_id', '=', $psa['ir_project_sample_id']);
-            $total = DB::collection('sequences')->raw()->count($sequence_match);
-
-            //$total = $count_query->count();
+            $total = DB::collection($query->getCollection())->raw()->count($sequence_match);
+            //dd(DB::getQueryLog());
             if ($total > 0) {
                 $psa['ir_filtered_sequence_count'] = $total;
                 $psa_list[] = $psa;
