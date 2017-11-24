@@ -18,10 +18,11 @@ class Sequence extends Model
         }
     }
 
-    public  function getCollection()
+    public function getCollection()
     {
         return $this->collection;
     }
+
     public $timestamps = false;
     protected $max_results = 25;
 
@@ -363,17 +364,15 @@ class Sequence extends Model
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
                 continue;
             }
-            if (in_array ($filtername , ["v_call", "j_call", "d_call"]))
-            {
+            if (in_array($filtername, ['v_call', 'j_call', 'd_call'])) {
                 $return_match[$filtername]['$regex'] = $filtervalue . '.*';
-                $return_match[$filtername]['$options']  = 'i';
+                $return_match[$filtername]['$options'] = 'i';
                 continue;
-  
             }
 
             if (self::$coltype[$filtername] == 'string') {
                 $return_match[$filtername]['$regex'] = '.*' . $filtervalue . '.*';
-                $return_match[$filtername]['$options']  = 'i';
+                $return_match[$filtername]['$options'] = 'i';
                 continue;
             }
             if (self::$coltype[$filtername] == 'int') {
@@ -384,12 +383,13 @@ class Sequence extends Model
         if (! isset($f['functional'])) {
             $return_match['functional'] = 1;
         }
+
         return $return_match;
     }
 
     public static function aggregate($filter)
     {
-        $query = new Sequence();
+        $query = new self();
         $psa_list = [];
         $counts = [];
         $sample_metadata = [];
