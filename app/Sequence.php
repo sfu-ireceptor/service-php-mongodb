@@ -364,8 +364,8 @@ class Sequence extends Model
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
                 continue;
             }
-            if (in_array($filtername, ["v_call", "j_call", "d_call"])) {
-                $filtervalue = preg_quote ($filtervalue);
+            if (in_array($filtername, ['v_call', 'j_call', 'd_call'])) {
+                $filtervalue = preg_quote($filtervalue);
 
                 $return_match[$filtername]['$regex'] = $filtervalue . '.*';
                 $return_match[$filtername]['$options'] = 'i';
@@ -373,7 +373,7 @@ class Sequence extends Model
             }
 
             if (self::$coltype[$filtername] == 'string') {
-                $filtervalue = preg_quote ($filtervalue);
+                $filtervalue = preg_quote($filtervalue);
                 $return_match[$filtername]['$regex'] = '.*' . $filtervalue . '.*';
                 $return_match[$filtername]['$options'] = 'i';
                 continue;
@@ -386,6 +386,7 @@ class Sequence extends Model
         if (! isset($f['functional'])) {
             $return_match['functional'] = 1;
         }
+
         return $return_match;
     }
 
