@@ -406,7 +406,7 @@ class Sequence extends Model
         //$result = DB::collection('samples')->raw()->find($match);
         foreach ($result as $psa) {
             //DB::enableQueryLog();
-            $sequence_match = self::SequenceMatch($psa['ir_project_sample_id'], $filter);
+            $sequence_match = self::SequenceMatch($psa['_id'], $filter);
             $total = DB::collection($query->getCollection())->raw()->count($sequence_match);
             //dd(DB::getQueryLog());
             if ($total > 0) {
