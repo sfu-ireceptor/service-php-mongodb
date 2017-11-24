@@ -329,6 +329,11 @@ class Sequence extends Model
                 $query = $query->where('substring', '=', $filtervalue);
                 continue;
             }
+            if (in_array($filtername, ["v_call", "j_call", "d_call"]))
+            {
+                $query = $query->where($filtername, 'like', $filtervalue . '%');
+                continue;
+            }
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
                 continue;
             }
@@ -364,10 +369,10 @@ class Sequence extends Model
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
                 continue;
             }
-            if (in_array($filtername, ['v_call', 'j_call', 'd_call'])) {
+            if (in_array($filtername, ["v_call", "j_call", "d_call"])) {
                 $filtervalue = preg_quote($filtervalue);
 
-                $return_match[$filtername]['$regex'] = $filtervalue . '.*';
+                $return_match[$filtername]['$regex'] = '^'.$filtervalue . '.*';
                 $return_match[$filtername]['$options'] = 'i';
                 continue;
             }
