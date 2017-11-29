@@ -501,10 +501,8 @@ class Sequence extends Model
         self::parseFilter($query, $params);
         $done = false;
         $current = 0;
-        while (!$done)
-        {
+        while (! $done) {
             $result = $query->skip($current)->take(5000)->get();
-        
 
             foreach ($result as $row) {
                 $current++;
@@ -514,23 +512,19 @@ class Sequence extends Model
                 $results_array = array_merge($sequence_list, $sample_array->toArray());
 
                 $new_line = [];
-                    foreach (self::$header_fields as $current_header) 
-                    {
-                        if (isset($results_array[$current_header])) {
-                            if (is_array($results_array[$current_header])) {
-                                $new_line[$current_header] = implode($results_array[$current_header], ', or');
-                            } else {
-                                $new_line[$current_header] = $results_array[$current_header];
-                            }
-                    } 
-                    else 
-                    {
+                foreach (self::$header_fields as $current_header) {
+                    if (isset($results_array[$current_header])) {
+                        if (is_array($results_array[$current_header])) {
+                            $new_line[$current_header] = implode($results_array[$current_header], ', or');
+                        } else {
+                            $new_line[$current_header] = $results_array[$current_header];
+                        }
+                    } else {
                         $new_line[$current_header] = '';
                     }
                 }
                 fputcsv($file, $new_line, ',');
-                if ($current%5000 > 0)
-                {
+                if ($current % 5000 > 0) {
                     $done = 1;
                 }
             }
