@@ -79,10 +79,8 @@ class SequenceController extends Controller
     {
         $params = $request->all();
 
-        if (isset($params['output']))
-        {
-            if ($params['output']== 'csv')
-            {
+        if (isset($params['output'])) {
+            if ($params['output'] == 'csv') {
                 return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
             }
         }
