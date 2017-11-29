@@ -344,7 +344,7 @@ class Sequence extends Model
             }
         }
         if (! isset($f['functional'])) {
-            $query = $query->where('functional', '=', 1);
+            //$query = $query->where('functional', '=', 1);
         }
     }
 
@@ -388,7 +388,7 @@ class Sequence extends Model
             }
         }
         if (! isset($f['functional'])) {
-            $return_match['functional'] = 1;
+            //$return_match['functional'] = 1;
         }
 
         return $return_match;
@@ -501,8 +501,9 @@ class Sequence extends Model
         self::parseFilter($query, $params);
         $done = false;
         $current = 0;
-        while (! $done) {
-            $result = $query->skip($current)->take(5000)->get();
+        $result = $query->take(5000)->get();
+
+        while ($result) {
 
             foreach ($result as $row) {
                 $current++;
@@ -531,6 +532,7 @@ class Sequence extends Model
                 $done = 1;
             }
             
+            $result = $query->skip($current)->take(5000)->get();
         }
         fclose($file);
 
