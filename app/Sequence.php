@@ -493,10 +493,10 @@ class Sequence extends Model
         fputcsv($file, self::$header_fields, ',');
 
         $query = new self();
-        if (isset($f['ir_project_sample_id_list'])) {
+        if (isset($params['ir_project_sample_id_list'])) {
             $int_ids = [];
 
-            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $f['ir_project_sample_id_list']));
+            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $params['ir_project_sample_id_list']));
         }
         self::parseFilter($query, $params);
         $done = false;
@@ -524,10 +524,13 @@ class Sequence extends Model
                     }
                 }
                 fputcsv($file, $new_line, ',');
-                if ($current % 5000 > 0) {
-                    $done = 1;
-                }
             }
+                
+            if ($current % 5000 > 0) 
+            {
+                $done = 1;
+            }
+            
         }
         fclose($file);
 
