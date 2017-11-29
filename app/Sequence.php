@@ -344,7 +344,7 @@ class Sequence extends Model
             }
         }
         if (! isset($f['functional'])) {
-            $query = $query->where('functional', '=', 1);
+            //$query = $query->where('functional', '=', 1);
         }
     }
 
@@ -388,7 +388,7 @@ class Sequence extends Model
             }
         }
         if (! isset($f['functional'])) {
-            $return_match['functional'] = 1;
+            //$return_match['functional'] = 1;
         }
 
         return $return_match;
