@@ -74,4 +74,17 @@ class SequenceController extends Controller
 
         return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
     }
+
+    public function v1controls(Request $request)
+    {
+        $params = $request->all();
+
+        if (isset($params['output']))
+        {
+            if ($params['output']== 'csv')
+            {
+                return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
+            }
+        }
+    }
 }
