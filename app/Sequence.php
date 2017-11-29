@@ -526,9 +526,8 @@ class Sequence extends Model
                 }
                 fputcsv($file, $new_line, ',');
             }
-                
-            if ($current % 5000 > 0) 
-            {
+
+            if ($current % 5000 > 0) {
                 $done = 1;
             }
             
