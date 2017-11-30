@@ -500,12 +500,10 @@ class Sequence extends Model
         }
         self::parseFilter($query, $params);
         $done = false;
-        $current = 0;
         $result = $query->take(5000)->get();
 
-        while ($result) {
+        while ($result->count() > 0) {
             foreach ($result as $row) {
-                $current++;
                 $sequence_list = $row->toArray();
                 $results_array = [];
                 $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
@@ -524,10 +522,6 @@ class Sequence extends Model
                     }
                 }
                 fputcsv($file, $new_line, ',');
-            }
-
-            if ($current % 5000 > 0) {
-                $done = 1;
             }
 
             $result = $query->skip($current)->take(5000)->get();
