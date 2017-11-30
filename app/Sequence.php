@@ -501,7 +501,7 @@ class Sequence extends Model
         self::parseFilter($query, $params);
         $done = false;
         $result = $query->take(5000)->get();
-
+	$current=0;
         while ($result->count() > 0) {
             foreach ($result as $row) {
                 $sequence_list = $row->toArray();
@@ -511,6 +511,7 @@ class Sequence extends Model
 
                 $new_line = [];
                 foreach (self::$header_fields as $current_header) {
+		$current++;
                     if (isset($results_array[$current_header])) {
                         if (is_array($results_array[$current_header])) {
                             $new_line[$current_header] = implode($results_array[$current_header], ', or');
