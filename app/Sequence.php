@@ -501,9 +501,9 @@ class Sequence extends Model
         self::parseFilter($query, $params);
         $done = false;
         $current = 0;
-        while (! $done) {
-            $result = $query->skip($current)->take(5000)->get();
+        $result = $query->take(5000)->get();
 
+        while ($result) {
             foreach ($result as $row) {
                 $current++;
                 $sequence_list = $row->toArray();
@@ -529,6 +529,8 @@ class Sequence extends Model
             if ($current % 5000 > 0) {
                 $done = 1;
             }
+
+            $result = $query->skip($current)->take(5000)->get();
         }
         fclose($file);
 
