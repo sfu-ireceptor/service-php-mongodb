@@ -501,7 +501,7 @@ class Sequence extends Model
         self::parseFilter($query, $params);
         $done = false;
         $result = $query->take(5000)->get();
-	$current=0;
+        $current = 0;
         while ($result->count() > 0) {
             foreach ($result as $row) {
                 $sequence_list = $row->toArray();
