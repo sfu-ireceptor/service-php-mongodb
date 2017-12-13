@@ -20,7 +20,7 @@ class SequenceController extends Controller
         }
         switch (strtolower($params['output'])) {
             case 'csv':
-                return Response::download(Sequence::csv($params))->deleteFileAfterSend(true);
+                return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
                 break;
             default:
                 $t['items'] = Sequence::list($params);

@@ -344,7 +344,7 @@ class Sequence extends Model
             }
         }
         if (! isset($f['functional'])) {
-            //$query = $query->where('functional', '=', 1);
+            $query = $query->where('functional', '=', 1);
         }
     }
 
@@ -388,7 +388,7 @@ class Sequence extends Model
             }
         }
         if (! isset($f['functional'])) {
-            //$return_match['functional'] = 1;
+            $return_match['functional'] = 1;
         }
 
         return $return_match;
@@ -509,9 +509,9 @@ class Sequence extends Model
                 $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
                 $results_array = array_merge($sequence_list, $sample_array->toArray());
 
+		$current++;
                 $new_line = [];
                 foreach (self::$header_fields as $current_header) {
-		$current++;
                     if (isset($results_array[$current_header])) {
                         if (is_array($results_array[$current_header])) {
                             $new_line[$current_header] = implode($results_array[$current_header], ', or');
