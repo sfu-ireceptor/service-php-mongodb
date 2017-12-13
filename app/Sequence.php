@@ -509,7 +509,7 @@ class Sequence extends Model
                 $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
                 $results_array = array_merge($sequence_list, $sample_array->toArray());
 
-		$current++;
+                $current++;
                 $new_line = [];
                 foreach (self::$header_fields as $current_header) {
                     if (isset($results_array[$current_header])) {
