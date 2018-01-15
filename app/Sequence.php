@@ -362,6 +362,8 @@ class Sequence extends Model
                 continue;
             }
             if ($filtername == 'junction_aa') {
+                $filtervalue = trim($filtervalue);
+
                 $return_match['substring'] = $filtervalue;
                 continue;
             }
@@ -369,14 +371,23 @@ class Sequence extends Model
                 continue;
             }
             if (in_array($filtername, ['v_call', 'j_call', 'd_call'])) {
-                $filtervalue = preg_quote($filtervalue);
+                //$filtervalue = preg_quote($filtervalue);
+                $filtervalue = trim($filtervalue);
+                //$return_match[$filtername]['$regex'] = '^' . $filtervalue . '.*';
+                //$return_match[$filtername]['$options'] = 'i';
+                $filtervalue_right = ord(substr($filtervalue, -1, 1));
+                $filtervalue_right++;
 
-                $return_match[$filtername]['$regex'] = '^' . $filtervalue . '.*';
-                $return_match[$filtername]['$options'] = 'i';
+                $filtervalue_upper = substr_replace($filtervalue, chr($filtervalue_right), -1);
+
+                $return_match[$filtername]['$gte'] = $filtervalue;
+                $return_match[$filtername]['$lt'] = $filtervalue_upper;
                 continue;
             }
 
             if (self::$coltype[$filtername] == 'string') {
+                $filtervalue = trim($filtervalue);
+
                 $filtervalue = preg_quote($filtervalue);
                 $return_match[$filtername]['$regex'] = '.*' . $filtervalue . '.*';
                 $return_match[$filtername]['$options'] = 'i';
