@@ -331,7 +331,7 @@ class Sequence extends Model
             }
             if (in_array($filtername, ['v_call', 'j_call', 'd_call'])) {
                 //$query = $query->where($filtername, 'like', $filtervalue . '%');
-                                $filtervalue = trim($filtervalue);
+                $filtervalue = trim($filtervalue);
 
                 $query = $query->where($filtername, '>=', $filtervalue);
                 $filtervalue_right = ord(substr($filtervalue, -1, 1));
