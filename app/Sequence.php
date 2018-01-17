@@ -330,7 +330,16 @@ class Sequence extends Model
                 continue;
             }
             if (in_array($filtername, ['v_call', 'j_call', 'd_call'])) {
-                $query = $query->where($filtername, 'like', $filtervalue . '%');
+                //$query = $query->where($filtername, 'like', $filtervalue . '%');
+                                $filtervalue = trim($filtervalue);
+
+                $query = $query->where($filtername, '>=', $filtervalue);
+                $filtervalue_right = ord(substr($filtervalue, -1, 1));
+                $filtervalue_right++;
+
+                $filtervalue_upper = substr_replace($filtervalue, chr($filtervalue_right), -1);
+                $query = $query->where($filtername, '<', $filtervalue_upper);
+
                 continue;
             }
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
@@ -344,7 +353,7 @@ class Sequence extends Model
             }
         }
         if (! isset($f['functional'])) {
-            $query = $query->where('functional', '=', 1);
+            //$query = $query->where('functional', '=', 1);
         }
     }
 
@@ -399,7 +408,7 @@ class Sequence extends Model
             }
         }
         if (! isset($f['functional'])) {
-            $return_match['functional'] = 1;
+            //$return_match['functional'] = 1;
         }
 
         return $return_match;
