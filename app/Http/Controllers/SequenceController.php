@@ -62,9 +62,9 @@ class SequenceController extends Controller
         $sequence_summary_list = Sequence::aggregate($params);
         $t['summary'] = $sequence_summary_list;
 
-        $sequence_query_list = Sequence::list($params);
+        $sequence_query_list = Sequence::list($params, $sequence_summary_list);
         $t['items'] = $sequence_query_list;
-
+	//$t['items'] = Array();
         return json_encode($t);
     }
 
