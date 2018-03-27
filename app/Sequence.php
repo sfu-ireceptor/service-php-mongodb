@@ -384,7 +384,7 @@ class Sequence extends Model
                 $filtervalue = trim($filtervalue);
                 //$return_match[$filtername]['$regex'] = '^' . $filtervalue . '.*';
                 //$return_match[$filtername]['$options'] = 'i';
-		$filtervalue = preg_replace("/\*/", '.', $filtervalue);
+		$filtervalue = preg_replace("/\*/", '\\*', $filtervalue);
                 $return_match[$filtername]['$regex'] = '^' . $filtervalue ;
                 /*$filtervalue_right = ord(substr($filtervalue, -1, 1));
                 $filtervalue_right++;
@@ -426,27 +426,41 @@ class Sequence extends Model
         $sample_id_query = new Sample();
         if (isset($filter['ir_project_sample_id_list'])) {
             $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
-            //$sample_id_list = array_map('intval', $filter['ir_project_sample_id_list']);
-            //$match .= "{ir_project_sample_id:{\$in:[".$sample_id_list."]}}";
-            //$match['ir_project_sample_id']['$in'] = $sample_id_list;
         }
+
+	// quick check to see if we have a filter that's not ir_project_sample_id_list
+	//   if we don't, we can just use pre-computed sequence counts
+	$has_filter = false;
+
+	foreach ($filter as $filtername=>$filtervalue)
+	{
+
+		if (array_key_exists($filtername, self::$coltype) )
+		{
+			$has_filter = true;
+		}
+	}
         $sample_id_query = $sample_id_query->where('ir_sequence_count', '>', 0);
         $result = $sample_id_query->get();
-        //$result = DB::collection('samples')->raw()->find($match);
         foreach ($result as $psa) {
             //DB::enableQueryLog();
-            $sequence_match = self::SequenceMatch($psa['_id'], $filter);
-	    $start = microtime(true);
-            $total = DB::collection($query->getCollection())->raw()->count($sequence_match);
-            $time = microtime(true) - $start;
-            $logid = $psa['_id'];
-            if (isset($sequence_match["substring"]))
-            {
-	      Log::error("For sample id $logid time was $time count was $total and junction was ".$sequence_match["substring"]);
+	    $total = $psa['ir_sequence_count'];	
+	    if ($has_filter)
+	    {
+                $sequence_match = self::SequenceMatch($psa['_id'], $filter);
+   	        $start = microtime(true);
+                $total = DB::collection($query->getCollection())->raw()->count($sequence_match);
+                $time = microtime(true) - $start;
+                $logid = $psa['_id'];
+                if (isset($sequence_match["substring"]))
+                {
+	          Log::error("For sample id $logid time was $time count was $total and junction was ".$sequence_match["substring"]);
 		}
 		else{
-	    Log::error("For sample id $logid time was $time count was $total ");
+	          Log::error("For sample id $logid time was $time count was $total ");
 		}
+	    }
+            
             //dd(DB::getQueryLog());
             if ($total > 0) {
                 $psa['ir_filtered_sequence_count'] = $total;
