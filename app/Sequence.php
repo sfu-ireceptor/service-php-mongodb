@@ -318,6 +318,53 @@ class Sequence extends Model
         'db_name',
     ];
 
+    public static $airr_headers=[
+        
+       'sequence'=>'sequence_nt',
+       'sequence_id'=>'seq_name',
+       'rearrangement_id'=>'_id',
+       'rev_comp'=>'rev_comp',
+       'sequence_alignment'=>'NULL',
+       'germline_alignment'=>'NULL',
+       'v_call'=>'v_call',
+       'j_call'=>'j_call',
+       'd_call'=>'d_call',
+       'c_call'=>'NULL',
+       'v_score'=>'v_score',
+       'd_score'=>'NULL',
+       'j_score'=>'NULL',
+       'c_score'=>'NULL',
+       'junction'=>'junction_nt',
+       'v_cigar'=>'NULL',
+       'j_cigar'=>'NULL',
+       'd_cigar'=>'NULL',
+       'c_cigar'=>'NULL',
+       'cdr1_aa'=>'cdr1region_sequence_aa',
+       'cdr2_aa'=>'cdr2region_sequence_aa',
+       'cdr3_aa'=>'cdr3region_sequence_aa',
+       'junction_aa'=>'junction_aa',
+       'cdr1_nt'=>'cdr1region_sequence_nt',
+       'cdr2_nt'=>'cdr2region_sequence_nt',
+       'cdr3_nt'=>'cdr3region_sequence_nt',
+       'productive'=>'functional',
+       'subject_id'=>'subject_id',
+       'sex'=>'sex',
+       'organism'=>'organism',
+       'ethnicity'=>'ethnicity',
+       'study_title'=>'study_title',
+       'study_id'=>'study_id',
+       'study_description'=>'study_description',
+       'lab_name'=>'lab_name',
+       'disease_state_sample'=>'disease_state_sample',
+       'study_group_description'=>'study_group_description',
+       'sample_id'=>'sample_id',
+       'template_class'=>'template_class',
+       'tissue'=>'tissue',
+       'cell_subset'=>'cell_subset',
+       'sequencing_platform'=>'sequencing_platform',
+       'cell_phenotype'=>'cell_phenotype',
+    ];
+
     public static function parseFilter(&$query, $f)
     {
         foreach ($f as $filtername => $filtervalue) {
@@ -470,43 +517,7 @@ class Sequence extends Model
 
         return $psa_list;
     }
-/*
-    public static function list($f)
-    {
-        $query = new self();
 
-        $num_results = 25;
-        $start_at = 0;
-        if (isset($f['ir_project_sample_id_list'])) {
-            $int_ids = [];
-
-            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $f['ir_project_sample_id_list']));
-        }
-        self::parseFilter($query, $f);
-
-        if (! empty($f['page_number']) && ($f['page_number'] > 0)) {
-            $start_at = $f['page_number'] - 1;
-        }
-        if (! empty($f['num_results']) && ($f['num_results'] > 0)) {
-            $num_results = $f['num_results'];
-        }
-
-        $result = $query->skip($start_at * $num_results)->take($num_results)->get();
-        foreach ($result as $row) {
-            if (is_array($row['v_call'])) {
-                $row['v_call'] = implode(', or ', $row['v_call']);
-            }
-            if (is_array($row['j_call'])) {
-                $row['j_call'] = implode(', or ', $row['j_call']);
-            }
-            if (is_array($row['d_call'])) {
-                $row['d_call'] = implode(', or ', $row['d_call']);
-            }
-        }
-
-        return $result;
-    }
-*/
     public static function list($f, $sample_list)
     {
         $query = new self();
@@ -566,6 +577,101 @@ class Sequence extends Model
         self::parseFilter($query, $f);
 
         return $query->count();
+    }
+    public static function airr_data($params)
+    {
+        set_time_limit(300);
+        ini_set('memory_limit', '1G');
+
+        $filename = sys_get_temp_dir() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
+
+        $file = fopen($filename, 'w');
+
+        $query = new self();
+        $psa_list = [];
+        $sample_id_query = new Sample();
+        if (isset($params['ir_project_sample_id_list'])) {
+            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $params['ir_project_sample_id_list']));
+        }
+        $result = $sample_id_query->get();
+        foreach ($result as $psa) {
+            $psa_list[$psa['_id']] = $psa;
+        }
+
+        fputcsv($file, array_keys(self::$airr_headers), chr(9));
+
+        $query = new self();
+        if (isset($params['ir_project_sample_id_list'])) {
+            $int_ids = [];
+
+            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $params['ir_project_sample_id_list']));
+        }
+        self::parseFilter($query, $params);
+        $done = false;
+        $result = $query->take(5000)->get();
+        $current = 0;
+        while ($result->count() > 0) {
+            foreach ($result as $row) {
+                $sequence_list = $row->toArray();
+                $airr_list = [];
+                foreach (self::$airr_headers as $airr_name => $ireceptor_name)
+                {
+                    if (isset ($ireceptor_name) && isset($sequence_list[$ireceptor_name]))
+                    {
+                        $airr_list[$airr_name] = $sequence_list[$ireceptor_name];
+                        if ($airr_name == 'rev_comp')
+                        {
+                            if ($airr_list['rev_comp'] == '+')
+                            {
+                                $airr_list['rev_comp'] = 'true';
+                            }
+                            if ($airr_list['rev_comp'] == '-')
+                            {
+                                $airr_list['rev_comp'] = 'false';
+                            }
+                        }
+                        if ($airr_name == 'productive')
+                        {
+                            if ($airr_list[$airr_name] == 1)
+                            {
+                                $airr_list[$airr_name] = 'true';
+                            }
+                            if ($airr_list[$airr_name] == 0)
+                            {
+                                $airr_list[$airr_name] = 'false';
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        $airr_list[$airr_name] = 'NULL';
+                    }
+                }
+                $results_array = [];
+                $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
+                $results_array = array_merge($airr_list, $sample_array->toArray());
+
+                $current++;
+                $new_line = [];
+                foreach (array_keys(self::$airr_headers) as $current_header) {
+                    if (isset($results_array[$current_header])) {
+                        if (is_array($results_array[$current_header])) {
+                            $new_line[$current_header] = implode($results_array[$current_header], ', or');
+                        } else {
+                            $new_line[$current_header] = $results_array[$current_header];
+                        }
+                    } else {
+                        $new_line[$current_header] = '';
+                    }
+                }
+                fputcsv($file, $new_line, chr(9));
+            }
+
+            $result = $query->skip($current)->take(5000)->get();
+        }
+        fclose($file);
+
+        return $filename;
     }
 
     public static function data($params)
