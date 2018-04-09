@@ -319,8 +319,8 @@ class Sequence extends Model
         'db_name',
     ];
 
-    public static $airr_headers=[
-        
+    public static $airr_headers = [
+
        'sequence'=>'sequence_nt',
        'sequence_id'=>'seq_name',
        'rearrangement_id'=>'_id',
@@ -513,8 +513,6 @@ class Sequence extends Model
         return $psa_list;
     }
 
-
-
     public static function list($f, $sample_list)
     {
         $query = new self();
@@ -568,6 +566,7 @@ class Sequence extends Model
 
         return $query->count();
     }
+
     public static function airr_data($params)
     {
         set_time_limit(300);
@@ -604,36 +603,26 @@ class Sequence extends Model
             foreach ($result as $row) {
                 $sequence_list = $row->toArray();
                 $airr_list = [];
-                foreach (self::$airr_headers as $airr_name => $ireceptor_name)
-                {
-                    if (isset ($ireceptor_name) && isset($sequence_list[$ireceptor_name]))
-                    {
+                foreach (self::$airr_headers as $airr_name => $ireceptor_name) {
+                    if (isset($ireceptor_name) && isset($sequence_list[$ireceptor_name])) {
                         $airr_list[$airr_name] = $sequence_list[$ireceptor_name];
-                        if ($airr_name == 'rev_comp')
-                        {
-                            if ($airr_list['rev_comp'] == '+')
-                            {
+                        if ($airr_name == 'rev_comp') {
+                            if ($airr_list['rev_comp'] == '+') {
                                 $airr_list['rev_comp'] = 'true';
                             }
-                            if ($airr_list['rev_comp'] == '-')
-                            {
+                            if ($airr_list['rev_comp'] == '-') {
                                 $airr_list['rev_comp'] = 'false';
                             }
                         }
-                        if ($airr_name == 'productive')
-                        {
-                            if ($airr_list[$airr_name] == 1)
-                            {
+                        if ($airr_name == 'productive') {
+                            if ($airr_list[$airr_name] == 1) {
                                 $airr_list[$airr_name] = 'true';
                             }
-                            if ($airr_list[$airr_name] == 0)
-                            {
+                            if ($airr_list[$airr_name] == 0) {
                                 $airr_list[$airr_name] = 'false';
                             }
                         }
-                    }
-                    else 
-                    {
+                    } else {
                         $airr_list[$airr_name] = 'NULL';
                     }
                 }

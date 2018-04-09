@@ -18,10 +18,8 @@ class SequenceController extends Controller
         if (! isset($params['output'])) {
             $params['output'] = 'json';
         }
-        if (isset ($params['ir_data_format']))
-        {
-            if ($params['ir_data_format'] == 'airr')
-            {
+        if (isset($params['ir_data_format'])) {
+            if ($params['ir_data_format'] == 'airr') {
                 return response()->download(Sequence::airr_data($params))->deleteFileAfterSend(true);
             }
         }
@@ -32,6 +30,7 @@ class SequenceController extends Controller
             default:
                 $t['items'] = Sequence::list($params);
                 $t['total'] = Sequence::count($params);
+
                 return json_encode($t);
         }
     }
@@ -77,10 +76,8 @@ class SequenceController extends Controller
     public function data(Request $request)
     {
         $params = $request->all();
-        if (isset ($params['ir_data_format']))
-        {
-            if ($params['ir_data_format'] == 'airr')
-            {
+        if (isset($params['ir_data_format'])) {
+            if ($params['ir_data_format'] == 'airr') {
                 return response()->download(Sequence::airr_data($params))->deleteFileAfterSend(true);
             }
         }
