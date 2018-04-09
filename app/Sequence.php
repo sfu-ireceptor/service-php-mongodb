@@ -514,7 +514,7 @@ class Sequence extends Model
     }
 
 
- 
+
     public static function list($f, $sample_list)
     {
         $query = new self();
