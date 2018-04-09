@@ -335,7 +335,7 @@ class Sequence extends Model
        'd_score'=>'NULL',
        'j_score'=>'NULL',
        'c_score'=>'NULL',
-       'junction'=>'junction_nt',
+       'junction'=>'junction',
        'v_cigar'=>'NULL',
        'j_cigar'=>'NULL',
        'd_cigar'=>'NULL',
