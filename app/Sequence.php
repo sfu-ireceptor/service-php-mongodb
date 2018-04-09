@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use Log;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Mongodb\Eloquent\Model;
@@ -431,8 +432,8 @@ class Sequence extends Model
                 $filtervalue = trim($filtervalue);
                 //$return_match[$filtername]['$regex'] = '^' . $filtervalue . '.*';
                 //$return_match[$filtername]['$options'] = 'i';
-		$filtervalue = preg_replace("/\*/", '\\*', $filtervalue);
-                $return_match[$filtername]['$regex'] = '^' . $filtervalue ;
+                $filtervalue = preg_replace("/\*/", '\\*', $filtervalue);
+                $return_match[$filtername]['$regex'] = '^' . $filtervalue;
                 /*$filtervalue_right = ord(substr($filtervalue, -1, 1));
                 $filtervalue_right++;
 
@@ -475,39 +476,33 @@ class Sequence extends Model
             $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
         }
 
-	// quick check to see if we have a filter that's not ir_project_sample_id_list
-	//   if we don't, we can just use pre-computed sequence counts
-	$has_filter = false;
+        // quick check to see if we have a filter that's not ir_project_sample_id_list
+        //   if we don't, we can just use pre-computed sequence counts
+        $has_filter = false;
 
-	foreach ($filter as $filtername=>$filtervalue)
-	{
-
-		if (array_key_exists($filtername, self::$coltype) )
-		{
-			$has_filter = true;
-		}
-	}
+        foreach ($filter as $filtername=>$filtervalue) {
+            if (array_key_exists($filtername, self::$coltype)) {
+                $has_filter = true;
+            }
+        }
         $sample_id_query = $sample_id_query->where('ir_sequence_count', '>', 0);
         $result = $sample_id_query->get();
         foreach ($result as $psa) {
             //DB::enableQueryLog();
-	    $total = $psa['ir_sequence_count'];	
-	    if ($has_filter)
-	    {
+            $total = $psa['ir_sequence_count'];
+            if ($has_filter) {
                 $sequence_match = self::SequenceMatch($psa['_id'], $filter);
-   	        $start = microtime(true);
+                $start = microtime(true);
                 $total = DB::collection($query->getCollection())->raw()->count($sequence_match);
                 $time = microtime(true) - $start;
                 $logid = $psa['_id'];
-                if (isset($sequence_match["substring"]))
-                {
-	          Log::error("For sample id $logid time was $time count was $total and junction was ".$sequence_match["substring"]);
-		}
-		else{
-	          Log::error("For sample id $logid time was $time count was $total ");
-		}
-	    }
-            
+                if (isset($sequence_match['substring'])) {
+                    Log::error("For sample id $logid time was $time count was $total and junction was " . $sequence_match['substring']);
+                } else {
+                    Log::error("For sample id $logid time was $time count was $total ");
+                }
+            }
+
             //dd(DB::getQueryLog());
             if ($total > 0) {
                 $psa['ir_filtered_sequence_count'] = $total;
@@ -518,6 +513,8 @@ class Sequence extends Model
         return $psa_list;
     }
 
+
+ 
     public static function list($f, $sample_list)
     {
         $query = new self();
@@ -525,43 +522,36 @@ class Sequence extends Model
         $num_results = 25;
         $start_at = 0;
         $current_results = 0;
-        $result = Array();
-        $return_array = Array();
-        foreach ($sample_list as $sample)
-        {
+        $result = [];
+        $return_array = [];
+        foreach ($sample_list as $sample) {
             $needed_results = $num_results - $current_results;
-            if ($needed_results < 1)
-            {
+            if ($needed_results < 1) {
                 break;
             }
             $sequence_match = self::SequenceMatch($sample['_id'], $f);
             $result = DB::collection($query->getCollection())->raw()->find($sequence_match, ['limit'=>$needed_results]);
-            foreach ($result as $sequence)
-            {
+            foreach ($result as $sequence) {
                 $return_array[] = $sequence;
-                $current_results ++;
+                $current_results++;
             }
-
         }
         foreach ($return_array as $row) {
-		if (!is_string($row['v_call']) && !is_null($row['v_call']))
-		{
-			$row['v_call'] = $row['v_call']->jsonSerialize();
-		}
+            if (! is_string($row['v_call']) && ! is_null($row['v_call'])) {
+                $row['v_call'] = $row['v_call']->jsonSerialize();
+            }
             if (is_array($row['v_call'])) {
                 $row['v_call'] = implode(', or ', $row['v_call']);
             }
-		if (!is_string($row['j_call']) && !is_null($row['j_call']))
-		{
-			$row['j_call'] = $row['j_call']->jsonSerialize();
-		}
+            if (! is_string($row['j_call']) && ! is_null($row['j_call'])) {
+                $row['j_call'] = $row['j_call']->jsonSerialize();
+            }
             if (is_array($row['j_call'])) {
                 $row['j_call'] = implode(', or ', $row['j_call']);
             }
-		if (!is_string($row['d_call']) && !is_null($row['d_call']))
-		{
-			$row['d_call'] = $row['d_call']->jsonSerialize();
-		}
+            if (! is_string($row['d_call']) && ! is_null($row['d_call'])) {
+                $row['d_call'] = $row['d_call']->jsonSerialize();
+            }
             if (is_array($row['d_call'])) {
                 $row['d_call'] = implode(', or ', $row['d_call']);
             }
