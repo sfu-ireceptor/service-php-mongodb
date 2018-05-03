@@ -75,7 +75,7 @@ class Sample extends Model
         }
 
         if (isset($f['study_group_description']) && $f['study_group_description'] != '') {
-            $query = $query->where('study_group_description', 'like', '%'.$f['study_group_description'].'%');
+            $query = $query->where('study_group_description', 'like', '%' . $f['study_group_description'] . '%');
         }
 
         if (isset($f['sample_id']) && $f['sample_id'] != '') {
