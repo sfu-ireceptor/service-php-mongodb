@@ -430,19 +430,14 @@ class Sequence extends Model
             if (in_array($filtername, ['v_call', 'j_call', 'd_call'])) {
                 //$filtervalue = preg_quote($filtervalue);
                 $filtervalue = trim($filtervalue);
-                preg_match("/(.)_/", $filtername, $gene_prefix );
-                $gene_to_filter =  $gene_prefix[1];
-                if (preg_match("/\*/", $filtervalue))
-                {
-                    $gene_to_filter = $gene_to_filter."_call";
-                }
-                elseif (preg_match("/\-/", $filtervalue))
-                {
-                    $gene_to_filter = $gene_to_filter."gene_gene";
-                }
-                else
-                {
-                    $gene_to_filter = $gene_to_filter."gene_family";
+                preg_match('/(.)_/', $filtername, $gene_prefix);
+                $gene_to_filter = $gene_prefix[1];
+                if (preg_match("/\*/", $filtervalue)) {
+                    $gene_to_filter = $gene_to_filter . '_call';
+                } elseif (preg_match("/\-/", $filtervalue)) {
+                    $gene_to_filter = $gene_to_filter . 'gene_gene';
+                } else {
+                    $gene_to_filter = $gene_to_filter . 'gene_family';
                 }
                 echo $gene_to_filter;
                 $return_match[$gene_to_filter] = $filtervalue;
