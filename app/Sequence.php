@@ -439,7 +439,6 @@ class Sequence extends Model
                 } else {
                     $gene_to_filter = $gene_to_filter . 'gene_family';
                 }
-                echo $gene_to_filter;
                 $return_match[$gene_to_filter] = $filtervalue;
                 continue;
                 //$return_match[$filtername]['$regex'] = '^' . $filtervalue . '.*';
