@@ -80,7 +80,8 @@ class SequenceController extends Controller
             if ($params['ir_data_format'] == 'airr') {
                 return response()->download(Sequence::airr_data($params))->deleteFileAfterSend(true);
             }
-        }       
+        }
+
         return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
     }
 
