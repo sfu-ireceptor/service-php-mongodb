@@ -677,9 +677,10 @@ class Sequence extends Model
 //            $result = $query->skip($current)->take(5000)->get();
         }
         fclose($file);
-        $time = microtime(true)-$start_request;
+        $time = microtime(true) - $start_request;
 
         Log::error("Finished creating the file in $time");
+
         return $filename;
     }
 
