@@ -583,7 +583,7 @@ class Sequence extends Model
     {
         set_time_limit(300);
         ini_set('memory_limit', '1G');
-
+        $start_request = microtime(true);
         $filename = sys_get_temp_dir() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
 
         $file = fopen($filename, 'w');
@@ -626,7 +626,7 @@ class Sequence extends Model
             $result = DB::collection($query->getCollection())->raw()->find($sequence_match, $field_to_retrieve);
             $time = microtime(true) - $start;
             Log::error("For sample id $sample_id_current query took $time");
-            $start = microtime();
+            $start = microtime(true);
             foreach ($result as $row) {
                 $sequence_list = $row;
                 $airr_list = [];
@@ -677,7 +677,9 @@ class Sequence extends Model
 //            $result = $query->skip($current)->take(5000)->get();
         }
         fclose($file);
+        $time = microtime(true)-$start_request;
 
+        Log::error("Finished creating the file in $time");
         return $filename;
     }
 
