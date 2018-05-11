@@ -587,7 +587,14 @@ class Sequence extends Model
         $filename = sys_get_temp_dir() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
 
         $file = fopen($filename, 'w');
-
+        $field_to_retrieve =  Array();
+        foreach (self::$airr_headers as $key=>$value)
+        {
+            if ($value != 'NULL')
+            {
+                $field_to_retrieve[$value] = 1;
+            }
+        }
         $query = new self();
         $psa_list = [];
         $sample_id_query = new Sample();
@@ -595,25 +602,35 @@ class Sequence extends Model
             $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $params['ir_project_sample_id_list']));
         }
         $result = $sample_id_query->get();
+        $sample_id_list = Array();
+
         foreach ($result as $psa) {
             $psa_list[$psa['_id']] = $psa;
+            $sample_id_list[] = $psa['_id'];
         }
 
         fputcsv($file, array_keys(self::$airr_headers), chr(9));
-
+        
         $query = new self();
-        if (isset($params['ir_project_sample_id_list'])) {
+        /*if (isset($params['ir_project_sample_id_list'])) {
             $int_ids = [];
 
             $query = $query->whereIn('ir_project_sample_id', array_map('intval', $params['ir_project_sample_id_list']));
         }
         self::parseFilter($query, $params);
         $done = false;
-        $result = $query->take(5000)->get();
+        $result = $query->take(5000)->get();*/
+
         $current = 0;
-        while ($result->count() > 0) {
+        foreach ($sample_id_list as $sample_id_current) 
+        {
+            $sequence_match = self::SequenceMatch($sample_id_current, $params);
+            $start = microtime(true);
+            $result = DB::collection($query->getCollection())->raw()->find($sequence_match, $field_to_retrieve);
+            $time = microtime(true) - $start;
+            Log::error("For sample id $sample_id_current query took $time");
             foreach ($result as $row) {
-                $sequence_list = $row->toArray();
+                $sequence_list = $row;
                 $airr_list = [];
                 foreach (self::$airr_headers as $airr_name => $ireceptor_name) {
                     if (isset($ireceptor_name) && isset($sequence_list[$ireceptor_name])) {
@@ -657,8 +674,8 @@ class Sequence extends Model
                 }
                 fputcsv($file, $new_line, chr(9));
             }
-
-            $result = $query->skip($current)->take(5000)->get();
+            Log::error("Finished writing line $current");
+//            $result = $query->skip($current)->take(5000)->get();
         }
         fclose($file);
 
