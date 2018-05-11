@@ -587,11 +587,9 @@ class Sequence extends Model
         $filename = sys_get_temp_dir() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
 
         $file = fopen($filename, 'w');
-        $field_to_retrieve =  Array();
-        foreach (self::$airr_headers as $key=>$value)
-        {
-            if ($value != 'NULL')
-            {
+        $field_to_retrieve = [];
+        foreach (self::$airr_headers as $key=>$value) {
+            if ($value != 'NULL') {
                 $field_to_retrieve[$value] = 1;
             }
         }
@@ -602,7 +600,7 @@ class Sequence extends Model
             $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $params['ir_project_sample_id_list']));
         }
         $result = $sample_id_query->get();
-        $sample_id_list = Array();
+        $sample_id_list = [];
 
         foreach ($result as $psa) {
             $psa_list[$psa['_id']] = $psa;
@@ -610,7 +608,7 @@ class Sequence extends Model
         }
 
         fputcsv($file, array_keys(self::$airr_headers), chr(9));
-        
+
         $query = new self();
         /*if (isset($params['ir_project_sample_id_list'])) {
             $int_ids = [];
@@ -622,8 +620,7 @@ class Sequence extends Model
         $result = $query->take(5000)->get();*/
 
         $current = 0;
-        foreach ($sample_id_list as $sample_id_current) 
-        {
+        foreach ($sample_id_list as $sample_id_current) {
             $sequence_match = self::SequenceMatch($sample_id_current, $params);
             $start = microtime(true);
             $result = DB::collection($query->getCollection())->raw()->find($sequence_match, $field_to_retrieve);
