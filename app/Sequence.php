@@ -629,6 +629,7 @@ class Sequence extends Model
             $result = DB::collection($query->getCollection())->raw()->find($sequence_match, $field_to_retrieve);
             $time = microtime(true) - $start;
             Log::error("For sample id $sample_id_current query took $time");
+            $start = microtime();
             foreach ($result as $row) {
                 $sequence_list = $row;
                 $airr_list = [];
@@ -674,7 +675,8 @@ class Sequence extends Model
                 }
                 fputcsv($file, $new_line, chr(9));
             }
-            Log::error("Finished writing line $current");
+            $time = microtime(true) - $start;
+            Log::error("Finished writing line $current took $time");
 //            $result = $query->skip($current)->take(5000)->get();
         }
         fclose($file);
