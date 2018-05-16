@@ -59,15 +59,15 @@ class Sample extends Model
         }
 
         if (isset($f['ethnicity']) && $f['ethnicity'] != '') {
-            $query = $query->where('ethnicity', '=', $f['ethnicity']);
+            $query = $query->whereIn('ethnicity',  $f['ethnicity']);
         }
 
         if (isset($f['ir_subject_age_min']) && $f['ir_subject_age_min'] != '') {
-            $query = $query->where('ir_subject_age', '>=', $f['ir_subject_age_min']);
+            $query = $query->where('ir_subject_age_min', '>=', (int)$f['ir_subject_age_min']);
         }
 
         if (isset($f['ir_subject_age_max']) && $f['ir_subject_age_max'] != '') {
-            $query = $query->where('ir_subject_age', '<=', $f['ir_subject_age_max']);
+            $query = $query->where('ir_subject_age_max', '<=', (int)$f['ir_subject_age_max']);
         }
 
         if (isset($f['ir_case_control_id']) && $f['ir_case_control_id'] != '') {
