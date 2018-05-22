@@ -164,6 +164,7 @@ class Sequence extends Model
     'cdr1region_mutation_string' => 'string',
     'cdr2region_mutation_string' => 'string',
     'cdr3region_mutation_string' => 'string',
+    'annotation_tool' => 'string',
     'junction_length' => 'int',
     'junction_aa_length' => 'int',
     'functional' => 'int',
