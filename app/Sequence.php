@@ -463,8 +463,7 @@ class Sequence extends Model
                 continue;
             }
             if ($filtername == 'annotation_tool') {
-                $filtervalue = trim($filtervalue);
-                $return_match['annotation_tool'] = $filtervalue;
+                $return_match['annotation_tool']['$in'] = $filtervalue;
                 continue;
             }
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
