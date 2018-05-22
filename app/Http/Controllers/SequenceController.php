@@ -67,8 +67,19 @@ class SequenceController extends Controller
         $sequence_summary_list = Sequence::aggregate($params);
         $t['summary'] = $sequence_summary_list;
 
-        $sequence_query_list = Sequence::list($params, $sequence_summary_list);
-        $t['items'] = $sequence_query_list;
+        if ($sequence_summary_list == -1)
+        {
+            abort(500, "Timeout");
+        }
+        if ($sequence_summary_list == "")
+        {
+            $t['items'] = "";
+        }
+        else 
+        {
+            $sequence_query_list = Sequence::list($params, $sequence_summary_list);
+            $t['items'] = $sequence_query_list;
+        }
         //$t['items'] = Array();
         return json_encode($t);
     }
@@ -78,7 +89,14 @@ class SequenceController extends Controller
         $params = $request->all();
         if (isset($params['ir_data_format'])) {
             if ($params['ir_data_format'] == 'airr') {
-                return response()->download(Sequence::airr_data($params))->deleteFileAfterSend(true);
+
+                $filename = Sequence::airr_data($params);
+                if ($filename == -1)
+                {
+                    abort(500, "Timeout");
+                }
+
+                return response()->download($filename)->deleteFileAfterSend(true);
             }
         }
 
