@@ -720,7 +720,7 @@ class Sequence extends Model
                                 }
                             }
                         } else {
-                            $airr_list[$airr_name] = "";
+                            $airr_list[$airr_name] = '';
                         }
                     }
                     $results_array = [];
