@@ -18,17 +18,13 @@ class Sequence extends Model
             $this->collection = 'sequences';
         }
         if (isset($_ENV['COUNT_QUERY_TIMEOUT'])) {
-            $this->count_timeout = (int)$_ENV['COUNT_QUERY_TIMEOUT']; 
-        }
-        else
-        {
+            $this->count_timeout = (int) $_ENV['COUNT_QUERY_TIMEOUT'];
+        } else {
             $this->count_timeout = 0;
         }
         if (isset($_ENV['FETCH_QUERY_TIMEOUT'])) {
-            $this->fetch_timeout = (int)$_ENV['FETCH_QUERY_TIMEOUT'];
-        }
-        else
-        {
+            $this->fetch_timeout = (int) $_ENV['FETCH_QUERY_TIMEOUT'];
+        } else {
             $this->fetch_timeout = 0;
         }
     }
@@ -37,14 +33,17 @@ class Sequence extends Model
     {
         return $this->collection;
     }
+
     public function getCountTimeout()
-    {        
+    {
         return $this->count_timeout;
     }
+
     public function getFetchTimeout()
     {
         return $this->fetch_timeout;
     }
+
     public $timestamps = false;
     protected $max_results = 25;
 
@@ -393,19 +392,13 @@ class Sequence extends Model
             if ($filtername == 'ir_project_sample_id_list') {
                 continue;
             }
-            if ($filtername == 'functional')
-            {
-               if (lc($filtervalue) == 'true')
-                {
+            if ($filtername == 'functional') {
+                if (lc($filtervalue) == 'true') {
                     $query = $query->where($filtername, '=', 1);
-                }
-                else if (lc($filtervalue) == 'false')
-                {
+                } elseif (lc($filtervalue) == 'false') {
                     $query = $query->where($filtername, '=', 0);
-                }
-                else
-                {
-                    $query = $query->where($filtername, '=', (int)$filtervalue);
+                } else {
+                    $query = $query->where($filtername, '=', (int) $filtervalue);
                 }
                 continue;
             }
@@ -452,15 +445,13 @@ class Sequence extends Model
             }
             if ($filtername == 'functional') {
                 $filtervalue = trim($filtervalue);
-                if ($filtervalue == 'true')
-                {
+                if ($filtervalue == 'true') {
                     $return_match['functional'] = 1;
-                }
-                else if ($filtervalue == 'false')
-                {
+                } elseif ($filtervalue == 'false') {
                     $return_match['functional'] = 0;
+                } else {
+                    $return_match['functional'] = (int) $filtervalue;
                 }
-                else {$return_match['functional'] = (int)$filtervalue;}
 
                 continue;
             }
@@ -471,8 +462,7 @@ class Sequence extends Model
                 $return_match['substring'] = $filtervalue;
                 continue;
             }
-            if ($filtername == 'annotation_tool')
-            {
+            if ($filtername == 'annotation_tool') {
                 $filtervalue = trim($filtervalue);
                 $return_match['annotation_tool'] = $filtervalue;
                 continue;
@@ -559,13 +549,16 @@ class Sequence extends Model
             $total = $psa['ir_sequence_count'];
             if ($has_filter) {
                 $sequence_match = self::SequenceMatch($psa['_id'], $filter);
-                $query_params = Array();
-                              
-                $query_params["maxTimeMS"] = $count_timeout;
+                $query_params = [];
 
-                $start = microtime(true);try{
-                $total = DB::collection($query->getCollection())->raw()->count($sequence_match, $query_params);}
-                catch(Exception $e) { return (-1);}
+                $query_params['maxTimeMS'] = $count_timeout;
+
+                $start = microtime(true);
+                try {
+                    $total = DB::collection($query->getCollection())->raw()->count($sequence_match, $query_params);
+                } catch (Exception $e) {
+                    return -1;
+                }
                 $time = microtime(true) - $start;
                 $logid = $psa['_id'];
                 if (isset($sequence_match['substring'])) {
@@ -580,14 +573,14 @@ class Sequence extends Model
                 $psa['ir_filtered_sequence_count'] = $total;
                 $psa_list[] = $psa;
             }
-            $total_time = (microtime(true) - $start_request)*1000;
-            if ($total_time > $count_timeout && $count_timeout>0)
-            {
+            $total_time = (microtime(true) - $start_request) * 1000;
+            if ($total_time > $count_timeout && $count_timeout > 0) {
                 echo "$total_time exceeded $count_timeout";
-                return (-1);
-            }
 
+                return -1;
+            }
         }
+
         return $psa_list;
     }
 
@@ -647,25 +640,24 @@ class Sequence extends Model
 
     public static function airr_data($params)
     {
-
         set_time_limit(300);
         ini_set('memory_limit', '1G');
         $start_request = microtime(true);
         $filename = sys_get_temp_dir() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
 
         $file = fopen($filename, 'w');
-        $find_options = Array();
+        $find_options = [];
         $field_to_retrieve = [];
         foreach (self::$airr_headers as $key=>$value) {
             if ($value != 'NULL') {
                 $field_to_retrieve[$value] = 1;
             }
         }
-        $find_options["projection"] = $field_to_retrieve;
-        $find_options["projection"]["ir_project_sample_id"] = 1;
+        $find_options['projection'] = $field_to_retrieve;
+        $find_options['projection']['ir_project_sample_id'] = 1;
         $query = new self();
         $fetch_timeout = $query->getFetchTimeout();
-        $find_options["maxTimeMS"] = $fetch_timeout;
+        $find_options['maxTimeMS'] = $fetch_timeout;
         $total_time = 0;
         $psa_list = [];
         $sample_id_query = new Sample();
@@ -696,82 +688,77 @@ class Sequence extends Model
         foreach ($sample_id_list as $sample_id_current) {
             $sequence_match = self::SequenceMatch($sample_id_current, $params);
             $start = microtime(true);
-            try{
+            try {
                 $result = DB::collection($query->getCollection())->raw()->find($sequence_match, $find_options);
-            }
-            catch (\Exception $e)
-            {
-                return (-1);
+            } catch (\Exception $e) {
+                return -1;
             }
             $time = microtime(true) - $start;
             Log::error("For sample id $sample_id_current query took $time");
             $start = microtime(true);
-            try {foreach ($result as $row) {
-                $sequence_list = $row;
-                $airr_list = [];
-                foreach (self::$airr_headers as $airr_name => $ireceptor_name) {
-                    if (isset($ireceptor_name) && isset($sequence_list[$ireceptor_name])) {
-                        $airr_list[$airr_name] = $sequence_list[$ireceptor_name];
-                        if ($airr_name == 'rev_comp') {
-                            if ($airr_list['rev_comp'] == '+') {
-                                $airr_list['rev_comp'] = 'true';
+            try {
+                foreach ($result as $row) {
+                    $sequence_list = $row;
+                    $airr_list = [];
+                    foreach (self::$airr_headers as $airr_name => $ireceptor_name) {
+                        if (isset($ireceptor_name) && isset($sequence_list[$ireceptor_name])) {
+                            $airr_list[$airr_name] = $sequence_list[$ireceptor_name];
+                            if ($airr_name == 'rev_comp') {
+                                if ($airr_list['rev_comp'] == '+') {
+                                    $airr_list['rev_comp'] = 'true';
+                                }
+                                if ($airr_list['rev_comp'] == '-') {
+                                    $airr_list['rev_comp'] = 'false';
+                                }
                             }
-                            if ($airr_list['rev_comp'] == '-') {
-                                $airr_list['rev_comp'] = 'false';
+                            if ($airr_name == 'productive') {
+                                if ($airr_list[$airr_name] == 1) {
+                                    $airr_list[$airr_name] = 'true';
+                                }
+                                if ($airr_list[$airr_name] == 0) {
+                                    $airr_list[$airr_name] = 'false';
+                                }
                             }
+                        } else {
+                            $airr_list[$airr_name] = 'NULL';
                         }
-                        if ($airr_name == 'productive') {
-                            if ($airr_list[$airr_name] == 1) {
-                                $airr_list[$airr_name] = 'true';
-                            }
-                            if ($airr_list[$airr_name] == 0) {
-                                $airr_list[$airr_name] = 'false';
-                            }
-                        }
-                    } else {
-                        $airr_list[$airr_name] = 'NULL';
                     }
-                }
-                $results_array = [];
-                $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
-                $results_array = array_merge($airr_list, $sample_array->toArray());
+                    $results_array = [];
+                    $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
+                    $results_array = array_merge($airr_list, $sample_array->toArray());
 
-                $current++;
-                $new_line = [];
-                foreach (array_keys(self::$airr_headers) as $current_header) {
-                    if (isset($results_array[$current_header])) {
-                        if (is_array($results_array[$current_header])) {
-                            $new_line[$current_header] = implode($results_array[$current_header], ', or');
-                        } 
-                        else 
-                            if(in_array($current_header, ["v_call", "d_call", "j_call"]) && $results_array[$current_header] != null && !is_string($results_array[$current_header]))
-                            {
-                                $new_line[$current_header] = implode($results_array[$current_header]->jsonSerialize(), ", or");
+                    $current++;
+                    $new_line = [];
+                    foreach (array_keys(self::$airr_headers) as $current_header) {
+                        if (isset($results_array[$current_header])) {
+                            if (is_array($results_array[$current_header])) {
+                                $new_line[$current_header] = implode($results_array[$current_header], ', or');
+                            } elseif (in_array($current_header, ['v_call', 'd_call', 'j_call']) && $results_array[$current_header] != null && ! is_string($results_array[$current_header])) {
+                                $new_line[$current_header] = implode($results_array[$current_header]->jsonSerialize(), ', or');
+                            } else {
+                                $new_line[$current_header] = $results_array[$current_header];
                             }
-                            else
-                            {
-                               $new_line[$current_header] = $results_array[$current_header];
-                            }
-                    } 
-                    else {
-                        $new_line[$current_header] = '';
+                        } else {
+                            $new_line[$current_header] = '';
+                        }
                     }
+                    fputcsv($file, $new_line, chr(9));
                 }
-                fputcsv($file, $new_line, chr(9));
-            } }
-            catch (\Exception $e){ 
-                    fclose($file);
-                    unlink($filename);
-                    return (-1);}
+            } catch (\Exception $e) {
+                fclose($file);
+                unlink($filename);
+
+                return -1;
+            }
             $time = microtime(true) - $start;
             Log::error("Finished writing line $current took $time");
 //            $result = $query->skip($current)->take(5000)->get();
-            $total_time = (microtime(true) - $start_request)*1000;
-            if ($total_time > $fetch_timeout && $fetch_timeout>0)
-            {
+            $total_time = (microtime(true) - $start_request) * 1000;
+            if ($total_time > $fetch_timeout && $fetch_timeout > 0) {
                 fclose($file);
                 unlink($filename);
-                return(-1);
+
+                return -1;
             }
         }
         fclose($file);
