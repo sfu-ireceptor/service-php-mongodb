@@ -715,8 +715,7 @@ class Sequence extends Model
                             if ($airr_name == 'productive' || $airr_name == 'functional') {
                                 if ($airr_list[$airr_name] == 1) {
                                     $airr_list[$airr_name] = 'true';
-                                }
-                                else if ($airr_list[$airr_name] == 0) {
+                                } elseif ($airr_list[$airr_name] == 0) {
                                     $airr_list[$airr_name] = 'false';
                                 }
                             }
