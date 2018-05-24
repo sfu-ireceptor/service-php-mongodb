@@ -384,7 +384,7 @@ class Sequence extends Model
        'tissue'=>'tissue',
        'cell_subset'=>'cell_subset',
        'sequencing_platform'=>'sequencing_platform',
-       'cell_phenotype'=>'cell_phenotype'
+       'cell_phenotype'=>'cell_phenotype',
     ];
 
     public static function parseFilter(&$query, $f)
