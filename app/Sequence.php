@@ -365,10 +365,10 @@ class Sequence extends Model
        'cdr2_aa'=>'cdr2region_sequence_aa',
        'cdr3_aa'=>'cdr3region_sequence_aa',
        'junction_aa'=>'junction_aa',
-       'cdr1_nt'=>'cdr1region_sequence_nt',
-       'cdr2_nt'=>'cdr2region_sequence_nt',
-       'cdr3_nt'=>'cdr3region_sequence_nt',
        'productive'=>'functional',
+       'functional'=>'functional',
+       'junction_nt'=>'junction',
+
        'subject_id'=>'subject_id',
        'sex'=>'sex',
        'organism'=>'organism',
@@ -384,7 +384,7 @@ class Sequence extends Model
        'tissue'=>'tissue',
        'cell_subset'=>'cell_subset',
        'sequencing_platform'=>'sequencing_platform',
-       'cell_phenotype'=>'cell_phenotype',
+       'cell_phenotype'=>'cell_phenotype'
     ];
 
     public static function parseFilter(&$query, $f)
