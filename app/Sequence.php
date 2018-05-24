@@ -344,7 +344,7 @@ class Sequence extends Model
 
        'sequence'=>'sequence_nt',
        'sequence_id'=>'seq_name',
-       'rearrangement_id'=>'_id',
+       'rearrangement_id'=>'NULL',
        'rev_comp'=>'rev_comp',
        'sequence_alignment'=>'NULL',
        'germline_alignment'=>'NULL',
@@ -368,6 +368,7 @@ class Sequence extends Model
        'productive'=>'functional',
        'functional'=>'functional',
        'junction_nt'=>'junction',
+       'junction_nt_length'=>'junction_length',
 
        'subject_id'=>'subject_id',
        'sex'=>'sex',
