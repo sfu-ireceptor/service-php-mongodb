@@ -712,11 +712,11 @@ class Sequence extends Model
                                     $airr_list['rev_comp'] = 'false';
                                 }
                             }
-                            if ($airr_name == 'productive') {
+                            if ($airr_name == 'productive' || $airr_name == 'functional') {
                                 if ($airr_list[$airr_name] == 1) {
                                     $airr_list[$airr_name] = 'true';
                                 }
-                                if ($airr_list[$airr_name] == 0) {
+                                else if ($airr_list[$airr_name] == 0) {
                                     $airr_list[$airr_name] = 'false';
                                 }
                             }
