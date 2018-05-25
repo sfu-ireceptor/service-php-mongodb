@@ -734,7 +734,7 @@ class Sequence extends Model
                             if (is_array($results_array[$current_header])) {
                                 $new_line[$current_header] = implode($results_array[$current_header], ', or');
                             } elseif (in_array($current_header, ['v_call', 'd_call', 'j_call']) && $results_array[$current_header] != null && ! is_string($results_array[$current_header])) {
-                                $new_line[$current_header] = implode($results_array[$current_header]->jsonSerialize(), ', or');
+                                $new_line[$current_header] = implode($results_array[$current_header]->jsonSerialize(), ', or ');
                             } else {
                                 $new_line[$current_header] = $results_array[$current_header];
                             }
