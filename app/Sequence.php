@@ -632,17 +632,13 @@ class Sequence extends Model
             if (is_array($row['d_call'])) {
                 $row['d_call'] = implode(', or ', $row['d_call']);
             }
-            if ($row['functional' ])
-            {
+            if ($row['functional']) {
                 $row['functional'] = true;
-            }
-            else
-            {
+            } else {
                 $row['functional'] = false;
             }
             if (isset($row['annotation_tool'])) {
                 $row['ir_annotation_tool'] = $row['annotation_tool'];
-
             }
         }
 
