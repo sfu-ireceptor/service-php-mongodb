@@ -424,9 +424,8 @@ class Sequence extends Model
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
                 continue;
             }
-            if ($filtername == 'ir_annotation_tool')
-            {
-                $query=$query->where('annotation_tool', '=', $filtervalue);
+            if ($filtername == 'ir_annotation_tool') {
+                $query = $query->where('annotation_tool', '=', $filtervalue);
             }
             if (self::$coltype[$filtername] == 'string') {
                 $query = $query->where($filtername, 'like', '%' . $filtervalue . '%');
@@ -643,6 +642,7 @@ class Sequence extends Model
             }
             if (isset($row['annotation_tool'])) {
                 $row['ir_annotation_tool'] = $row['annotation_tool'];
+
             }
         }
 
