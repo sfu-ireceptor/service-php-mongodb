@@ -169,11 +169,12 @@ class Sequence extends Model
     'junction_aa_length' => 'int',
     'functional' => 'int',
     'ir_annotation_tool' => 'string',
+    'sequence'=>'string'
     ];
 
     public static $header_fields = [
         'seq_id',
-        'sequence_nt',
+        'sequence',
         'seq_name',
         'id',
         'sequence_id',
@@ -342,8 +343,7 @@ class Sequence extends Model
     ];
 
     public static $airr_headers = [
-
-       'sequence'=>'sequence_nt',
+       'sequence'=>'sequence',
        'sequence_id'=>'seq_name',
        'rearrangement_id'=>'NULL',
        'rev_comp'=>'rev_comp',
