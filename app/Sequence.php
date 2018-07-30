@@ -169,7 +169,7 @@ class Sequence extends Model
     'junction_aa_length' => 'int',
     'functional' => 'int',
     'ir_annotation_tool' => 'string',
-    'sequence'=>'string'
+    'sequence'=>'string',
     ];
 
     public static $header_fields = [
