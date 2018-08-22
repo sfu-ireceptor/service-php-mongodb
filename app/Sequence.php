@@ -17,13 +17,15 @@ class Sequence extends Model
         } else {
             $this->collection = 'sequences';
         }
+        //timeouts are set in seconds, so we should convert to miliseconds for 
+        //  mongoDB 
         if (isset($_ENV['COUNT_QUERY_TIMEOUT'])) {
-            $this->count_timeout = (int) $_ENV['COUNT_QUERY_TIMEOUT'];
+            $this->count_timeout = (int) $_ENV['COUNT_QUERY_TIMEOUT'] * 1000;
         } else {
             $this->count_timeout = 0;
         }
         if (isset($_ENV['FETCH_QUERY_TIMEOUT'])) {
-            $this->fetch_timeout = (int) $_ENV['FETCH_QUERY_TIMEOUT'];
+            $this->fetch_timeout = (int) $_ENV['FETCH_QUERY_TIMEOUT'] * 1000;
         } else {
             $this->fetch_timeout = 0;
         }
@@ -565,7 +567,7 @@ class Sequence extends Model
                 $start = microtime(true);
                 try {
                     $total = DB::collection($query->getCollection())->raw()->count($sequence_match, $query_params);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return -1;
                 }
                 $time = microtime(true) - $start;
