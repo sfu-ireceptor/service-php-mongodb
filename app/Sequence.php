@@ -17,8 +17,8 @@ class Sequence extends Model
         } else {
             $this->collection = 'sequences';
         }
-        //timeouts are set in seconds, so we should convert to miliseconds for 
-        //  mongoDB 
+        //timeouts are set in seconds, so we should convert to miliseconds for
+        //  mongoDB
         if (isset($_ENV['COUNT_QUERY_TIMEOUT'])) {
             $this->count_timeout = (int) $_ENV['COUNT_QUERY_TIMEOUT'] * 1000;
         } else {
