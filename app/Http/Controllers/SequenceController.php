@@ -93,7 +93,8 @@ class SequenceController extends Controller
             }
         }
 
-        return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
+        //return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
+        abort(500, "Only AIRR TSV files are supported");
     }
 
     public function v1controls(Request $request)
