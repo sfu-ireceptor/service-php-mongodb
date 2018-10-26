@@ -89,12 +89,13 @@ class SequenceController extends Controller
                 if ($filename == -1) {
                     abort(500, 'Timeout');
                 }
+
                 return response()->download($filename)->deleteFileAfterSend(true);
             }
         }
 
         //return response()->download(Sequence::data($params))->deleteFileAfterSend(true);
-        abort(500, "Only AIRR TSV files are supported");
+        abort(500, 'Only AIRR TSV files are supported');
     }
 
     public function v1controls(Request $request)
