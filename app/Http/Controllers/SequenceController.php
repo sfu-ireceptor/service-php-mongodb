@@ -89,7 +89,6 @@ class SequenceController extends Controller
                 if ($filename == -1) {
                     abort(500, 'Timeout');
                 }
-
                 return response()->download($filename)->deleteFileAfterSend(true);
             }
         }
