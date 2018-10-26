@@ -29,6 +29,11 @@ class Sequence extends Model
         } else {
             $this->fetch_timeout = 0;
         }
+        if (isset($_ENV['TEMP_FILE_FOLDER'])) {
+            $this->temp_files = $_ENV['TEMP_FILE_FOLDER'];
+        } else {
+            $this->temp_files = sys_get_temp_dir();
+        }
     }
 
     public function getCollection()
@@ -44,6 +49,11 @@ class Sequence extends Model
     public function getFetchTimeout()
     {
         return $this->fetch_timeout;
+    }
+
+    public function getTempFolder()
+    {
+        return $this->temp_files;
     }
 
     public $timestamps = false;
@@ -662,7 +672,9 @@ class Sequence extends Model
         set_time_limit(300);
         ini_set('memory_limit', '1G');
         $start_request = microtime(true);
-        $filename = sys_get_temp_dir() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
+        $query = new self();
+
+        $filename = $query->getTempFolder() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
 
         $file = fopen($filename, 'w');
         $find_options = [];
@@ -674,7 +686,6 @@ class Sequence extends Model
         }
         $find_options['projection'] = $field_to_retrieve;
         $find_options['projection']['ir_project_sample_id'] = 1;
-        $query = new self();
         $fetch_timeout = $query->getFetchTimeout();
         $find_options['maxTimeMS'] = $fetch_timeout;
         $total_time = 0;
@@ -792,11 +803,12 @@ class Sequence extends Model
         set_time_limit(300);
         ini_set('memory_limit', '1G');
 
-        $filename = sys_get_temp_dir() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.csv';
+        $query = new self();
+
+        $filename = $query->getTempFolder() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.csv';
 
         $file = fopen($filename, 'w');
 
-        $query = new self();
         $psa_list = [];
         $sample_id_query = new Sample();
         if (isset($params['ir_project_sample_id_list'])) {
