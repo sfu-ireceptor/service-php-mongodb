@@ -771,23 +771,23 @@ class Sequence extends Model
                             $new_line[$current_header] = '';
                         }
                     }
-                    fputcsv($file, $new_line, chr(9)); 
-                    #every 5000 results check the free space and fail if empty
-                    if ($current % 5000 == 0)
-                    {                    
+                    fputcsv($file, $new_line, chr(9));
+                    //every 5000 results check the free space and fail if empty
+                    if ($current % 5000 == 0) {
                         $free_space = disk_free_space($query->getTempFolder());
-                        if ($free_space ==0)
-                        {
-                            Log::error("Out of space on device - removing the file");
+                        if ($free_space == 0) {
+                            Log::error('Out of space on device - removing the file');
                             fclose($file);
                             unlink($filename);
+
                             return -1;
                         }
-                    }                   
+                    }
                 }
             } catch (\Exception $e) {
                 fclose($file);
                 unlink($filename);
+
                 return -1;
             }
             $time = microtime(true) - $start;
@@ -797,6 +797,7 @@ class Sequence extends Model
             if ($total_time > $fetch_timeout && $fetch_timeout > 0) {
                 fclose($file);
                 unlink($filename);
+
                 return -1;
             }
         }
