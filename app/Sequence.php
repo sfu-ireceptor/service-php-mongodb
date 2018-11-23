@@ -370,6 +370,7 @@ class Sequence extends Model
        'j_score'=>'NULL',
        'c_score'=>'NULL',
        'junction'=>'junction',
+       'junction_length'=>'junction_length',
        'v_cigar'=>'NULL',
        'j_cigar'=>'NULL',
        'd_cigar'=>'NULL',
@@ -378,11 +379,9 @@ class Sequence extends Model
        'cdr2_aa'=>'cdr2region_sequence_aa',
        'cdr3_aa'=>'cdr3region_sequence_aa',
        'junction_aa'=>'junction_aa',
+       'junction_aa_length'=>'junction_aa_length',
        'productive'=>'functional',
        'functional'=>'functional',
-       'junction_nt'=>'junction',
-       'junction_nt_length'=>'junction_length',
-
        'subject_id'=>'subject_id',
        'sex'=>'sex',
        'organism'=>'organism',
@@ -669,8 +668,7 @@ class Sequence extends Model
 
     public static function airr_data($params)
     {
-        set_time_limit(300);
-        ini_set('memory_limit', '1G');
+        ini_set('memory_limit', '2G');
         $start_request = microtime(true);
         $query = new self();
 
@@ -811,7 +809,6 @@ class Sequence extends Model
 
     public static function data($params)
     {
-        set_time_limit(300);
         ini_set('memory_limit', '1G');
 
         $query = new self();
