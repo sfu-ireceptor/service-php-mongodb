@@ -1,11 +1,9 @@
 # iReceptor Service (PHP/MongoDB)
 
-### Requirements
+## Installation
+Requires:
 - Linux Ubuntu (tested with Ubuntu Xenial 16.04)
 - a user with sudo rights without password
-
-## Installation
-
 ### Create a configuration file
 Create a file `env` containing your MongoDB database connection info. Example:
 ```
