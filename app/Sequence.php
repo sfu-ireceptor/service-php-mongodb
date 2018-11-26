@@ -669,6 +669,7 @@ class Sequence extends Model
     public static function airr_data($params)
     {
         ini_set('memory_limit', '2G');
+        set_time_limit(60*60*24);
         $start_request = microtime(true);
         $query = new self();
 
