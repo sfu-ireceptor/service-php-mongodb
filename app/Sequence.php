@@ -626,7 +626,7 @@ class Sequence extends Model
             }
         }
         foreach ($return_array as $row) {
-            $row["_id"] = (string)$row["_id"];
+            $row['_id'] = (string) $row['_id'];
             if (! is_string($row['v_call']) && ! is_null($row['v_call'])) {
                 $row['v_call'] = $row['v_call']->jsonSerialize();
             }
