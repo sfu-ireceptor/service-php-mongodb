@@ -652,6 +652,10 @@ class Sequence extends Model
             if (isset($row['annotation_tool'])) {
                 $row['ir_annotation_tool'] = $row['annotation_tool'];
             }
+            //remove substring for space/clarity
+            if (isset($row['substring'])) {
+                unset($row['substring']);
+            }
         }
 
         return $return_array;
@@ -669,7 +673,7 @@ class Sequence extends Model
     public static function airr_data($params)
     {
         ini_set('memory_limit', '2G');
-        set_time_limit(60*60*24);
+        set_time_limit(60 * 60 * 24);
         $start_request = microtime(true);
         $query = new self();
 
