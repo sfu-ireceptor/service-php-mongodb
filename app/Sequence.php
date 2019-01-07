@@ -652,6 +652,10 @@ class Sequence extends Model
             if (isset($row['annotation_tool'])) {
                 $row['ir_annotation_tool'] = $row['annotation_tool'];
             }
+            #remove substring for space/clarity
+            if (isset($row['substring'])) {
+                unset($row['substring']);
+            }
         }
 
         return $return_array;
