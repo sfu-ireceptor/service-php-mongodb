@@ -595,7 +595,7 @@ class Sequence extends Model
             }
             $total_time = (microtime(true) - $start_request) * 1000;
             if ($total_time > $count_timeout && $count_timeout > 0) {
-                echo "$total_time exceeded $count_timeout";
+                Log::error( "$total_time exceeded $count_timeout");
 
                 return -1;
             }
@@ -687,6 +687,7 @@ class Sequence extends Model
         $find_options['projection']['ir_project_sample_id'] = 1;
         $fetch_timeout = $query->getFetchTimeout();
         $find_options['maxTimeMS'] = $fetch_timeout;
+	$find_options['noCursorTimeout'] = true;
         $total_time = 0;
         $psa_list = [];
         $sample_id_query = new Sample();
@@ -720,6 +721,8 @@ class Sequence extends Model
             try {
                 $result = DB::collection($query->getCollection())->raw()->find($sequence_match, $find_options);
             } catch (\Exception $e) {
+		Log::error("error in database query \n");
+		Log::error($e);
                 return -1;
             }
             $time = microtime(true) - $start;
@@ -786,6 +789,8 @@ class Sequence extends Model
             } catch (\Exception $e) {
                 fclose($file);
                 unlink($filename);
+		Log::error("error in writing \n");
+		Log::error($e);
 
                 return -1;
             }
@@ -796,6 +801,7 @@ class Sequence extends Model
             if ($total_time > $fetch_timeout && $fetch_timeout > 0) {
                 fclose($file);
                 unlink($filename);
+		Log::error("out of time $total_time is greater than $fetch_timeout");
 
                 return -1;
             }
