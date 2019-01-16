@@ -31,7 +31,7 @@ class SequenceController extends Controller
                 $t['items'] = Sequence::list($params);
                 $t['total'] = Sequence::count($params);
 
-                return json_encode($t);
+                return json_encode($t, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
         }
     }
 
@@ -77,7 +77,7 @@ class SequenceController extends Controller
             $t['items'] = $sequence_query_list;
         }
         //$t['items'] = Array();
-        return json_encode($t);
+        return json_encode($t, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
     }
 
     public function data(Request $request)

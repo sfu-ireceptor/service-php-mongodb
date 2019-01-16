@@ -14,6 +14,6 @@ class SampleController extends Controller
         //$l = Sample::list($params);
         $l = Sample::getSamples($params);
 
-        return json_encode($l);
+        return json_encode($l, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
     }
 }
