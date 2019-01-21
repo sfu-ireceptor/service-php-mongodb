@@ -86,8 +86,8 @@ class SequenceController extends Controller
         if (isset($params['ir_data_format'])) {
             if ($params['ir_data_format'] == 'airr') {
                 //$filename = Sequence::airr_data($params);
-               // if ($filename == -1) {
-                  //  abort(500, 'Timeout');
+                // if ($filename == -1) {
+                //  abort(500, 'Timeout');
                 //}
 
                 //return response()->download($filename)->deleteFileAfterSend(true);

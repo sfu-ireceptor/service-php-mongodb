@@ -708,8 +708,7 @@ class Sequence extends Model
         }
 
         //fputcsv($file, array_keys(self::$airr_headers), chr(9));
-        echo(implode(array_keys(self::$airr_headers), ",") . "\n");
-
+        echo implode(array_keys(self::$airr_headers), ',') . "\n";
 
         $query = new self();
         /*if (isset($params['ir_project_sample_id_list'])) {
@@ -782,7 +781,7 @@ class Sequence extends Model
                         }
                     }
                     //fputcsv($file, $new_line, chr(9));
-                    echo(implode($new_line, ",") . "\n");
+                    echo implode($new_line, ',') . "\n";
 
                     //every 5000 results check the free space and fail if empty
                     /*if ($current % 5000 == 0) {
@@ -797,8 +796,8 @@ class Sequence extends Model
                     }*/
                 }
             } catch (\Exception $e) {
-               // fclose($file);
-               // unlink($filename);
+                // fclose($file);
+                // unlink($filename);
                 Log::error("error in writing \n");
                 Log::error($e);
 
