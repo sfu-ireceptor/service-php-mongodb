@@ -678,9 +678,9 @@ class Sequence extends Model
         $start_request = microtime(true);
         $query = new self();
 
-        $filename = $query->getTempFolder() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
+        //$filename = $query->getTempFolder() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
 
-        $file = fopen($filename, 'w');
+        //$file = fopen($filename, 'w');
         $find_options = [];
         $field_to_retrieve = [];
         foreach (self::$airr_headers as $key=>$value) {
@@ -707,7 +707,9 @@ class Sequence extends Model
             $sample_id_list[] = $psa['_id'];
         }
 
-        fputcsv($file, array_keys(self::$airr_headers), chr(9));
+        //fputcsv($file, array_keys(self::$airr_headers), chr(9));
+        echo(implode(array_keys(self::$airr_headers), ",") . "\n");
+
 
         $query = new self();
         /*if (isset($params['ir_project_sample_id_list'])) {
@@ -779,9 +781,11 @@ class Sequence extends Model
                             $new_line[$current_header] = '';
                         }
                     }
-                    fputcsv($file, $new_line, chr(9));
+                    //fputcsv($file, $new_line, chr(9));
+                    echo(implode($new_line, ",") . "\n");
+
                     //every 5000 results check the free space and fail if empty
-                    if ($current % 5000 == 0) {
+                    /*if ($current % 5000 == 0) {
                         $free_space = disk_free_space($query->getTempFolder());
                         if ($free_space == 0) {
                             Log::error('Out of space on device - removing the file');
@@ -790,11 +794,11 @@ class Sequence extends Model
 
                             return -1;
                         }
-                    }
+                    }*/
                 }
             } catch (\Exception $e) {
-                fclose($file);
-                unlink($filename);
+               // fclose($file);
+               // unlink($filename);
                 Log::error("error in writing \n");
                 Log::error($e);
 
@@ -805,19 +809,19 @@ class Sequence extends Model
 //            $result = $query->skip($current)->take(5000)->get();
             $total_time = (microtime(true) - $start_request) * 1000;
             if ($total_time > $fetch_timeout && $fetch_timeout > 0) {
-                fclose($file);
-                unlink($filename);
+                //fclose($file);
+                //unlink($filename);
                 Log::error("out of time $total_time is greater than $fetch_timeout");
 
                 return -1;
             }
         }
-        fclose($file);
+        //fclose($file);
         $time = microtime(true) - $start_request;
 
         Log::error("Finished creating the file in $time");
 
-        return $filename;
+        //return $filename;
     }
 
     public static function data($params)

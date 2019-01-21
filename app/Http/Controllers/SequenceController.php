@@ -85,12 +85,13 @@ class SequenceController extends Controller
         $params = $request->all();
         if (isset($params['ir_data_format'])) {
             if ($params['ir_data_format'] == 'airr') {
-                $filename = Sequence::airr_data($params);
-                if ($filename == -1) {
-                    abort(500, 'Timeout');
-                }
+                //$filename = Sequence::airr_data($params);
+               // if ($filename == -1) {
+                  //  abort(500, 'Timeout');
+                //}
 
-                return response()->download($filename)->deleteFileAfterSend(true);
+                //return response()->download($filename)->deleteFileAfterSend(true);
+                return response(Sequence::airr_data($params))->header('Content-Type', 'text/tsv')->header('Content-Disposition', 'attachment;filename="data.csv"');
             }
         }
 
