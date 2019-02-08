@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Analysis;
 use App\Sequence;
 use App\CloneData;
-use App\FileMapping;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
