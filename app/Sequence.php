@@ -677,7 +677,7 @@ class Sequence extends Model
         set_time_limit(60 * 60 * 24);
         $start_request = microtime(true);
         $query = new self();
-        $airr_headers = FileMapping::createMappingArray("airr", "ir_mongo_database");
+        $airr_headers = FileMapping::createMappingArray('airr', 'ir_mongo_database');
         //$filename = $query->getTempFolder() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
 
         //$file = fopen($filename, 'w');
@@ -685,7 +685,7 @@ class Sequence extends Model
         $field_to_retrieve = [];
         //foreach (self::$airr_headers as $key=>$value) {
         foreach ($airr_headers as $key=>$value) {
-            if ($value != NULL) {
+            if ($value != null) {
                 $field_to_retrieve[$value] = 1;
             }
         }
@@ -741,7 +741,7 @@ class Sequence extends Model
                     $sequence_list = $row;
                     $airr_list = [];
                     //foreach (self::$airr_headers as $airr_name => $ireceptor_name) {
-                   
+
                     foreach ($airr_headers as $airr_name => $ireceptor_name) {
                         if (isset($ireceptor_name) && isset($sequence_list[$ireceptor_name])) {
                             $airr_list[$airr_name] = $sequence_list[$ireceptor_name];
