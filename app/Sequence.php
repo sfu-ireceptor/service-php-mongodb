@@ -648,13 +648,10 @@ class Sequence extends Model
             if (isset($row['functional']) && $row['functional']) {
                 $row['functional'] = true;
             } else {
-                if (isset($row['functional']))
-                {
+                if (isset($row['functional'])) {
                     $row['functional'] = false;
-                }
-                else
-                {
-                    $row['functional'] = null; 
+                } else {
+                    $row['functional'] = null;
                 }
             }
             if (isset($row['annotation_tool'])) {
