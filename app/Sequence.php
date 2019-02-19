@@ -627,28 +627,35 @@ class Sequence extends Model
         }
         foreach ($return_array as $row) {
             $row['_id'] = (string) $row['_id'];
-            if (! is_string($row['v_call']) && ! is_null($row['v_call'])) {
+            if (isset($row['v_call']) && ! is_string($row['v_call']) && ! is_null($row['v_call'])) {
                 $row['v_call'] = $row['v_call']->jsonSerialize();
             }
-            if (is_array($row['v_call'])) {
+            if (isset($row['v_call']) && is_array($row['v_call'])) {
                 $row['v_call'] = implode(', or ', $row['v_call']);
             }
-            if (! is_string($row['j_call']) && ! is_null($row['j_call'])) {
+            if (isset($row['j_call']) && ! is_string($row['j_call']) && ! is_null($row['j_call'])) {
                 $row['j_call'] = $row['j_call']->jsonSerialize();
             }
-            if (is_array($row['j_call'])) {
+            if (isset($row['j_call']) && is_array($row['j_call'])) {
                 $row['j_call'] = implode(', or ', $row['j_call']);
             }
-            if (! is_string($row['d_call']) && ! is_null($row['d_call'])) {
+            if (isset($row['d_call']) && ! is_string($row['d_call']) && ! is_null($row['d_call'])) {
                 $row['d_call'] = $row['d_call']->jsonSerialize();
             }
-            if (is_array($row['d_call'])) {
+            if (isset($row['d_call']) && is_array($row['d_call'])) {
                 $row['d_call'] = implode(', or ', $row['d_call']);
             }
-            if ($row['functional']) {
+            if (isset($row['functional']) && $row['functional']) {
                 $row['functional'] = true;
             } else {
-                $row['functional'] = false;
+                if (isset($row['functional']))
+                {
+                    $row['functional'] = false;
+                }
+                else
+                {
+                    $row['functional'] = null; 
+                }
             }
             if (isset($row['annotation_tool'])) {
                 $row['ir_annotation_tool'] = $row['annotation_tool'];
