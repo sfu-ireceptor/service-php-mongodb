@@ -421,7 +421,6 @@ class Sequence extends Model
                 continue;
             }
             if (in_array($filtername, ['v_call', 'j_call', 'd_call'])) {
-                //$query = $query->where($filtername, 'like', $filtervalue . '%');
                 $filtervalue = trim($filtervalue);
 
                 $query = $query->where($filtername, '>=', $filtervalue);
@@ -491,7 +490,6 @@ class Sequence extends Model
                 continue;
             }
             if (in_array($filtername, ['v_call', 'j_call', 'd_call'])) {
-                //$filtervalue = preg_quote($filtervalue);
                 $filtervalue = trim($filtervalue);
                 preg_match('/(.)_/', $filtername, $gene_prefix);
                 $gene_to_filter = $gene_prefix[1];
@@ -503,19 +501,6 @@ class Sequence extends Model
                     $gene_to_filter = $gene_to_filter . 'gene_family';
                 }
                 $return_match[$gene_to_filter] = $filtervalue;
-                continue;
-                //$return_match[$filtername]['$regex'] = '^' . $filtervalue . '.*';
-                //$return_match[$filtername]['$options'] = 'i';
-                //$filtervalue = preg_replace("/\*/", '\\*', $filtervalue);
-                //$return_match[$filtername]['$regex'] = '^' . $filtervalue;
-                /*$filtervalue_right = ord(substr($filtervalue, -1, 1));
-                $filtervalue_right++;
-
-
-                $filtervalue_upper = substr_replace($filtervalue, chr($filtervalue_right), -1);
-
-                $return_match[$filtername]['$gte'] = $filtervalue;
-                $return_match[$filtername]['$lt'] = $filtervalue_upper;*/
                 continue;
             }
 
@@ -685,12 +670,9 @@ class Sequence extends Model
         $start_request = microtime(true);
         $query = new self();
         $airr_headers = FileMapping::createMappingArray('airr', 'ir_mongo_database');
-        //$filename = $query->getTempFolder() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.tsv';
-
-        //$file = fopen($filename, 'w');
+  
         $find_options = [];
         $field_to_retrieve = [];
-        //foreach (self::$airr_headers as $key=>$value) {
         foreach ($airr_headers as $key=>$value) {
             if ($value != null) {
                 $field_to_retrieve[$value] = 1;
@@ -715,18 +697,9 @@ class Sequence extends Model
             $sample_id_list[] = $psa['_id'];
         }
 
-        //fputcsv($file, array_keys(self::$airr_headers), chr(9));
         echo implode(array_keys(self::$airr_headers), ',') . "\n";
 
         $query = new self();
-        /*if (isset($params['ir_project_sample_id_list'])) {
-            $int_ids = [];
-
-            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $params['ir_project_sample_id_list']));
-        }
-        self::parseFilter($query, $params);
-        $done = false;
-        $result = $query->take(5000)->get();*/
 
         $current = 0;
         foreach ($sample_id_list as $sample_id_current) {
@@ -738,7 +711,7 @@ class Sequence extends Model
                 Log::error("error in database query \n");
                 Log::error($e);
 
-                return -1;
+                abort(500, 'Error in Sequence query.');
             }
             $time = microtime(true) - $start;
             Log::error("For sample id $sample_id_current query took $time");
@@ -747,7 +720,6 @@ class Sequence extends Model
                 foreach ($result as $row) {
                     $sequence_list = $row;
                     $airr_list = [];
-                    //foreach (self::$airr_headers as $airr_name => $ireceptor_name) {
 
                     foreach ($airr_headers as $airr_name => $ireceptor_name) {
                         if (isset($ireceptor_name) && isset($sequence_list[$ireceptor_name])) {
@@ -790,47 +762,27 @@ class Sequence extends Model
                             $new_line[$current_header] = '';
                         }
                     }
-                    //fputcsv($file, $new_line, chr(9));
                     echo implode($new_line, ',') . "\n";
 
-                    //every 5000 results check the free space and fail if empty
-                    /*if ($current % 5000 == 0) {
-                        $free_space = disk_free_space($query->getTempFolder());
-                        if ($free_space == 0) {
-                            Log::error('Out of space on device - removing the file');
-                            fclose($file);
-                            unlink($filename);
-
-                            return -1;
-                        }
-                    }*/
                 }
-            } catch (\Exception $e) {
-                // fclose($file);
-                // unlink($filename);
+            } catch (\Exception $e) {              
                 Log::error("error in writing \n");
                 Log::error($e);
 
-                return -1;
+                abort(500, "Error writing sequence response.");
             }
             $time = microtime(true) - $start;
             Log::error("Finished writing line $current took $time");
-//            $result = $query->skip($current)->take(5000)->get();
             $total_time = (microtime(true) - $start_request) * 1000;
             if ($total_time > $fetch_timeout && $fetch_timeout > 0) {
-                //fclose($file);
-                //unlink($filename);
-                Log::error("out of time $total_time is greater than $fetch_timeout");
-
-                return -1;
+                Log::error("Timeout. Query took $total_time milliseconds and the limit is $fetch_timeout milliseconds");
+                abort (500, "Timeout. Query took $total_time milliseconds and the limit is $fetch_timeout milliseconds");
             }
         }
-        //fclose($file);
         $time = microtime(true) - $start_request;
 
         Log::error("Finished creating the file in $time");
 
-        //return $filename;
     }
 
     public static function data($params)
