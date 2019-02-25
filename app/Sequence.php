@@ -667,7 +667,7 @@ class Sequence extends Model
         $start_request = microtime(true);
         $query = new self();
         $airr_headers = FileMapping::createMappingArray('airr', 'ir_mongo_database');
-  
+
         $find_options = [];
         $field_to_retrieve = [];
         foreach ($airr_headers as $key=>$value) {
@@ -760,26 +760,24 @@ class Sequence extends Model
                         }
                     }
                     echo implode($new_line, ',') . "\n";
-
                 }
-            } catch (\Exception $e) {              
+            } catch (\Exception $e) {
                 Log::error("error in writing \n");
                 Log::error($e);
 
-                abort(500, "Error writing sequence response.");
+                abort(500, 'Error writing sequence response.');
             }
             $time = microtime(true) - $start;
             Log::error("Finished writing line $current took $time");
             $total_time = (microtime(true) - $start_request) * 1000;
             if ($total_time > $fetch_timeout && $fetch_timeout > 0) {
                 Log::error("Timeout. Query took $total_time milliseconds and the limit is $fetch_timeout milliseconds");
-                abort (500, "Timeout. Query took $total_time milliseconds and the limit is $fetch_timeout milliseconds");
+                abort(500, "Timeout. Query took $total_time milliseconds and the limit is $fetch_timeout milliseconds");
             }
         }
         $time = microtime(true) - $start_request;
 
         Log::error("Finished creating the file in $time");
-
     }
 
     public static function data($params)
