@@ -91,7 +91,7 @@ class SequenceController extends Controller
                 //}
 
                 //return response()->download($filename)->deleteFileAfterSend(true);
-                return response(Sequence::airr_data($params))->header('Content-Type', 'text/tsv')->header('Content-Disposition', 'attachment;filename="data.csv"');
+                return response(Sequence::airr_data($params))->header('Content-Type', 'text/tsv')->header('Content-Disposition', 'attachment;filename="data.tsv"');
             }
         }
 

@@ -694,7 +694,7 @@ class Sequence extends Model
             $sample_id_list[] = $psa['_id'];
         }
 
-        echo implode(array_keys(self::$airr_headers), ',') . "\n";
+        echo implode(array_keys(self::$airr_headers), chr(9)) . "\n";
 
         $query = new self();
 
@@ -759,7 +759,7 @@ class Sequence extends Model
                             $new_line[$current_header] = '';
                         }
                     }
-                    echo implode($new_line, ',') . "\n";
+                    echo implode($new_line, chr(9)) . "\n";
                 }
             } catch (\Exception $e) {
                 Log::error("error in writing \n");
