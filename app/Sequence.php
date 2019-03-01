@@ -906,4 +906,4 @@ class Sequence extends Model
         Log::error("Finished creating the file in $time");
     }
 
-
+}
