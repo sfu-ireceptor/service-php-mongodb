@@ -450,6 +450,128 @@ class Sequence extends Model
         }
     }
 
+    public static function configurableSequenceMatch($id, $f)
+    {
+        //because we might have different names in repository, we should
+        //  apply the mapping of service terms into repository terms, as well
+        //  as the mapping of API inputs into service terms
+
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
+        $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input');
+
+        $return_match = [];
+
+        //translate all the api parameters that service can use in a filter
+        $ir_project_sample_id_repository_name = $repository_names["ir_project_sample_id"];
+        $ir_project_sample_id_list_api_name = $filter_names["ir_project_sample_id_list"];
+        $functional_api_name = $filter_names["functional"];
+        $functional_repository_name = $repository_names["functional"];
+        $junction_aa_api_name = $filter_names["junction_aa"];
+        $substring_repository_name = $repository_names["substring"];
+        $junction_aa_length_api_name = $filter_names["junction_aa_length"];
+        $junction_aa_length_repository_name = $repository_names["junction_aa_length"];
+        $v_call_api_name = $filter_names["v_call"];
+        $v_call_repository_name = $repository_names["v_call"];
+        $j_call_api_name = $filter_names["j_call"];
+        $j_call_repository_name = $repository_names["j_call"];
+        $d_call_api_name = $filter_names["d_call"];
+        $d_call_repository_name = $repository_names["d_call"];
+        $v_family_repository_name = $repository_names["vgene_family"];
+        $d_family_repository_name = $repository_names["dgene_family"];
+        $j_family_repository_name = $repository_names["jgene_family"];
+        $v_gene_repository_name = $repository_names["vgene_gene"];
+        $d_gene_repository_name = $repository_names["dgene_gene"];
+        $j_gene_repository_name = $repository_names["jgene_gene"];
+
+        $ir_annotation_tool_api_name = $filter_names["ir_annotation_tool"];
+        $ir_annotation_tool_repository_name = $repository_names["ir_annotation_tool"];
+       
+        //we process each working sample ID in turn so no need to look at sample id list
+        $return_match[$ir_project_sample_id_repository_name] = (int) $id;
+        foreach ($f as $filtername => $filtervalue) {
+
+            // map the API terms to repository by going through service terms
+            if ($filtername == $ir_project_sample_id_list_api_name) {
+                continue;
+            }
+            if ($filtername == $functional_api_name ) {
+                $filtervalue = trim($filtervalue);
+                if ($filtervalue == 'true') {
+                    $return_match[$functional_repository_name] = 1;
+                } elseif ($filtervalue == 'false') {
+                    $return_match[$functional_repository_name] = 0;
+                } else {
+                    $return_match[$functional_repository_name] = (int) $filtervalue;
+                }
+
+                continue;
+            }
+
+            if ($filtername == $junction_aa_api_name) {
+                $filtervalue = trim($filtervalue);
+
+                $return_match[$substring_repository_name] = $filtervalue;
+                continue;
+            }
+            if ($filtername == $junction_aa_length_api_name) {
+                $filtervalue = trim($filtervalue);
+                $return_match[$junction_aa_length_repository_name] = (int)$filtervalue;
+                continue;
+            }
+
+            if ($filtername == $ir_annotation_tool_api_name) {
+                $return_match[$ir_annotation_tool_repository_name] = $filtervalue;
+                continue;
+            }
+
+            //skip over non-API terms 
+            if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
+                continue;
+            }
+            if (in_array($filtername, [$v_call_api_name, $j_call_api_name, $d_call_api_name])) {
+                $filtervalue = trim($filtervalue);
+                preg_match('/(.)_/', $filtername, $gene_prefix);
+                $gene_to_filter = $gene_prefix[1];
+                if (preg_match("/\*/", $filtervalue)) {
+                    $gene_to_filter_service = $gene_to_filter . '_call';
+                    $gene_to_filter = $repository_names[$gene_to_filter_service];
+                } elseif (preg_match("/\-/", $filtervalue)) {
+                    $gene_to_filter_service = $gene_to_filter . 'gene_gene';
+                    $gene_to_filter = $repository_names[$gene_to_filter_service];
+
+                } else {
+                    $gene_to_filter_service = $gene_to_filter . 'gene_family';
+                    $gene_to_filter = $repository_names[$gene_to_filter_service];
+
+                }
+                $return_match[$gene_to_filter] = $filtervalue;
+                continue;
+            }
+
+            //TO DO: replace the column types with mappings
+            //  but, these are not filters in API so they should probably be ignored
+            if (self::$coltype[$filtername] == 'string') {
+                $filtervalue = trim($filtervalue);
+
+                $filtervalue = preg_quote($filtervalue);
+                $return_match[$filtername]['$regex'] = '.*' . $filtervalue . '.*';
+                $return_match[$filtername]['$options'] = 'i';
+                continue;
+            }
+            if (self::$coltype[$filtername] == 'int') {
+                $return_match[$filtername] = (int) $filtervalue;
+                continue;
+            }
+        }
+        // we might want to return only functional sequences in the future, but
+        // decided not to for now
+        //if (! isset($f['functional'])) {
+            //$return_match['functional'] = 1;
+            
+        //}
+        return $return_match;
+    }
+
     public static function SequenceMatch($id, $f)
     {
         $return_match = [];
@@ -503,7 +625,6 @@ class Sequence extends Model
                 $return_match[$gene_to_filter] = $filtervalue;
                 continue;
             }
-
             if (self::$coltype[$filtername] == 'string') {
                 $filtervalue = trim($filtervalue);
 
@@ -517,12 +638,16 @@ class Sequence extends Model
                 continue;
             }
         }
-        if (! isset($f['functional'])) {
+        // we might want to return only functional sequences in the future, but
+        // decided not to for now
+        //if (! isset($f['functional'])) {
             //$return_match['functional'] = 1;
-        }
+            
+        //}
 
         return $return_match;
     }
+
 
     public static function aggregate($filter)
     {
@@ -553,7 +678,8 @@ class Sequence extends Model
             //DB::enableQueryLog();
             $total = $psa['ir_sequence_count'];
             if ($has_filter) {
-                $sequence_match = self::SequenceMatch($psa['_id'], $filter);
+                //$sequence_match = self::SequenceMatch($psa['_id'], $filter);
+                $sequence_match = self::configurableSequenceMatch($psa['_id'], $filter);
                 $query_params = [];
 
                 $query_params['maxTimeMS'] = $count_timeout;
@@ -603,7 +729,7 @@ class Sequence extends Model
             if ($needed_results < 1) {
                 break;
             }
-            $sequence_match = self::SequenceMatch($sample['_id'], $f);
+            $sequence_match = self::configurableSequenceMatch($sample['_id'], $f);
             $result = DB::collection($query->getCollection())->raw()->find($sequence_match, ['limit'=>$needed_results]);
             foreach ($result as $sequence) {
                 $return_array[] = $sequence;
@@ -700,7 +826,7 @@ class Sequence extends Model
 
         $current = 0;
         foreach ($sample_id_list as $sample_id_current) {
-            $sequence_match = self::SequenceMatch($sample_id_current, $params);
+            $sequence_match = self::configurableSequenceMatch($sample_id_current, $params);
             $start = microtime(true);
             try {
                 $result = DB::collection($query->getCollection())->raw()->find($sequence_match, $find_options);
@@ -780,65 +906,4 @@ class Sequence extends Model
         Log::error("Finished creating the file in $time");
     }
 
-    public static function data($params)
-    {
-        ini_set('memory_limit', '1G');
 
-        $query = new self();
-
-        $filename = $query->getTempFolder() . '/' . uniqid() . '-' . date('Y-m-d_G-i-s', time()) . '.csv';
-
-        $file = fopen($filename, 'w');
-
-        $psa_list = [];
-        $sample_id_query = new Sample();
-        if (isset($params['ir_project_sample_id_list'])) {
-            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $params['ir_project_sample_id_list']));
-        }
-        $result = $sample_id_query->get();
-        foreach ($result as $psa) {
-            $psa_list[$psa['_id']] = $psa;
-        }
-
-        fputcsv($file, self::$header_fields, ',');
-
-        $query = new self();
-        if (isset($params['ir_project_sample_id_list'])) {
-            $int_ids = [];
-
-            $query = $query->whereIn('ir_project_sample_id', array_map('intval', $params['ir_project_sample_id_list']));
-        }
-        self::parseFilter($query, $params);
-        $done = false;
-        $result = $query->take(5000)->get();
-        $current = 0;
-        while ($result->count() > 0) {
-            foreach ($result as $row) {
-                $sequence_list = $row->toArray();
-                $results_array = [];
-                $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
-                $results_array = array_merge($sequence_list, $sample_array->toArray());
-
-                $current++;
-                $new_line = [];
-                foreach (self::$header_fields as $current_header) {
-                    if (isset($results_array[$current_header])) {
-                        if (is_array($results_array[$current_header])) {
-                            $new_line[$current_header] = implode($results_array[$current_header], ', or');
-                        } else {
-                            $new_line[$current_header] = $results_array[$current_header];
-                        }
-                    } else {
-                        $new_line[$current_header] = '';
-                    }
-                }
-                fputcsv($file, $new_line, ',');
-            }
-
-            $result = $query->skip($current)->take(5000)->get();
-        }
-        fclose($file);
-
-        return $filename;
-    }
-}
