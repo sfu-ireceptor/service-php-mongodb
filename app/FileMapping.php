@@ -20,14 +20,17 @@ class FileMapping
 
         //get headers from the first line
         $headers = [];
-        $headers = fgetcsv($file, 0, chr(9));
+        $headers = fgetcsv($file, 0, ',');
         $this->rows = 0;
-        while ($line = fgetcsv($file, 0, chr(9))) {
+        while ($line = fgetcsv($file, 0, ',')) {
             $temp_array = [];
             for ($i = 0; $i < count($line); $i++) {
                 $key = $headers[$i];
                 $value = $line[$i];
-                $temp_array[$key] = $value;
+                if (isset($value))
+                {
+                	$temp_array[$key] = $value;
+                }
             }
             array_push($this->fileMappings, $temp_array);
 
@@ -62,7 +65,9 @@ class FileMapping
                 $return_value = $mapping_row[$value];
                 $return_array[$return_key] = $return_value;
             }
+
         }
+
 
         return $return_array;
     }
