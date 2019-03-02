@@ -27,7 +27,7 @@ class FileMapping
             for ($i = 0; $i < count($line); $i++) {
                 $key = $headers[$i];
                 $value = $line[$i];
-                if (isset($value)) {
+                if (isset($value) ) {
                     $temp_array[$key] = $value;
                 }
             }
@@ -59,7 +59,7 @@ class FileMapping
         $return_array = [];
         for ($i = 0; $i < $mapping->rows; $i++) {
             $mapping_row = $mapping->fileMappings[$i];
-            if (isset($mapping_row[$key])) {
+            if (isset($mapping_row[$key]) && ($mapping_row[$key] != "")) {
                 $return_key = $mapping_row[$key];
                 $return_value = $mapping_row[$value];
                 $return_array[$return_key] = $return_value;

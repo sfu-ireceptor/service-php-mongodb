@@ -720,6 +720,7 @@ class Sequence extends Model
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
         $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_mongo_database');
 
+var_dump($return_mapping);
         $num_results = 25;
         $start_at = 0;
         $current_results = 0;
@@ -783,10 +784,16 @@ class Sequence extends Model
                 unset($row[$substring_repository_name]);
             }
             $return_row = [];
+            //only take the terms we want to return, as set in ir_api_output column
+            //  of the mapping file 
             foreach ($return_mapping as $output_name=>$repo_name) {
                 $return_row['_id'] = $row['_id'];
                 if (isset($row[$repo_name])) {
                     $return_row[$output_name] = $row[$repo_name];
+                }
+                else
+                {
+                    $return_row[$output_name] = null;
                 }
             }
             $return_array[] = $return_row;
