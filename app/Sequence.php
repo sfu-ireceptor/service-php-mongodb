@@ -719,11 +719,16 @@ class Sequence extends Model
     {
         $query = new self();
 
+        // map the repository names to API expected output names through service terms
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
+        $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_mongo_database');
+
         $num_results = 25;
         $start_at = 0;
         $current_results = 0;
         $result = [];
         $return_array = [];
+        $result_array = [];
         foreach ($sample_list as $sample) {
             $needed_results = $num_results - $current_results;
             if ($needed_results < 1) {
@@ -732,46 +737,64 @@ class Sequence extends Model
             $sequence_match = self::configurableSequenceMatch($sample['_id'], $f);
             $result = DB::collection($query->getCollection())->raw()->find($sequence_match, ['limit'=>$needed_results]);
             foreach ($result as $sequence) {
-                $return_array[] = $sequence;
+                $result_array[] = $sequence;
                 $current_results++;
             }
         }
-        foreach ($return_array as $row) {
+        foreach ($result_array as $row) {
+            //no need to map as this is a default MongoDB field
             $row['_id'] = (string) $row['_id'];
-            if (isset($row['v_call']) && ! is_string($row['v_call']) && ! is_null($row['v_call'])) {
-                $row['v_call'] = $row['v_call']->jsonSerialize();
+
+            $v_call_repository_name = $repository_names['v_call'];
+            $j_call_repository_name = $repository_names['j_call'];
+            $d_call_repository_name = $repository_names['d_call'];
+            $substring_repository_name = $repository_names['substring'];
+            $functional_repository_name = $repository_names['functional'];
+
+            //sometimes v_call, d_call or j_call are Arrays, which require imploding
+            if (isset($row[$v_call_repository_name]) && ! is_string($row[$v_call_repository_name]) && ! is_null($row[$v_call_repository_name])) {
+                $row[$v_call_repository_name] = $row[$v_call_repository_name]->jsonSerialize();
             }
-            if (isset($row['v_call']) && is_array($row['v_call'])) {
-                $row['v_call'] = implode(', or ', $row['v_call']);
+            if (isset($row[$v_call_repository_name]) && is_array($row[$v_call_repository_name])) {
+                $row[$v_call_repository_name] = implode(', or ', $row[$v_call_repository_name]);
             }
-            if (isset($row['j_call']) && ! is_string($row['j_call']) && ! is_null($row['j_call'])) {
-                $row['j_call'] = $row['j_call']->jsonSerialize();
+            if (isset($row[$j_call_repository_name]) && ! is_string($row[$j_call_repository_name]) && ! is_null($row[$j_call_repository_name])) {
+                $row[$j_call_repository_name] = $row[$j_call_repository_name]->jsonSerialize();
             }
-            if (isset($row['j_call']) && is_array($row['j_call'])) {
-                $row['j_call'] = implode(', or ', $row['j_call']);
+            if (isset($row[$j_call_repository_name]) && is_array($row[$j_call_repository_name])) {
+                $row[$j_call_repository_name] = implode(', or ', $row[$j_call_repository_name]);
             }
-            if (isset($row['d_call']) && ! is_string($row['d_call']) && ! is_null($row['d_call'])) {
-                $row['d_call'] = $row['d_call']->jsonSerialize();
+            if (isset($row[$d_call_repository_name]) && ! is_string($row[$d_call_repository_name]) && ! is_null($row[$d_call_repository_name])) {
+                $row[$d_call_repository_name] = $row[$d_call_repository_name]->jsonSerialize();
             }
-            if (isset($row['d_call']) && is_array($row['d_call'])) {
-                $row['d_call'] = implode(', or ', $row['d_call']);
+            if (isset($row[$d_call_repository_name]) && is_array($row[$d_call_repository_name])) {
+                $row[$d_call_repository_name] = implode(', or ', $row[$d_call_repository_name]);
             }
-            if (isset($row['functional']) && $row['functional']) {
-                $row['functional'] = true;
+
+            //functional might be an int so we convert to boolean
+            if (isset($row[$functional_repository_name]) && $row[$functional_repository_name]) {
+                $row[$functional_repository_name] = true;
             } else {
-                if (isset($row['functional'])) {
-                    $row['functional'] = false;
+                if (isset($row[$functional_repository_name])) {
+                    $row[$functional_repository_name] = false;
                 } else {
-                    $row['functional'] = null;
+                    $row[$functional_repository_name] = null;
                 }
             }
-            if (isset($row['annotation_tool'])) {
-                $row['ir_annotation_tool'] = $row['annotation_tool'];
-            }
             //remove substring for space/clarity
-            if (isset($row['substring'])) {
-                unset($row['substring']);
+            if (isset($row[$substring_repository_name])) {
+                unset($row[$substring_repository_name]);
             }
+            $return_row = [];
+            foreach ($return_mapping as $output_name=>$repo_name)
+            {
+                $return_row["_id"] = $row["_id"];
+                if (isset ($row[$repo_name]))
+                {
+                    $return_row[$output_name] = $row[$repo_name];
+                }
+            }
+            $return_array[] = $return_row;
         }
 
         return $return_array;
