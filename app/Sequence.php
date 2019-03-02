@@ -462,30 +462,30 @@ class Sequence extends Model
         $return_match = [];
 
         //translate all the api parameters that service can use in a filter
-        $ir_project_sample_id_repository_name = $repository_names["ir_project_sample_id"];
-        $ir_project_sample_id_list_api_name = $filter_names["ir_project_sample_id_list"];
-        $functional_api_name = $filter_names["functional"];
-        $functional_repository_name = $repository_names["functional"];
-        $junction_aa_api_name = $filter_names["junction_aa"];
-        $substring_repository_name = $repository_names["substring"];
-        $junction_aa_length_api_name = $filter_names["junction_aa_length"];
-        $junction_aa_length_repository_name = $repository_names["junction_aa_length"];
-        $v_call_api_name = $filter_names["v_call"];
-        $v_call_repository_name = $repository_names["v_call"];
-        $j_call_api_name = $filter_names["j_call"];
-        $j_call_repository_name = $repository_names["j_call"];
-        $d_call_api_name = $filter_names["d_call"];
-        $d_call_repository_name = $repository_names["d_call"];
-        $v_family_repository_name = $repository_names["vgene_family"];
-        $d_family_repository_name = $repository_names["dgene_family"];
-        $j_family_repository_name = $repository_names["jgene_family"];
-        $v_gene_repository_name = $repository_names["vgene_gene"];
-        $d_gene_repository_name = $repository_names["dgene_gene"];
-        $j_gene_repository_name = $repository_names["jgene_gene"];
+        $ir_project_sample_id_repository_name = $repository_names['ir_project_sample_id'];
+        $ir_project_sample_id_list_api_name = $filter_names['ir_project_sample_id_list'];
+        $functional_api_name = $filter_names['functional'];
+        $functional_repository_name = $repository_names['functional'];
+        $junction_aa_api_name = $filter_names['junction_aa'];
+        $substring_repository_name = $repository_names['substring'];
+        $junction_aa_length_api_name = $filter_names['junction_aa_length'];
+        $junction_aa_length_repository_name = $repository_names['junction_aa_length'];
+        $v_call_api_name = $filter_names['v_call'];
+        $v_call_repository_name = $repository_names['v_call'];
+        $j_call_api_name = $filter_names['j_call'];
+        $j_call_repository_name = $repository_names['j_call'];
+        $d_call_api_name = $filter_names['d_call'];
+        $d_call_repository_name = $repository_names['d_call'];
+        $v_family_repository_name = $repository_names['vgene_family'];
+        $d_family_repository_name = $repository_names['dgene_family'];
+        $j_family_repository_name = $repository_names['jgene_family'];
+        $v_gene_repository_name = $repository_names['vgene_gene'];
+        $d_gene_repository_name = $repository_names['dgene_gene'];
+        $j_gene_repository_name = $repository_names['jgene_gene'];
 
-        $ir_annotation_tool_api_name = $filter_names["ir_annotation_tool"];
-        $ir_annotation_tool_repository_name = $repository_names["ir_annotation_tool"];
-       
+        $ir_annotation_tool_api_name = $filter_names['ir_annotation_tool'];
+        $ir_annotation_tool_repository_name = $repository_names['ir_annotation_tool'];
+
         //we process each working sample ID in turn so no need to look at sample id list
         $return_match[$ir_project_sample_id_repository_name] = (int) $id;
         foreach ($f as $filtername => $filtervalue) {
@@ -494,7 +494,7 @@ class Sequence extends Model
             if ($filtername == $ir_project_sample_id_list_api_name) {
                 continue;
             }
-            if ($filtername == $functional_api_name ) {
+            if ($filtername == $functional_api_name) {
                 $filtervalue = trim($filtervalue);
                 if ($filtervalue == 'true') {
                     $return_match[$functional_repository_name] = 1;
@@ -515,7 +515,7 @@ class Sequence extends Model
             }
             if ($filtername == $junction_aa_length_api_name) {
                 $filtervalue = trim($filtervalue);
-                $return_match[$junction_aa_length_repository_name] = (int)$filtervalue;
+                $return_match[$junction_aa_length_repository_name] = (int) $filtervalue;
                 continue;
             }
 
@@ -524,7 +524,7 @@ class Sequence extends Model
                 continue;
             }
 
-            //skip over non-API terms 
+            //skip over non-API terms
             if (empty(self::$coltype[$filtername]) || $filtervalue == '') {
                 continue;
             }
@@ -538,11 +538,9 @@ class Sequence extends Model
                 } elseif (preg_match("/\-/", $filtervalue)) {
                     $gene_to_filter_service = $gene_to_filter . 'gene_gene';
                     $gene_to_filter = $repository_names[$gene_to_filter_service];
-
                 } else {
                     $gene_to_filter_service = $gene_to_filter . 'gene_family';
                     $gene_to_filter = $repository_names[$gene_to_filter_service];
-
                 }
                 $return_match[$gene_to_filter] = $filtervalue;
                 continue;
@@ -566,8 +564,8 @@ class Sequence extends Model
         // we might want to return only functional sequences in the future, but
         // decided not to for now
         //if (! isset($f['functional'])) {
-            //$return_match['functional'] = 1;
-            
+        //$return_match['functional'] = 1;
+
         //}
         return $return_match;
     }
@@ -641,13 +639,12 @@ class Sequence extends Model
         // we might want to return only functional sequences in the future, but
         // decided not to for now
         //if (! isset($f['functional'])) {
-            //$return_match['functional'] = 1;
-            
+        //$return_match['functional'] = 1;
+
         //}
 
         return $return_match;
     }
-
 
     public static function aggregate($filter)
     {
@@ -928,5 +925,4 @@ class Sequence extends Model
 
         Log::error("Finished creating the file in $time");
     }
-
 }
