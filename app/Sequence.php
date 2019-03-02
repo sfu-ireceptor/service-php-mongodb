@@ -783,11 +783,9 @@ class Sequence extends Model
                 unset($row[$substring_repository_name]);
             }
             $return_row = [];
-            foreach ($return_mapping as $output_name=>$repo_name)
-            {
-                $return_row["_id"] = $row["_id"];
-                if (isset ($row[$repo_name]))
-                {
+            foreach ($return_mapping as $output_name=>$repo_name) {
+                $return_row['_id'] = $row['_id'];
+                if (isset($row[$repo_name])) {
                     $return_row[$output_name] = $row[$repo_name];
                 }
             }
