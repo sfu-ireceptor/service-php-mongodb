@@ -24,3 +24,5 @@ RUN chmod -R 777 /var/www/html/storage && \
 	cp .env.example .env && \
 	php artisan key:generate
 
+# Use default mapping
+RUN cp AIRR-iReceptorMapping.txt.example AIRR-iReceptorMapping.txt
