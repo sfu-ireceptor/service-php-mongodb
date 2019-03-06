@@ -182,7 +182,7 @@ class Sequence extends Model
     'functional' => 'int',
     'ir_annotation_tool' => 'string',
     'sequence'=>'string',
-    ]; 
+    ];
 
     public static function parseFilter(&$query, $f)
     {
@@ -598,7 +598,7 @@ class Sequence extends Model
         // We want extra RAM and long time to process the request
         // The time limit is separate from FETCH_QUERY_TIMEOUT in .env and applies
         //  to the Apache HTTP Request duration, whereas FETCH_QUERY_TIMEOUT applies to
-        //  the MongoDB timeout value.  
+        //  the MongoDB timeout value.
         ini_set('memory_limit', '2G');
         set_time_limit(60 * 60 * 24);
         $start_request = microtime(true);
@@ -610,7 +610,7 @@ class Sequence extends Model
         $airr_fields = FileMapping::createMappingArray('airr', 'service_name');
         $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
 
-        // These are needed for MongoDB query. Here we store max timeout and which fields we want 
+        // These are needed for MongoDB query. Here we store max timeout and which fields we want
         //   pulled from databse
         $find_options = [];
         $field_to_retrieve = [];
@@ -618,8 +618,8 @@ class Sequence extends Model
         // rev_comp and functional field are sometimes stored with annotation values
         //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
         //  for those two values here so we don't have to do it on every sequence.
-        // For similar reason, we want a translation of ir_project_sample_id value, which connects 
-        //  rearrangement with repertoire 
+        // For similar reason, we want a translation of ir_project_sample_id value, which connects
+        //  rearrangement with repertoire
         $rev_comp_airr_name = array_search('rev_comp', $airr_fields);
         $functional_arr_name = array_search('functional', $airr_fields);
 
@@ -627,13 +627,13 @@ class Sequence extends Model
         // e.g. $psa_list[$sequence_list[$database_fields['ir_project_sample_id']]];
         $ir_project_sample_id_repository_name = $database_fields['ir_project_sample_id'];
         $v_call_airr_name = array_search('v_call', $airr_fields);
-        $j_call_airr_name = array_search('j_call', $airr_fields );
+        $j_call_airr_name = array_search('j_call', $airr_fields);
         $d_call_airr_name = array_search('d_call', $airr_fields);
 
         //create what MongoDB calls 'projection' to retrieve only the fields we use for AIRR TSV
         foreach ($projection_mapping as $key=>$value) {
             if ($value != null) {
-                $field_to_retrieve[$key]=1;
+                $field_to_retrieve[$key] = 1;
             }
         }
 
@@ -693,25 +693,26 @@ class Sequence extends Model
 
                     foreach ($airr_fields as $airr_name => $service_name) {
                         Log::error("Airr name: $airr_name Service name: $service_name");
-                        if (isset($service_name)){
-                          if (isset($sequence_list[$database_fields[$service_name]])) {
-                            $airr_list[$airr_name] = $sequence_list[$database_fields[$service_name]];
-                            if ($service_name == 'rev_comp') {
-                                if ($airr_list[$rev_comp_airr_name] == '+') {
-                                    $airr_list[$rev_comp_airr_name] = 'true';
+                        if (isset($service_name)) {
+                            if (isset($sequence_list[$database_fields[$service_name]])) {
+                                $airr_list[$airr_name] = $sequence_list[$database_fields[$service_name]];
+                                if ($service_name == 'rev_comp') {
+                                    if ($airr_list[$rev_comp_airr_name] == '+') {
+                                        $airr_list[$rev_comp_airr_name] = 'true';
+                                    }
+                                    if ($airr_list[$rev_comp_airr_name] == '-') {
+                                        $airr_list[$rev_comp_airr_name] = 'false';
+                                    }
                                 }
-                                if ($airr_list[$rev_comp_airr_name] == '-') {
-                                    $airr_list[$rev_comp_airr_name] = 'false';
+                                if ($service_name == 'functional') {
+                                    if ($airr_list[$functional_arr_name] == 1) {
+                                        $airr_list[$functional_arr_name] = 'true';
+                                    } elseif ($airr_list[$functional_arr_name] == 0) {
+                                        $airr_list[$functional_arr_name] = 'false';
+                                    }
                                 }
                             }
-                            if ($service_name == 'functional' ) {
-                                if ($airr_list[$functional_arr_name] == 1) {
-                                    $airr_list[$functional_arr_name] = 'true';
-                                } elseif ($airr_list[$functional_arr_name] == 0) {
-                                    $airr_list[$functional_arr_name] = 'false';
-                                }
-                            }
-                        } }else {
+                        } else {
                             $airr_list[$airr_name] = '';
                         }
                     }
