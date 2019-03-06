@@ -504,7 +504,6 @@ class Sequence extends Model
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
         $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_mongo_database');
 
-        var_dump($return_mapping);
         $num_results = 25;
         $start_at = 0;
         $current_results = 0;
@@ -607,7 +606,7 @@ class Sequence extends Model
         // Create mappings between service terms, database field names and AIRR TSV headers.
         //   as well as which sequence fields we want to fetch (fewer fields make query faster)
         $database_fields = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
-        $airr_fields = FileMapping::createMappingArray('airr', 'service_name');
+        $airr_fields = FileMapping::createMappingArray('airr_tsv', 'service_name');
         $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
 
         // These are needed for MongoDB query. Here we store max timeout and which fields we want
@@ -692,7 +691,6 @@ class Sequence extends Model
                     $airr_list = [];
 
                     foreach ($airr_fields as $airr_name => $service_name) {
-                        Log::error("Airr name: $airr_name Service name: $service_name");
                         if (isset($service_name)) {
                             if (isset($sequence_list[$database_fields[$service_name]])) {
                                 $airr_list[$airr_name] = $sequence_list[$database_fields[$service_name]];

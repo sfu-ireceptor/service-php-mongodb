@@ -1,4 +1,4 @@
-airr,ir_mongo_database,ir_api_input,ir_api_output,service_name,projection
+airr_tsv,ir_mongo_database,ir_api_input,ir_api_output,service_name,projection
 sequence,sequence,sequence,sequence,sequence,TRUE
 sequence_id,sequence_id,sequence_id,sequence_id,sequence_id,TRUE
 rearrangement_id,,,,NULL,
