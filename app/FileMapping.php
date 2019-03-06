@@ -27,8 +27,12 @@ class FileMapping
             for ($i = 0; $i < count($line); $i++) {
                 $key = $headers[$i];
                 $value = $line[$i];
-                if (isset($value)) {
+                if (isset($value) && $value!="") {
                     $temp_array[$key] = $value;
+                }
+                else
+                {
+                	$temp_array[$key] = null;
                 }
             }
             array_push($this->fileMappings, $temp_array);

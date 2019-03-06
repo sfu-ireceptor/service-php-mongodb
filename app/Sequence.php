@@ -182,223 +182,7 @@ class Sequence extends Model
     'functional' => 'int',
     'ir_annotation_tool' => 'string',
     'sequence'=>'string',
-    ];
-
-    public static $header_fields = [
-        'seq_id',
-        'sequence',
-        'seq_name',
-        'id',
-        'sequence_id',
-        'vgene_string',
-        'vgene_family',
-        'vgene_gene',
-        'v_call',
-        'jgene_string',
-        'jgene_family',
-        'jgene_gene',
-        'j_call',
-        'dgene_string',
-        'dgene_family',
-        'dgene_gene',
-        'd_call',
-        'functionality',
-        'v_score',
-        'vgene_probablity',
-        'dregion_reading_frame',
-        'cdr1_length',
-        'cdr2_length',
-        'cdr3_length',
-        'vdjregion_sequence_nt',
-        'vjregion_sequence_nt',
-        'djregion_sequence_nt',
-        'vregion_sequence_nt',
-        'jregion_sequence_nt',
-        'dregion_sequence_nt',
-        'fr1region_sequence_nt',
-        'fr2region_sequence_nt',
-        'fr3region_sequence_nt',
-        'fr4region_sequence_nt',
-        'cdr1region_sequence_nt',
-        'cdr2region_sequence_nt',
-        'cdr3region_sequence_nt',
-        'junction_nt',
-        'vdjregion_sequence_nt_gapped',
-        'vjregion_sequence_nt_gapped',
-        'djregion_sequence_nt_gapped',
-        'vregion_sequence_nt_gapped',
-        'jregion_sequence_nt_gapped',
-        'dregion_sequence_nt_gapped',
-        'fr1region_sequence_nt_gapped',
-        'fr2region_sequence_nt_gapped',
-        'fr3region_sequence_nt_gapped',
-        'fr4region_sequence_nt_gapped',
-        'cdr1region_sequence_nt_gapped',
-        'cdr2region_sequence_nt_gapped',
-        'cdr3region_sequence_nt_gapped',
-        'junction_sequence_nt_gapped',
-        'vdjregion_sequence_aa',
-        'vjregion_sequence_aa',
-        'djregion_sequence_aa',
-        'vregion_sequence_aa',
-        'jregion_sequence_aa',
-        'dregion_sequence_aa',
-        'fr1region_sequence_aa',
-        'fr2region_sequence_aa',
-        'fr3region_sequence_aa',
-        'fr4region_sequence_aa',
-        'cdr1region_sequence_aa',
-        'cdr2region_sequence_aa',
-        'cdr3region_sequence_aa',
-        'junction_aa',
-        'vdjregion_sequence_aa_gapped',
-        'vjregion_sequence_aa_gapped',
-        'djregion_sequence_aa_gapped',
-        'vregion_sequence_aa_gapped',
-        'jregion_sequence_aa_gapped',
-        'dregion_sequence_aa_gapped',
-        'fr1region_sequence_aa_gapped',
-        'fr2region_sequence_aa_gapped',
-        'fr3region_sequence_aa_gapped',
-        'fr4region_sequence_aa_gapped',
-        'cdr1region_sequence_aa_gapped',
-        'cdr2region_sequence_aa_gapped',
-        'cdr3region_sequence_aa_gapped',
-        'junction_sequence_aa_gapped',
-        'vdjregion_start',
-        'vdjregion_end',
-        'vjregion_start',
-        'vjregion_end',
-        'v_start',
-        'v_end',
-        'j_start',
-        'j_end',
-        'd_start',
-        'd_end',
-        'fwr1_start',
-        'fwr1_end',
-        'fwr2_start',
-        'fwr2_end',
-        'fwr3_start',
-        'fwr3_end',
-        'fwr4_start',
-        'fwr4_end',
-        'cdr1_start',
-        'cdr1_end',
-        'cdr2_start',
-        'cdr2_end',
-        'cdr3_start',
-        'cdr3_end',
-        'junction_start',
-        'junction_end',
-        'vregion_mutation_string',
-        'fr1region_mutation_string',
-        'fr2region_mutation_string',
-        'fr3region_mutation_string',
-        'cdr1region_mutation_string',
-        'cdr2region_mutation_string',
-        'cdr3region_mutation_string',
-        'created_by',
-        'created_at',
-        'updated_by',
-        'updated_at',
-        'functionality_comment',
-        'rev_comp',
-        'vgene_probability',
-        'djregion_start',
-        'djregion_end',
-        'annotation_tool',
-        'annotation_date',
-        'tool_version',
-        'reference_version',
-        'species',
-        'receptor_type',
-        'reference_directory_set',
-        'search_insert_delete',
-        'no_nucleotide_to_add',
-        'no_nucleotide_to_exclude',
-        'ir_project_sample_id',
-        'junction_aa_length',
-        'junction_length',
-        'functional',
-        'subject_id',
-        'ir_subject_id',
-        'sex',
-        'organism',
-        'ethnicity',
-        'ir_project_id',
-        'study_title',
-        'ir_project_parent_id',
-        'study_id',
-        'study_description',
-        'ir_lab_id',
-        'lab_name',
-        'ir_disease_state_id',
-        'disease_state_sample',
-        'ir_case_control_id',
-        'study_group_description',
-        'ir_sequence_count',
-        'ir_project_sample_note',
-        'ir_sra_run_id',
-        'sample_id',
-        'ir_subject_age',
-        'ir_sample_subject_id',
-        'ir_dna_id',
-        'template_class',
-        'ir_sample_source_id',
-        'tissue',
-        'ir_lab_cell_subset_name',
-        'cell_subset',
-        'sequencing_platform',
-        'cell_phenotype',
-        'db_name',
-    ];
-
-    public static $airr_headers = [
-       'sequence'=>'sequence',
-       'sequence_id'=>'seq_name',
-       'rearrangement_id'=>'NULL',
-       'rev_comp'=>'rev_comp',
-       'sequence_alignment'=>'NULL',
-       'germline_alignment'=>'NULL',
-       'v_call'=>'v_call',
-       'j_call'=>'j_call',
-       'd_call'=>'d_call',
-       'c_call'=>'NULL',
-       'v_score'=>'v_score',
-       'd_score'=>'NULL',
-       'j_score'=>'NULL',
-       'c_score'=>'NULL',
-       'junction'=>'junction',
-       'junction_length'=>'junction_length',
-       'v_cigar'=>'NULL',
-       'j_cigar'=>'NULL',
-       'd_cigar'=>'NULL',
-       'c_cigar'=>'NULL',
-       'cdr1_aa'=>'cdr1region_sequence_aa',
-       'cdr2_aa'=>'cdr2region_sequence_aa',
-       'cdr3_aa'=>'cdr3region_sequence_aa',
-       'junction_aa'=>'junction_aa',
-       'junction_aa_length'=>'junction_aa_length',
-       'productive'=>'functional',
-       'functional'=>'functional',
-       'subject_id'=>'subject_id',
-       'sex'=>'sex',
-       'organism'=>'organism',
-       'ethnicity'=>'ethnicity',
-       'study_title'=>'study_title',
-       'study_id'=>'study_id',
-       'study_description'=>'study_description',
-       'lab_name'=>'lab_name',
-       'disease_state_sample'=>'disease_state_sample',
-       'study_group_description'=>'study_group_description',
-       'sample_id'=>'sample_id',
-       'template_class'=>'template_class',
-       'tissue'=>'tissue',
-       'cell_subset'=>'cell_subset',
-       'sequencing_platform'=>'sequencing_platform',
-       'cell_phenotype'=>'cell_phenotype',
-    ];
+    ]; 
 
     public static function parseFilter(&$query, $f)
     {
@@ -811,25 +595,61 @@ class Sequence extends Model
 
     public static function airr_data($params)
     {
+        // We want extra RAM and long time to process the request
+        // The time limit is separate from FETCH_QUERY_TIMEOUT in .env and applies
+        //  to the Apache HTTP Request duration, whereas FETCH_QUERY_TIMEOUT applies to
+        //  the MongoDB timeout value.  
         ini_set('memory_limit', '2G');
         set_time_limit(60 * 60 * 24);
         $start_request = microtime(true);
         $query = new self();
-        $airr_headers = FileMapping::createMappingArray('airr', 'ir_mongo_database');
 
+        // Create mappings between service terms, database field names and AIRR TSV headers.
+        //   as well as which sequence fields we want to fetch (fewer fields make query faster)
+        $database_fields = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
+        $airr_fields = FileMapping::createMappingArray('airr', 'service_name');
+        $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
+
+        // These are needed for MongoDB query. Here we store max timeout and which fields we want 
+        //   pulled from databse
         $find_options = [];
         $field_to_retrieve = [];
-        foreach ($airr_headers as $key=>$value) {
+
+        // rev_comp and functional field are sometimes stored with annotation values
+        //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
+        //  for those two values here so we don't have to do it on every sequence.
+        // For similar reason, we want a translation of ir_project_sample_id value, which connects 
+        //  rearrangement with repertoire 
+        $rev_comp_airr_name = array_search('rev_comp', $airr_fields);
+        $functional_arr_name = array_search('functional', $airr_fields);
+
+        //few other variables we use in other arrays, simply to avoid triple-nested array references
+        // e.g. $psa_list[$sequence_list[$database_fields['ir_project_sample_id']]];
+        $ir_project_sample_id_repository_name = $database_fields['ir_project_sample_id'];
+        $v_call_airr_name = array_search('v_call', $airr_fields);
+        $j_call_airr_name = array_search('j_call', $airr_fields );
+        $d_call_airr_name = array_search('d_call', $airr_fields);
+
+        //create what MongoDB calls 'projection' to retrieve only the fields we use for AIRR TSV
+        foreach ($projection_mapping as $key=>$value) {
             if ($value != null) {
-                $field_to_retrieve[$value] = 1;
+                $field_to_retrieve[$key]=1;
             }
         }
+
+        // Set the MongoDB query options
         $find_options['projection'] = $field_to_retrieve;
         $find_options['projection']['ir_project_sample_id'] = 1;
         $fetch_timeout = $query->getFetchTimeout();
         $find_options['maxTimeMS'] = $fetch_timeout;
         $find_options['noCursorTimeout'] = true;
+
+        // Keep track of total time spent, se we can do timeout on service, even if MongoDB still
+        //  has time left
         $total_time = 0;
+
+        // Get the sample (repertoire) information so we can send it alongside each rearrangement
+        //  - it may be helpful to analysis apps, but not required by AIRR TSV standard
         $psa_list = [];
         $sample_id_query = new Sample();
         if (isset($params['ir_project_sample_id_list'])) {
@@ -843,11 +663,15 @@ class Sequence extends Model
             $sample_id_list[] = $psa['_id'];
         }
 
-        echo implode(array_keys(self::$airr_headers), chr(9)) . "\n";
+        // Service streams data rather than create temp file than send the file. This is done
+        //   to save space on client side, particularly if docker containters are used.
+        echo implode(array_keys($airr_fields), chr(9)) . "\n";
 
         $query = new self();
-
         $current = 0;
+
+        // Default iReceptor database uses a compound index for sequence searches, so results are
+        //   broken up by workign sample even if the inbound filter didn't use it.
         foreach ($sample_id_list as $sample_id_current) {
             $sequence_match = self::configurableSequenceMatch($sample_id_current, $params);
             $start = microtime(true);
@@ -867,39 +691,41 @@ class Sequence extends Model
                     $sequence_list = $row;
                     $airr_list = [];
 
-                    foreach ($airr_headers as $airr_name => $ireceptor_name) {
-                        if (isset($ireceptor_name) && isset($sequence_list[$ireceptor_name])) {
-                            $airr_list[$airr_name] = $sequence_list[$ireceptor_name];
-                            if ($airr_name == 'rev_comp') {
-                                if ($airr_list['rev_comp'] == '+') {
-                                    $airr_list['rev_comp'] = 'true';
+                    foreach ($airr_fields as $airr_name => $service_name) {
+                        Log::error("Airr name: $airr_name Service name: $service_name");
+                        if (isset($service_name)){
+                          if (isset($sequence_list[$database_fields[$service_name]])) {
+                            $airr_list[$airr_name] = $sequence_list[$database_fields[$service_name]];
+                            if ($service_name == 'rev_comp') {
+                                if ($airr_list[$rev_comp_airr_name] == '+') {
+                                    $airr_list[$rev_comp_airr_name] = 'true';
                                 }
-                                if ($airr_list['rev_comp'] == '-') {
-                                    $airr_list['rev_comp'] = 'false';
-                                }
-                            }
-                            if ($airr_name == 'productive' || $airr_name == 'functional') {
-                                if ($airr_list[$airr_name] == 1) {
-                                    $airr_list[$airr_name] = 'true';
-                                } elseif ($airr_list[$airr_name] == 0) {
-                                    $airr_list[$airr_name] = 'false';
+                                if ($airr_list[$rev_comp_airr_name] == '-') {
+                                    $airr_list[$rev_comp_airr_name] = 'false';
                                 }
                             }
-                        } else {
+                            if ($service_name == 'functional' ) {
+                                if ($airr_list[$functional_arr_name] == 1) {
+                                    $airr_list[$functional_arr_name] = 'true';
+                                } elseif ($airr_list[$functional_arr_name] == 0) {
+                                    $airr_list[$functional_arr_name] = 'false';
+                                }
+                            }
+                        } }else {
                             $airr_list[$airr_name] = '';
                         }
                     }
                     $results_array = [];
-                    $sample_array = $psa_list[$sequence_list['ir_project_sample_id']];
+                    $sample_array = $psa_list[$sequence_list[$ir_project_sample_id_repository_name]];
                     $results_array = array_merge($airr_list, $sample_array->toArray());
 
                     $current++;
                     $new_line = [];
-                    foreach (array_keys(self::$airr_headers) as $current_header) {
+                    foreach (array_keys($airr_fields) as $current_header) {
                         if (isset($results_array[$current_header])) {
                             if (is_array($results_array[$current_header])) {
                                 $new_line[$current_header] = implode($results_array[$current_header], ', or');
-                            } elseif (in_array($current_header, ['v_call', 'd_call', 'j_call']) && $results_array[$current_header] != null && ! is_string($results_array[$current_header])) {
+                            } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) && $results_array[$current_header] != null && ! is_string($results_array[$current_header])) {
                                 $new_line[$current_header] = implode($results_array[$current_header]->jsonSerialize(), ', or ');
                             } else {
                                 $new_line[$current_header] = $results_array[$current_header];
