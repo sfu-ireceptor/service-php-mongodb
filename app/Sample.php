@@ -34,64 +34,52 @@ class Sample extends Model
         //parse over input parameters and resolve them
         //  special cases go first
         //  otherwise, ints get equals, strings get substring, arrays get in operators
-        foreach ($f as $filter_name=>$filter_value)
-        {
+        foreach ($f as $filter_name=>$filter_value) {
             //empty values count as no filter
-            if (!isset($filter_value) || $filter_value == '')
-            {
+            if (! isset($filter_value) || $filter_value == '') {
                 continue;
             }
             //min and max age are iReceptor-specific fields to determine the range
-            if ($filter_name == $filter_names['age_max'])
-            {
-                $query=$query->whereIn($repository_names['age_max'], "=>", (double)$filter_value);
+            if ($filter_name == $filter_names['age_max']) {
+                $query = $query->whereIn($repository_names['age_max'], '=>', (float) $filter_value);
                 continue;
             }
-            if ($filter_name == $filter_names['age_min'] )
-            {
-                $query=$query->whereIn($repository_names['age_min'], ">=", (double)$filter_value);
+            if ($filter_name == $filter_names['age_min']) {
+                $query = $query->whereIn($repository_names['age_min'], '>=', (float) $filter_value);
                 continue;
             }
             //sex is  a string but we want exact match here
-            if ($filter_name == $filter_names['sex'])
-            {
-                $query = $query->where($repository_names['sex']. "=", (string)$filter_value);
+            if ($filter_name == $filter_names['sex']) {
+                $query = $query->where($repository_names['sex'] . '=', (string) $filter_value);
                 continue;
             }
 
             // rest of the filters are done by data type
-            if ($filter_types[$filter_name] == 'int')
-            {
+            if ($filter_types[$filter_name] == 'int') {
                 $query = $query->where($filter_to_repo[$filter_name], '=', (int) $filter_value);
                 continue;
             }
-            
-            if ($filter_types[$filter_name] == 'double')
-            {
-                $query = $query->where($filter_to_repo[$filter_name], '=', (double) $filter_value);
+
+            if ($filter_types[$filter_name] == 'double') {
+                $query = $query->where($filter_to_repo[$filter_name], '=', (float) $filter_value);
                 continue;
             }
 
-            if ($filter_types[$filter_name] == 'boolean')
-            {
-                $query = $query->where($filter_to_repo[$filter_name], '=', (boolean) $filter_value);
+            if ($filter_types[$filter_name] == 'boolean') {
+                $query = $query->where($filter_to_repo[$filter_name], '=', (bool) $filter_value);
                 continue;
             }
 
-            if ($filter_types[$filter_name] == 'array')
-            {
+            if ($filter_types[$filter_name] == 'array') {
                 $query = $query->whereIn($filter_to_repo[$filter_name], $filter_value);
                 continue;
             }
 
-            if ($filter_types[$filter_name] == 'string')
-            {
-                $query = $query->where($filter_to_repo[$filter_name], 'like', '%'. $filter_value.'%');
+            if ($filter_types[$filter_name] == 'string') {
+                $query = $query->where($filter_to_repo[$filter_name], 'like', '%' . $filter_value . '%');
                 continue;
             }
-           
         }
-
 
         $list = $query->get();
 
