@@ -41,11 +41,10 @@ class Sample extends Model
             }
 
             //skip over unmapped entries
-            if (!isset($filter_types[$filter_name]) || !isset($filter_to_rep[$filter_name]))
-            {
+            if (! isset($filter_types[$filter_name]) || ! isset($filter_to_rep[$filter_name])) {
                 continue;
             }
-            
+
             //min and max age are iReceptor-specific fields to determine the range
             if ($filter_name == $filter_names['age_max']) {
                 $query = $query->whereIn($repository_names['age_max'], '=>', (float) $filter_value);
