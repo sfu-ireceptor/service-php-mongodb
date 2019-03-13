@@ -41,7 +41,7 @@ class Sample extends Model
             }
 
             //skip over unmapped entries
-            if (! isset($filter_types[$filter_name]) || ! isset($filter_to_rep[$filter_name])) {
+            if (! isset($filter_types[$filter_name]) || ! isset($filter_to_repo[$filter_name])) {
                 continue;
             }
 
