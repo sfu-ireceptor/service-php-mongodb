@@ -443,6 +443,9 @@ class Sequence extends Model
             $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
         }
 
+        // translate repertoire-level terms to api output terms if they are different
+        $repo_to_output_sample = FileMapping::createMappingArray('ir_mongo_database', 'ir_api_output', ["ir_class"=>"repertoire"]);
+
         // quick check to see if we have a filter that's not ir_project_sample_id_list
         //   if we don't, we can just use pre-computed sequence counts
         $has_filter = false;
@@ -454,9 +457,28 @@ class Sequence extends Model
         }
         $count_timeout = $query->getCountTimeout();
         $sample_id_query = $sample_id_query->where('ir_sequence_count', '>', 0);
-        $result = $sample_id_query->get();
+        $result = $sample_id_query->get()->toArray();
         foreach ($result as $psa) {
             //DB::enableQueryLog();
+
+            //if there's a mapping for any return value, replace it
+            foreach($psa as $psa_name=>$psa_value)
+            {
+                // this is baked into mongodb, so doesn't really belong in a mapping file
+                if ($psa_name == '_id')
+                {
+                    $psa['ir_project_sample_id'] = $psa['_id'];
+                    continue;
+                }
+
+                //apply mapping if it exists
+                if (isset($repo_to_output_sample[$psa_name]) && ($repo_to_output_sample[$psa_name]!=''))
+                {
+                   $element[$repo_to_output_sample[$psa_name]] = $psa_value;
+                   unset($psa[$psa_name]);
+                }
+
+            }
             $total = $psa['ir_sequence_count'];
             if ($has_filter) {
                 //$sequence_match = self::SequenceMatch($psa['_id'], $filter);
@@ -502,7 +524,7 @@ class Sequence extends Model
 
         // map the repository names to API expected output names through service terms
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
-        $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_mongo_database');
+        $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_mongo_database', ["ir_class"=>["rearrangement", "ir_rearrangement"]]);
 
         $num_results = 25;
         $start_at = 0;
@@ -567,12 +589,13 @@ class Sequence extends Model
                 unset($row[$substring_repository_name]);
             }
             $return_row = [];
-            //only take the terms we want to return, as set in ir_api_output column
-            //  of the mapping file
+            //map the terms specified in api output column, pass the other values through as-is
+            $return_row = $row;
             foreach ($return_mapping as $output_name=>$repo_name) {
                 $return_row['_id'] = $row['_id'];
                 if (isset($row[$repo_name])) {
                     $return_row[$output_name] = $row[$repo_name];
+                    unset($return_row[$repo_name]);
                 } else {
                     $return_row[$output_name] = null;
                 }
@@ -605,7 +628,7 @@ class Sequence extends Model
 
         // Create mappings between service terms, database field names and AIRR TSV headers.
         //   as well as which sequence fields we want to fetch (fewer fields make query faster)
-        $database_fields = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
+        $database_fields = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ["ir_class"=>["rearrangement", "ir_rearrangement"]]);
         $airr_fields = FileMapping::createMappingArray('airr_tsv', 'service_name');
         $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
 

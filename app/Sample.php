@@ -28,6 +28,7 @@ class Sample extends Model
         $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input');
         $filter_types = FileMapping::createMappingArray('ir_api_input', 'ir_api_input_type');
         $filter_to_repo = FileMapping::createMappingArray('ir_api_input', 'ir_mongo_database');
+        $repo_to_output = FileMapping::createMappingArray('ir_mongo_database', 'ir_api_output', ["ir_class"=>["repertoire", "ir_repertoire"]]);
 
         $query = new self();
 
@@ -87,13 +88,34 @@ class Sample extends Model
             }
         }
 
-        $list = $query->get();
-
+        $list = $query->get()->toArray();
+        $return_array = array();
         foreach ($list as $element) {
-            $element['ir_project_sample_id'] = $element['_id'];
+
+            //if there's a mapping for any return value, replace it
+            foreach($element as $element_name=>$element_value)
+            {
+                // this is baked into mongodb, so doesn't really belong in a mapping file
+                if ($element_name == '_id')
+                {
+                    $element['ir_project_sample_id'] = $element['_id'];
+                    continue;
+                }
+
+                //apply mapping if it exists
+                if (isset($repo_to_output[$element_name]) && ($repo_to_output[$element_name]!=''))
+                {
+                   $element[$repo_to_output[$element_name]] = $element_value;
+                   unset($element[$element_name]);
+                }
+
+            }
+
+            array_push($return_array, $element);
+
         }
 
-        return $list;
+        return $return_array;
     }
 
     public static function list($params)

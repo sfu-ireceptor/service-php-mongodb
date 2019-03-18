@@ -55,12 +55,53 @@ class FileMapping
     //  provided by the user
     //    e.g. createMappingArray("ir_curator", "airr") will create an array in
     //	    which curator terms are a key and corresponding airr terms are a value
-    public static function createMappingArray($key, $value)
+    //   $condition is an array of key/value pairs that define which rows will be considered
+    //    e.g. createMappingArray("ir_curator", "airr", ["ir_class"=>"repertoire"}]) will only
+    //      map an ir_curator term to an airr term if the ir_class of that row is "repertoire"
+    public static function createMappingArray($key, $value, $condition_array = null)
     {
         $mapping = new self();
         $return_array = [];
+        $has_condition = ($condition_array != null && is_array($condition_array));
         for ($i = 0; $i < $mapping->rows; $i++) {
             $mapping_row = $mapping->fileMappings[$i];
+
+            //check if there's a mapping condition and if so, does the row pass it
+            $skip_row = false;
+            if ($has_condition)
+            {
+            	foreach($condition_array as $condition_name=>$condition_value)
+            	{
+            		if (isset($mapping_row[$condition_name]))
+            		{
+            			// we have the row with condition_name in it, let's see if passes the filter
+            			if (is_array($condition_value))
+            			{
+            				if (!in_array($mapping_row[$condition_name], $condition_value))
+            				{
+            					$skip_row = true;
+            				}
+            			}
+            			else
+            			{            				          			
+            				if($mapping_row[$condition_name] != $condition_value)
+            				{
+            					$skip_row = true;
+            				}
+            			}
+            		}
+            		else
+            		{
+            			$skip_row=true;
+            		}
+
+            	}
+            }
+            if ($skip_row)
+            {
+            	continue;
+            }
+
             if (isset($mapping_row[$key]) && ($mapping_row[$key] != '')) {
                 $return_key = $mapping_row[$key];
                 $return_value = $mapping_row[$value];
