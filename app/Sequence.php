@@ -525,9 +525,9 @@ class Sequence extends Model
         $num_results = 25;
         $start_at = 0;
         $current_results = 0;
-        $result = [];
-        $return_array = [];
-        $result_array = [];
+        $result = array();
+        $return_array = array();
+        $result_array = array();
         foreach ($sample_list as $sample) {
             $needed_results = $num_results - $current_results;
             if ($needed_results < 1) {
@@ -584,14 +584,18 @@ class Sequence extends Model
             if (isset($row[$substring_repository_name])) {
                 unset($row[$substring_repository_name]);
             }
-            $return_row = [];
+            $return_row = array();
+            //copy the row to array. 
+            foreach($row as $row_key=>$row_value)
+            {
+                $return_row[$row_key]=$row_value;
+            }
             //map the terms specified in api output column, pass the other values through as-is
-            $return_row = $row;
             foreach ($return_mapping as $output_name=>$repo_name) {
                 $return_row['_id'] = $row['_id'];
                 if (isset($row[$repo_name])) {
-                    $return_row[$output_name] = $row[$repo_name];
                     unset($return_row[$repo_name]);
+                    $return_row[$output_name] = $row[$repo_name];                    
                 } else {
                     $return_row[$output_name] = null;
                 }
