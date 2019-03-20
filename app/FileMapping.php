@@ -7,9 +7,11 @@ class FileMapping
     protected $fileMappings;
     protected $filename;
     protected $rows;
+    protected $separator;
 
     public function __construct()
     {
+    	$this->separator = chr(9);
         if (isset($_ENV['AIRR_MAPPING_FILE'])) {
             $this->filename = $_ENV['AIRR_MAPPING_FILE'];
         } else {
@@ -20,9 +22,9 @@ class FileMapping
 
         //get headers from the first line
         $headers = [];
-        $headers = fgetcsv($file, 0, ',');
+        $headers = fgetcsv($file, 0, $this->separator);
         $this->rows = 0;
-        while ($line = fgetcsv($file, 0, ',')) {
+        while ($line = fgetcsv($file, 0, $this->separator)) {
             $temp_array = [];
             for ($i = 0; $i < count($line); $i++) {
                 $key = $headers[$i];
