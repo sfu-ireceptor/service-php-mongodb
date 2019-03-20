@@ -11,7 +11,7 @@ class FileMapping
 
     public function __construct()
     {
-    	$this->separator = chr(9);
+        $this->separator = chr(9);
         if (isset($_ENV['AIRR_MAPPING_FILE'])) {
             $this->filename = $_ENV['AIRR_MAPPING_FILE'];
         } else {
