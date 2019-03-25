@@ -45,19 +45,19 @@ class Sample extends Model
             if (! isset($filter_types[$filter_name]) || ! isset($filter_to_repo[$filter_name])) {
                 continue;
             }
-
             //min and max age are iReceptor-specific fields to determine the range
             if ($filter_name == $filter_names['age_max']) {
-                $query = $query->whereIn($repository_names['age_max'], '=>', (float) $filter_value);
+                $query = $query->where($repository_names['age_max'], '<=', (float) $filter_value);
                 continue;
             }
             if ($filter_name == $filter_names['age_min']) {
-                $query = $query->whereIn($repository_names['age_min'], '>=', (float) $filter_value);
+                $query = $query->where($repository_names['age_min'], '>=', (float) $filter_value);
                 continue;
             }
             //sex is  a string but we want exact match here
             if ($filter_name == $filter_names['sex']) {
-                $query = $query->where($repository_names['sex'] . '=', (string) $filter_value);
+
+                $query = $query->where($repository_names['sex'] , 'like', (string) $filter_value);
                 continue;
             }
 
