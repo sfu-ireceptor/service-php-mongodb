@@ -56,8 +56,7 @@ class Sample extends Model
             }
             //sex is  a string but we want exact match here
             if ($filter_name == $filter_names['sex']) {
-
-                $query = $query->where($repository_names['sex'] , 'like', (string) $filter_value);
+                $query = $query->where($repository_names['sex'], 'like', (string) $filter_value);
                 continue;
             }
 
