@@ -41,6 +41,7 @@ return [
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'options'  => [
+                'sockettimeoutms' => 1000 * 60 * 60 * 2,
                 'database' => 'admin', // sets the authentication database required by mongo 3
             ],
         ],
