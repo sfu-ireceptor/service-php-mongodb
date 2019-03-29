@@ -592,7 +592,7 @@ class Sequence extends Model
             //map the terms specified in api output column, pass the other values through as-is
             foreach ($return_mapping as $output_name=>$repo_name) {
                 $return_row['_id'] = $row['_id'];
-                if (isset($row[$repo_name])) {
+                if (isset($repo_name) && isset($row[$repo_name])) {
                     unset($return_row[$repo_name]);
                     $return_row[$output_name] = $row[$repo_name];
                 } else {
