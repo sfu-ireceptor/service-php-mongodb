@@ -713,7 +713,7 @@ class Sequence extends Model
                     $airr_list = [];
 
                     foreach ($airr_fields as $airr_name => $service_name) {
-                        if (isset($service_name)) {
+                        if (isset($service_name) && isset($database_fields[$service_name])) {
                             if (isset($sequence_list[$database_fields[$service_name]])) {
                                 $airr_list[$airr_name] = $sequence_list[$database_fields[$service_name]];
                                 if ($service_name == 'rev_comp') {
