@@ -30,9 +30,14 @@
 
 			<div class="row">
 				<div class="col-md-6">
-					<h2>About iReceptor</h2>
-					<p>iReceptor federates Adaptive Immune Receptor Repertoire (AIRR-seq) data repositories from multiple laboratories and enable researchers to easily and efficiently perform complex analyses on these federated repositories via the <a href="https://gateway.ireceptor.org">iRececeptor Gateway</a>.</p>
-					<p>For more information, visit the <a href="https://ireceptor.org">iReceptor website</a>.</p>
+					@if (config('ireceptor.provenance_url') != '')
+						<h2>Provenance</h2>
+						<p>
+							<a href="{{ config('ireceptor.provenance_url') }}">
+								{{ config('ireceptor.provenance_url') }}
+							</a>
+						</p>
+					@endif
 
 					<h2>iReceptor API</h2>
 					<ul>
@@ -40,6 +45,11 @@
 						<li><a href="/v2/sequences_summary">/v2/sequences_summary</a></li>
 					</ul>
 					<p>For more information about the iReceptor API, visit the <a href="https://github.com/sfu-ireceptor/api">iReceptor API definition</a> on GitHub.</p>
+
+					<h2>About iReceptor</h2>
+					<p>iReceptor federates Adaptive Immune Receptor Repertoire (AIRR-seq) data repositories from multiple laboratories and enable researchers to easily and efficiently perform complex analyses on these federated repositories via the <a href="https://gateway.ireceptor.org">iRececeptor Gateway</a>.</p>
+					<p>For more information, visit the <a href="https://ireceptor.org">iReceptor website</a>.</p>
+
 				</div>
 			</div>
 	</body>
