@@ -20,115 +20,96 @@ class Sample extends Model
     public static function getSamples($f)
     {
         //Log::debug($f);
+        // use the FileMapping class to translate API terms to repository terms
+        // $repository_names is for any special cases that are interpreted by the service
+        // $filter_to_repo is for passthrough of API terms to repository terms because service
+        //   doesn't have to interpret them
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
+        $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input');
+        $filter_types = FileMapping::createMappingArray('ir_api_input', 'ir_api_input_type');
+        $filter_to_repo = FileMapping::createMappingArray('ir_api_input', 'ir_mongo_database');
+        $repo_to_output = FileMapping::createMappingArray('ir_mongo_database', 'ir_api_output', ['ir_class'=>['repertoire', 'ir_repertoire']]);
 
         $query = new self();
 
-        if (isset($f['ir_lab_id']) && $f['ir_lab_id'] != '') {
-            $query = $query->where('ir_lab_id', '=', $f['ir_lab_id']);
+        //parse over input parameters and resolve them
+        //  special cases go first
+        //  otherwise, ints get equals, strings get substring, arrays get in operators
+        foreach ($f as $filter_name=>$filter_value) {
+            //empty values count as no filter
+            if (! isset($filter_value) || $filter_value == '') {
+                continue;
+            }
+
+            //skip over unmapped entries
+            if (! isset($filter_types[$filter_name]) || ! isset($filter_to_repo[$filter_name])) {
+                continue;
+            }
+            //min and max age are iReceptor-specific fields to determine the range
+            if ($filter_name == $filter_names['age_max']) {
+                $query = $query->where($repository_names['age_max'], '<=', (float) $filter_value);
+                continue;
+            }
+            if ($filter_name == $filter_names['age_min']) {
+                $query = $query->where($repository_names['age_min'], '>=', (float) $filter_value);
+                continue;
+            }
+            //sex is  a string but we want exact match here
+            if ($filter_name == $filter_names['sex']) {
+                $query = $query->where($repository_names['sex'], 'like', (string) $filter_value);
+                continue;
+            }
+
+            // rest of the filters are done by data type
+            if ($filter_types[$filter_name] == 'int') {
+                $query = $query->where($filter_to_repo[$filter_name], '=', (int) $filter_value);
+                continue;
+            }
+
+            if ($filter_types[$filter_name] == 'double') {
+                $query = $query->where($filter_to_repo[$filter_name], '=', (float) $filter_value);
+                continue;
+            }
+
+            if ($filter_types[$filter_name] == 'boolean') {
+                $query = $query->where($filter_to_repo[$filter_name], '=', (bool) $filter_value);
+                continue;
+            }
+
+            if ($filter_types[$filter_name] == 'array') {
+                $query = $query->whereIn($filter_to_repo[$filter_name], $filter_value);
+                continue;
+            }
+
+            if ($filter_types[$filter_name] == 'string') {
+                $query = $query->where($filter_to_repo[$filter_name], 'like', '%' . $filter_value . '%');
+                continue;
+            }
         }
 
-        if (isset($f['ir_project_id']) && ! empty($f['ir_project_id'])) {
-            $query = $query->whereIn('ir_project_id', $f['ir_project_id']);
-        }
-
-        if (isset($f['sex']) && $f['sex'] != '') {
-            $query = $query->where('sex', '=', $f['sex']);
-        }
-        if (isset($f['study_id']) && $f['study_id'] != '') {
-            $query = $query->where('study_id', 'like', '%' . $f['study_id'] . '%');
-        }
-
-        if (isset($f['study_title']) && $f['study_title'] != '') {
-            $query = $query->where('study_title', 'like', '%' . $f['study_title'] . '%');
-        }
-
-        if (isset($f['study_description']) && $f['study_description'] != '') {
-            $query = $query->where('study_description', 'like', '%' . $f['study_description'] . '%');
-        }
-
-        if (isset($f['lab_name']) && $f['lab_name'] != '') {
-            $query = $query->where('lab_name', 'like', '%' . $f['lab_name'] . '%');
-        }
-
-        if (isset($f['organism']) && $f['organism'] != '') {
-            $query = $query->where('organism', 'like', '%' . $f['organism'] . '%');
-        }
-
-        if (isset($f['subject_id']) && $f['subject_id'] != '') {
-            $query = $query->where('subject_id', 'like', '%' . $f['subject_id'] . '%');
-        }
-
-        if (isset($f['ethnicity']) && $f['ethnicity'] != '') {
-            $query = $query->whereIn('ethnicity', $f['ethnicity']);
-        }
-
-        if (isset($f['ir_subject_age_min']) && $f['ir_subject_age_min'] != '') {
-            $query = $query->where('ir_subject_age_min', '>=', (int) $f['ir_subject_age_min']);
-        }
-
-        if (isset($f['ir_subject_age_max']) && $f['ir_subject_age_max'] != '') {
-            $query = $query->where('ir_subject_age_max', '<=', (int) $f['ir_subject_age_max']);
-        }
-
-        if (isset($f['ir_case_control_id']) && $f['ir_case_control_id'] != '') {
-            $query = $query->where('ir_case_control_id', '=', $f['ir_case_control_id']);
-        }
-
-        if (isset($f['study_group_description']) && $f['study_group_description'] != '') {
-            $query = $query->where('study_group_description', 'like', '%' . $f['study_group_description'] . '%');
-        }
-
-        if (isset($f['sample_id']) && $f['sample_id'] != '') {
-            $query = $query->where('sample_id', 'like', '%' . $f['sample_id'] . '%');
-        }
-
-        if (isset($f['disease_state_sample']) && $f['disease_state_sample'] != '') {
-            $query = $query->where('disease_state_sample', 'like', '%' . $f['disease_state_sample'] . '%');
-        }
-
-        if (isset($f['cell_phenotype']) && $f['cell_phenotype'] != '') {
-            $query = $query->where('cell_phenotype', 'like', '%' . $f['cell_phenotype'] . '%');
-        }
-
-        if (isset($f['sequencing_platform']) && $f['sequencing_platform'] != '') {
-            $query = $query->where('sequencing_platform', 'like', '%' . $f['sequencing_platform'] . '%');
-        }
-
-        if (isset($f['ir_sample_source_id']) && ! empty($f['ir_sample_source_id'])) {
-            $query = $query->whereIn('ir_sample_source_id', $f['ir_sample_source_id']);
-        }
-
-        if (isset($f['tissue']) && ! empty($f['tissue'])) {
-            $query = $query->whereIn('tissue', $f['tissue']);
-        }
-
-        if (isset($f['sample_type']) && ! empty($f['sample_type'])) {
-            $query = $query->whereIn('sample_type', $f['sample_type']);
-        }
-
-        if (isset($f['ir_dna_id']) && ! empty($f['ir_dna_id'])) {
-            $query = $query->whereIn('ir_dna_id', $f['ir_dna_id']);
-        }
-
-        if (isset($f['template_class']) && ! empty($f['template_class'])) {
-            $query = $query->whereIn('template_class', $f['template_class']);
-        }
-
-        if (isset($f['dna_type']) && ! empty($f['dna_type'])) {
-            $query = $query->whereIn('template_class', $f['dna_type']);
-        }
-
-        if (isset($f['cell_subset']) && ! empty($f['cell_subset'])) {
-            $query = $query->whereIn('cell_subset', $f['cell_subset']);
-        }
-
-        $list = $query->get();
-
+        $list = $query->get()->toArray();
+        $return_array = [];
         foreach ($list as $element) {
-            $element['ir_project_sample_id'] = $element['_id'];
+
+            //if there's a mapping for any return value, replace it
+            foreach ($element as $element_name=>$element_value) {
+                // this is baked into mongodb, so doesn't really belong in a mapping file
+                if ($element_name == '_id') {
+                    $element['ir_project_sample_id'] = $element['_id'];
+                    continue;
+                }
+
+                //apply mapping if it exists
+                if (isset($repo_to_output[$element_name]) && ($repo_to_output[$element_name] != '')) {
+                    $element[$repo_to_output[$element_name]] = $element_value;
+                    unset($element[$element_name]);
+                }
+            }
+
+            array_push($return_array, $element);
         }
 
-        return $list;
+        return $return_array;
     }
 
     public static function list($params)

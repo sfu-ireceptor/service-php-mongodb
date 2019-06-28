@@ -26,3 +26,6 @@ RUN chmod -R 777 /var/www/html/storage && \
 	cp .env.example .env && \
 	php artisan key:generate
 
+# download mapping file
+ADD https://raw.githubusercontent.com/sfu-ireceptor/config/turnkey/AIRR-iReceptorMapping.txt /var/www/html/
+RUN chmod 755 /var/www/html/AIRR-iReceptorMapping.txt
