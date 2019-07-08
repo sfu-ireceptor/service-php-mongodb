@@ -3,6 +3,8 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
 
 class Sample extends Model
 {
@@ -16,7 +18,363 @@ class Sample extends Model
             $this->collection = 'samples';
         }
     }
+    public function getCollection()
+    {
+        return $this->collection;
+    }
 
+    public static function processAirrFilter($f, $service_to_airr_array, $airr_types_array)
+    {       
+        if (!(isset($f['op'])) || $f['op']=='')
+        {
+            return null;
+        }
+        if (!(isset($f['content'])) || $f['content']=='')
+        {
+            return null;
+        }
+        $field = "";
+        $type = "";
+
+        $content = $f['content'];
+        $operator = $f['op'];
+
+        if (isset ($content['field']) && $content['field'] !="")
+        {
+            // fields are of form sample.subject.subject_id
+            //   we only want the last part, as it will define the field in database
+            $field_array = explode('.',$content['field']);
+            $field = end($field_array);
+
+            $type = $airr_types_array[$field];
+
+        }
+
+        if ($type == "" && $field != "")
+        {
+            Log::error("Type not found $field");
+        }
+
+        if (isset ($content['value']) && $content['value']!= "")
+        {
+            switch ($type)
+            {
+                case "integer":
+                case "number":
+                case "boolean":
+                    if (is_array($content['value']))
+                    {
+                        $value = json_encode($content['value']);
+                    }
+                    else
+                    {
+                        $value = $content['value'];
+                    }
+                    break;
+                case "string":
+                default:
+                    if (is_array($content['value']))
+                    {
+                        $value = json_encode($content['value']);
+                    }
+                    else
+                    {
+                        $value = '"'.$content['value'].'"';
+                    }
+                    break;
+            }
+        }
+
+        switch ($f['op'])
+        {
+            case '=':
+                if ($field != "" && $value != "")
+                {
+                    return '{"'.$field.'":'.$value.'}';
+                }
+                else
+                {
+                    return null;
+                }                    
+            case '!=':
+                if ($field != "" && $value != "")
+                {
+                    return '{"'.$field.'":{"$ne":"'.$value.'"}}';
+                }
+                else
+                {
+                    return null;
+                }
+            case '<':
+                if ($field != "" && $value != "")
+                {
+                    return '{"'.$field.'":{"$lt":"'.$value.'"}}';
+                }
+                else
+                {
+                    return null;
+                }
+            case '>':
+                if ($field != "" && $value != "")
+                {
+                    return '{"'.$field.'":{"$gt":"'.$value.'"}}';
+                }
+                else
+                {
+                    return null;
+                }
+            case '<=':
+                if ($field != "" && $value != "")
+                {
+                    return '{"'.$field.'":{"$le":"'.$value.'"}}';
+                }
+                else
+                {
+                    return null;
+                }
+            case '>=':
+                if ($field != "" && $value != "")
+                {
+                    return '{"'.$field.'":{"$ge":"'.$value.'"}}';
+                }
+                else
+                {
+                    return null;
+                }
+            case 'contains':
+                if ($field != "" && $value != "")
+                {
+                    return '{"'.$field.'":{"$regex":"'.$value.'","$options":"i"}}';                    
+                }
+                else
+                {
+                    return null;
+                }
+            case 'is':
+                if ($field != "" )
+                {
+                    return '{"'.$field.'":{"$exists":"false"}}';
+
+                }
+                else
+                {
+                    return null;
+                }
+            case 'not':
+                if ($field != "" )
+                {
+                    return '{"'.$field.'":{"$exists":"true"}}';
+                }
+                else
+                {
+                    return null;
+                }
+            case 'in':
+                if ($field != "" && $value != "" && is_array($value))
+                {
+                    return '{"'.$field.'":{"$in":"'.$value.'"}}';
+                }
+                else
+                {
+                    return null;
+                }
+            case 'exclude':
+                if ($field != "" && $value != "" && is_array($value))
+                {
+                    return '{"'.$field.'":{"$nin":"'.$value.'"}}';
+                }
+                else
+                {
+                    return null;
+                }
+            case 'and':
+                if (is_array($content) && sizeof($content)>1)
+                {
+                    $exp_list = [];
+                    foreach ($content as $content_chunk)
+                    {
+                        $exp = self::processAirrFilter($content_chunk, $service_to_airr_array, $airr_types_array);
+                        if (isset($exp))
+                        {
+                            array_push($exp_list, $exp);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    return '{"$and":['.implode(",", $exp_list).']}';
+                }
+                else
+                {
+                    return null;
+                }
+            case 'or':
+                if (is_array($content) && sizeof($content)>1)
+                {
+                    $exp_list = [];
+                    foreach ($content as $content_chunk)
+                    {
+                        $exp = self::processAirrFilter($content_chunk, $service_to_airr_array, $airr_types_array);
+                        if (isset($exp))
+                        {
+                            array_push($exp_list, $exp);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    return '{"$or":['.implode($exp_list).']}';
+                }
+                else
+                {
+                    return null;
+                }
+            default:
+                Log::error("Unknown op");
+                return null;                
+        } //end switch ($op)
+        
+        // should not get here
+        return null;
+    }
+
+    public static function airrRepertoireRequest($params)
+    {
+        //function that processes AIRR API request and returns a response
+        //  currently the response is iReceptor API response
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
+        $airr_names = FileMapping::createMappingArray('service_name', 'airr');
+        $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_mongo_database');
+        $airr_types = FileMapping::createMappingArray('airr', 'airr_type');
+
+        $query_string = "{}";
+        $options = [];
+        $fields_to_retrieve=[];
+        $query = new self();
+        // if we have filters, process them
+        if (isset($params['filters']) && $params['filters']!="" )
+        {
+            $query_string = self::processAirrFilter($params['filters'] , $airr_names, $airr_types);
+            if ($query_string == null)
+            {
+                return null;
+            }
+        }
+        // if fields parameter is set, we only want to return the fields specified
+        if (isset($params['fields']) && $params['fields']!="")
+        {
+            foreach ($params['fields'] as $airr_field_name)
+            {
+                if (isset ($airr_to_repository[$airr_field_name]) && $airr_to_repository[$airr_field_name]!="")
+                {
+                    $fields_to_retrieve[$airr_to_repository[$airr_field_name]] = 1;
+                }
+            }
+            $options['projection'] = $fields_to_retrieve;
+        }
+        // if we have from parameter, start the query at that value
+        if (isset($params['from']) && is_int($params['from']))
+        {
+            $options['skip'] = abs($params['from']);
+        }
+
+        // if we have size parameter, don't take more than that number of results
+        if (isset($params['size']) && is_int($params['size']))
+        {
+            $options['limit'] = abs($params['size']);
+        }
+
+        //echo "<br/>\n Returning $query_string";
+        //return ($query_string);
+
+        //if facets is set we want to aggregate by that fields using the sum operation
+        if (isset($params['facets']) && $params['facets']!="")
+        {
+            $aggOptions = [];
+            $aggOptions[0]['$match'] = json_decode($query_string);
+            $aggOptions[1]['$group'] = ['_id'=> [$airr_to_repository[$params['facets']] => "$".$airr_to_repository[$params['facets']]]];
+            $aggOptions[1]['$group']['count'] = ['$sum' => 1];
+
+            
+           $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
+           // $list = DB::collection($query->getCollection())->raw()->find(json_decode($query_string, true), $options);
+
+        }
+        else
+        {
+            $list = DB::collection($query->getCollection())->raw()->find(json_decode($query_string, true), $options);
+        }
+        
+        return($list->toArray());
+
+    }
+
+    public static function airrRepertoireResponse($response_list)
+    {
+        //method that takes an array of AIRR terms and returns a JSON string 
+        //  that represents a repertoire response as defined in AIRR API
+
+        //first, we need some mappings to convert database values to AIRR terms 
+        //  and bucket them into appropriate AIRR classes
+        $airr_classes = FileMapping::createMappingArray('ir_mongo_database', 'airr_subclass',['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $db_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database',['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'airr',['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'airr',['ir_class'=>['repertoire', 'ir_repertoire']]);
+
+        //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set 
+        //  associated with it, so we will take the array of samples and place each element into an appropriate section
+        //  of AIRR reperotoire response
+
+        $return_list = [];
+        foreach($response_list as $repertoire)
+        {
+            $return_array = [];
+            //in AIRR API, repertoire_id is an element of AIRR response, not a sub-element like others 
+            //  (e.g. study_title is subelement of study) so we set it here
+            if (isset($db_names['repertoire_id']))
+            {
+                $return_array[$airr_names['repertoire_id']] = $repertoire[$db_names['repertoire_id']];
+            }
+
+            foreach ($repertoire as $return_key => $return_element)
+            {                
+                if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] !="")
+                {
+                    $key_array =  $airr_classes[$return_key].".".$repository_to_airr[$return_key];
+                    array_set($return_array, $key_array, $return_element);
+                    //$return_array=[$repository_to_airr[$return_key] => $return_element];
+                }
+            }
+
+ 
+
+            $return_list[] = $return_array;
+
+        }
+
+        return ($return_list);
+        //return (json_encode($return_list, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+
+    }
+
+    public static function airrRepertoireFacetsResponse($response_list)
+    {
+        $return_array = [];
+        //MongoDB by default aggregates in the format _id: {column: value}, count: sum
+        //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
+        foreach ($response_list as $response)
+        {
+            $temp=[];
+            $facet = $response['_id'];
+            $count = $response["count"];
+            $temp[key($facet)] = $facet[key($facet)];
+            $temp["count"] = $count;
+            $return_array[] = $temp;
+        }
+        return ($return_array);
+    }
     public static function getSamples($f)
     {
         //Log::debug($f);
@@ -118,4 +476,6 @@ class Sample extends Model
 
         return $l;
     }
+
+
 }
