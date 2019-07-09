@@ -318,7 +318,7 @@ class Sample extends Model
 
         //first, we need some mappings to convert database values to AIRR terms 
         //  and bucket them into appropriate AIRR classes
-        $airr_classes = FileMapping::createMappingArray('ir_mongo_database', 'airr_subclass',['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $airr_classes = FileMapping::createMappingArray('ir_mongo_database', 'airr_full_path',['ir_class'=>['repertoire', 'ir_repertoire']]);
         $db_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database',['ir_class'=>['repertoire', 'ir_repertoire']]);
         $airr_names = FileMapping::createMappingArray('service_name', 'airr',['ir_class'=>['repertoire', 'ir_repertoire']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'airr',['ir_class'=>['repertoire', 'ir_repertoire']]);
@@ -331,19 +331,13 @@ class Sample extends Model
         foreach($response_list as $repertoire)
         {
             $return_array = [];
-            //in AIRR API, repertoire_id is an element of AIRR response, not a sub-element like others 
-            //  (e.g. study_title is subelement of study) so we set it here
-            if (isset($db_names['repertoire_id']))
-            {
-                $return_array[$airr_names['repertoire_id']] = $repertoire[$db_names['repertoire_id']];
-            }
-
+            
             foreach ($repertoire as $return_key => $return_element)
             {                
                 if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] !="")
                 {
-                    $key_array =  $airr_classes[$return_key].".".$repository_to_airr[$return_key];
-                    array_set($return_array, $key_array, $return_element);
+                    //$key_array =  $airr_classes[$return_key].".".$repository_to_airr[$return_key];
+                    array_set($return_array, $airr_classes[$return_key], $return_element);
                     //$return_array=[$repository_to_airr[$return_key] => $return_element];
                 }
             }
