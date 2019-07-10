@@ -1,17 +1,17 @@
 <?php
 
-//class that contains various utility functions for AIRR API 
+//class that contains various utility functions for AIRR API
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
 class AirrUtils extends Model
 {
-
     public static function processAirrFilter($f, $service_to_airr_array, $airr_types_array)
     {
-    	//method to process an AIRR API filter object
-    	//  based on design by Scott Christley
+        //method to process an AIRR API filter object
+        //  based on design by Scott Christley
         if (! (isset($f['op'])) || $f['op'] == '') {
             return;
         }
@@ -167,4 +167,3 @@ class AirrUtils extends Model
         // should not get here
     }
 }
-?>
