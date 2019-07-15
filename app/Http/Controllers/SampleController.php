@@ -48,4 +48,10 @@ class SampleController extends Controller
         //return($response);
         return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
+    public function airr_repertoire_single($repertoire_id)
+    {
+        $repertoire = Sample::airrRepertoireSingle($repertoire_id);
+        $response = Sample::airrRepertoireResponse($repertoire);
+        return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    }
 }
