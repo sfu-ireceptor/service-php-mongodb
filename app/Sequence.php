@@ -778,12 +778,12 @@ class Sequence extends Model
 
     public static function airrRearrangementRequest($params)
     {
-        //function that processes AIRR API request and returns an array of fields matching 
+        //function that processes AIRR API request and returns an array of fields matching
         //   the filters, with optional start number and max number of results
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database',['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_names = FileMapping::createMappingArray('service_name', 'airr',['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_mongo_database',['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_types = FileMapping::createMappingArray('airr', 'airr_type',['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_types = FileMapping::createMappingArray('airr', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
 
         $query_string = '{}';
         $options = [];

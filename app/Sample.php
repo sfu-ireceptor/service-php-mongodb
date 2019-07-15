@@ -86,11 +86,10 @@ class Sample extends Model
         //return a single repertoire based on the repertoire_id
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
         $query = new self;
-        $query = $query->where($repository_names['repertoire_id'], '=', (int)$repertoire_id);
+        $query = $query->where($repository_names['repertoire_id'], '=', (int) $repertoire_id);
         $result = $query->get();
-        return($result->toArray());
 
-
+        return $result->toArray();
     }
 
     public static function airrRepertoireResponse($response_list)
@@ -119,7 +118,7 @@ class Sample extends Model
 
                     //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
                     //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
-                    $fully_qualified_path = preg_replace("/^sample\./", "sample.0.", $fully_qualified_path);
+                    $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
                     array_set($return_array, $fully_qualified_path, $return_element);
                 }
             }

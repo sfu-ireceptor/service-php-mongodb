@@ -31,13 +31,10 @@ class AirrUtils extends Model
             $field = end($field_array);
 
             // check if the field provided exists in the mapping file
-            if (isset($airr_types_array[$field]))
-            {
+            if (isset($airr_types_array[$field])) {
                 $type = $airr_types_array[$field];
-            }
-            else
-            {
-                return null;
+            } else {
+                return;
             }
         }
 
