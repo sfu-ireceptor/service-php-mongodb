@@ -27,10 +27,10 @@ class Sample extends Model
     {
         //function that processes AIRR API request and returns a response
         //  currently the response is iReceptor API response
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
-        $airr_names = FileMapping::createMappingArray('service_name', 'airr');
-        $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_mongo_database');
-        $airr_types = FileMapping::createMappingArray('airr', 'airr_type');
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $airr_types = FileMapping::createMappingArray('airr', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire']]);
 
         $query_string = '{}';
         $options = [];
@@ -81,6 +81,18 @@ class Sample extends Model
         return $list->toArray();
     }
 
+    public static function airrRepertoireSingle($repertoire_id)
+    {
+        //return a single repertoire based on the repertoire_id
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $query = new self;
+        $query = $query->where($repository_names['repertoire_id'], '=', (int)$repertoire_id);
+        $result = $query->get();
+        return($result->toArray());
+
+
+    }
+
     public static function airrRepertoireResponse($response_list)
     {
         //method that takes an array of AIRR terms and returns a JSON string
@@ -103,9 +115,12 @@ class Sample extends Model
 
             foreach ($repertoire as $return_key => $return_element) {
                 if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] != '') {
-                    //$key_array =  $airr_classes[$return_key].".".$repository_to_airr[$return_key];
-                    array_set($return_array, $airr_classes[$return_key], $return_element);
-                    //$return_array=[$repository_to_airr[$return_key] => $return_element];
+                    $fully_qualified_path = $airr_classes[$return_key];
+
+                    //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
+                    //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
+                    $fully_qualified_path = preg_replace("/^sample\./", "sample.0.", $fully_qualified_path);
+                    array_set($return_array, $fully_qualified_path, $return_element);
                 }
             }
 
@@ -121,6 +136,7 @@ class Sample extends Model
         $return_array = [];
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
+        //  This method fills the AIRR API response with values from MongoDB query
         foreach ($response_list as $response) {
             $temp = [];
             $facet = $response['_id'];
@@ -140,10 +156,10 @@ class Sample extends Model
         // $repository_names is for any special cases that are interpreted by the service
         // $filter_to_repo is for passthrough of API terms to repository terms because service
         //   doesn't have to interpret them
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
-        $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input');
-        $filter_types = FileMapping::createMappingArray('ir_api_input', 'ir_api_input_type');
-        $filter_to_repo = FileMapping::createMappingArray('ir_api_input', 'ir_mongo_database');
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $filter_types = FileMapping::createMappingArray('ir_api_input', 'ir_api_input_type', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $filter_to_repo = FileMapping::createMappingArray('ir_api_input', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
         $repo_to_output = FileMapping::createMappingArray('ir_mongo_database', 'ir_api_output', ['ir_class'=>['repertoire', 'ir_repertoire']]);
 
         $query = new self();

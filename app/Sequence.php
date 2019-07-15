@@ -775,4 +775,113 @@ class Sequence extends Model
 
         Log::error("Finished creating the file in $time");
     }
+
+    public static function airrRearrangementRequest($params)
+    {
+        //function that processes AIRR API request and returns an array of fields matching 
+        //   the filters, with optional start number and max number of results
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database',['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'airr',['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_mongo_database',['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_types = FileMapping::createMappingArray('airr', 'airr_type',['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+
+        $query_string = '{}';
+        $options = [];
+        $fields_to_retrieve = [];
+        $query = new self();
+        // if we have filters, process them
+        if (isset($params['filters']) && $params['filters'] != '') {
+            $query_string = AirrUtils::processAirrFilter($params['filters'], $airr_names, $airr_types);
+            if ($query_string == null) {
+                return;
+            }
+        }
+        // if fields parameter is set, we only want to return the fields specified
+        if (isset($params['fields']) && $params['fields'] != '') {
+            foreach ($params['fields'] as $airr_field_name) {
+                if (isset($airr_to_repository[$airr_field_name]) && $airr_to_repository[$airr_field_name] != '') {
+                    $fields_to_retrieve[$airr_to_repository[$airr_field_name]] = 1;
+                }
+            }
+            $options['projection'] = $fields_to_retrieve;
+        }
+        // if we have from parameter, start the query at that value
+        if (isset($params['from']) && is_int($params['from'])) {
+            $options['skip'] = abs($params['from']);
+        }
+
+        // if we have size parameter, don't take more than that number of results
+        if (isset($params['size']) && is_int($params['size'])) {
+            $options['limit'] = abs($params['size']);
+        }
+
+        //echo "<br/>\n Returning $query_string";
+        //return ($query_string);
+
+        //if facets is set we want to aggregate by that fields using the sum operation
+        if (isset($params['facets']) && $params['facets'] != '') {
+            $aggOptions = [];
+            $aggOptions[0]['$match'] = json_decode($query_string);
+            $aggOptions[1]['$group'] = ['_id'=> [$airr_to_repository[$params['facets']] => '$' . $airr_to_repository[$params['facets']]]];
+            $aggOptions[1]['$group']['count'] = ['$sum' => 1];
+
+            $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
+        } else {
+            $list = DB::collection($query->getCollection())->raw()->find(json_decode($query_string, true), $options);
+        }
+
+        return $list->toArray();
+    }
+
+    public static function airrRearrangementResponse($response_list)
+    {
+        //method that takes an array of AIRR terms and returns a JSON string
+        //  that represents a repertoire response as defined in AIRR API
+
+        //first, we need some mappings to convert database values to AIRR terms
+        //  and bucket them into appropriate AIRR classes
+        $airr_classes = FileMapping::createMappingArray('ir_mongo_database', 'airr_full_path', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $db_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+
+        //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
+        //  associated with it, so we will take the array of samples and place each element into an appropriate section
+        //  of AIRR reperotoire response
+
+        $return_list = [];
+        foreach ($response_list as $repertoire) {
+            $return_array = [];
+
+            foreach ($repertoire as $return_key => $return_element) {
+                if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] != '') {
+                    //$key_array =  $airr_classes[$return_key].".".$repository_to_airr[$return_key];
+                    array_set($return_array, $airr_classes[$return_key], $return_element);
+                    //$return_array=[$repository_to_airr[$return_key] => $return_element];
+                }
+            }
+
+            $return_list[] = $return_array;
+        }
+
+        return $return_list;
+        //return (json_encode($return_list, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+    }
+
+    public static function airrRearrangementFacetsResponse($response_list)
+    {
+        $return_array = [];
+        //MongoDB by default aggregates in the format _id: {column: value}, count: sum
+        //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
+        foreach ($response_list as $response) {
+            $temp = [];
+            $facet = $response['_id'];
+            $count = $response['count'];
+            $temp[key($facet)] = $facet[key($facet)];
+            $temp['count'] = $count;
+            $return_array[] = $temp;
+        }
+
+        return $return_array;
+    }
 }
