@@ -42,7 +42,7 @@ class SampleController extends Controller
             } else {
                 //regular response, needs to be formatted as per AIRR standard, as
                 //	iReceptor repertoires are flat collections in MongoDB
-                $response['Repertoire'] = Sample::airrRepertoireResponseSingle($l);
+                $response['Repertoire'] = Sample::airrRepertoireResponse($l);
             }
         }
         //return($response);
@@ -52,7 +52,7 @@ class SampleController extends Controller
     public function airr_repertoire_single($repertoire_id)
     {
         $repertoire = Sample::airrRepertoireSingle($repertoire_id);
-        $response = Sample::airrRepertoireResponse($repertoire);
+        $response = Sample::airrRepertoireResponseSingle($repertoire);
 
         return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
