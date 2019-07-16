@@ -35,11 +35,11 @@ class SampleController extends Controller
         if ($l == null) {
             $response['succes'] = 'false';
         } else {
-            $response['Info']['Title'] = "AIRR Data Commons API";
-            $response['Info']['description'] = "API response for repertoire query";
+            $response['Info']['Title'] = 'AIRR Data Commons API';
+            $response['Info']['description'] = 'API response for repertoire query';
             $response['Info']['version'] = 1.3;
-            $response['Info']['contact']['name'] = "AIRR Community";
-            $response['Info']['contact']['url'] = "https://github.com/airr-community"; 
+            $response['Info']['contact']['name'] = 'AIRR Community';
+            $response['Info']['contact']['url'] = 'https://github.com/airr-community';
 
             if (isset($params['facets'])) {
                 //facets have different formatting requirements
