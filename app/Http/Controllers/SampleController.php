@@ -25,10 +25,6 @@ class SampleController extends Controller
         //    currently returns an iReceptor API response
         $params = $request->json()->all();
 
-        if (! isset($params) || empty($params)) {
-            //something went bad and Laravel cound't parse the parameters as JSON
-            return "{success:'false'}";
-        }
 
         $response = [];
         $l = Sample::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
