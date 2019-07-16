@@ -35,14 +35,19 @@ class SampleController extends Controller
         if ($l == null) {
             $response['succes'] = 'false';
         } else {
-            $response['success'] = 'true';
+            $response['Info']['Title'] = "AIRR Data Commons API";
+            $response['Info']['description'] = "API response for repertoire query";
+            $response['Info']['version'] = 1.3;
+            $response['Info']['contact']['name'] = "AIRR Community";
+            $response['Info']['contact']['url'] = "https://github.com/airr-community"; 
+
             if (isset($params['facets'])) {
                 //facets have different formatting requirements
-                $response['result'] = Sample::airrRepertoireFacetsResponse($l);
+                $response['Repertoire'] = Sample::airrRepertoireFacetsResponse($l);
             } else {
                 //regular response, needs to be formatted as per AIRR standard, as
                 //	iReceptor repertoires are flat collections in MongoDB
-                $response['result'] = Sample::airrRepertoireResponse($l);
+                $response['Repertoire'] = Sample::airrRepertoireResponse($l);
             }
         }
         //return($response);

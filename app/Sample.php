@@ -126,8 +126,7 @@ class Sample extends Model
             $return_list[] = $return_array;
         }
 
-        return $return_list;
-        //return (json_encode($return_list, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        return $return_list[0];
     }
 
     public static function airrRepertoireFacetsResponse($response_list)
