@@ -25,7 +25,6 @@ class SampleController extends Controller
         //    currently returns an iReceptor API response
         $params = $request->json()->all();
 
-
         $response = [];
         $l = Sample::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
         if ($l == null) {
