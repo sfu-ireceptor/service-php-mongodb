@@ -42,7 +42,7 @@ class SampleController extends Controller
             } else {
                 //regular response, needs to be formatted as per AIRR standard, as
                 //	iReceptor repertoires are flat collections in MongoDB
-                $response['Repertoire'] = Sample::airrRepertoireResponse($l);
+                $response['Repertoire'] = Sample::airrRepertoireResponseSingle($l);
             }
         }
         //return($response);
