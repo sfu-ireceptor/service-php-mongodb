@@ -109,6 +109,7 @@ class SequenceController extends Controller
             }
         }
     }
+
     public function airr_rearrangement(Request $request)
     {
         // /repertoire entry point that resolves an AIRR API rearrangement query request and
@@ -138,10 +139,12 @@ class SequenceController extends Controller
         //return($response);
         return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
+
     public function airr_rearrangement_single($rearrangement_id)
     {
         $rearrangement = Sequence::airrRearrangementSingle($rearrangement_id);
         $response = Sequence::airrRearrangementResponse($rearrangement);
+
         return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
 }
