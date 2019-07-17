@@ -5,27 +5,27 @@ namespace App\Http\Controllers;
 use App\Sample;
 use App\Sequence;
 use Illuminate\Http\Request;
-use Symfony\Component\Process\Process;
 
 class AirrApiController extends Controller
 {
-	public function index()
-	{
-		$response['result'] = 'success';
-		return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-	}
+    public function index()
+    {
+        $response['result'] = 'success';
 
-	public function info()
-	{
-		$response['name'] = "airr-api-ireceptor";
-		$response['version'] = "0.1.0";
-		return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-	}
+        return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    }
 
-	public function swagger()
-	{
+    public function info()
+    {
+        $response['name'] = 'airr-api-ireceptor';
+        $response['version'] = '0.1.0';
 
-	}
+        return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    }
+
+    public function swagger()
+    {
+    }
 
     public function airr_repertoire(Request $request)
     {
@@ -64,7 +64,7 @@ class AirrApiController extends Controller
 
         return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
-    
+
     public function airr_rearrangement(Request $request)
     {
         // /repertoire entry point that resolves an AIRR API rearrangement query request and
@@ -102,5 +102,4 @@ class AirrApiController extends Controller
 
         return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
-
 }
