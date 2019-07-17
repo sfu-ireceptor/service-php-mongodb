@@ -98,7 +98,7 @@ class AirrApiController extends Controller
     public function airr_rearrangement_single($rearrangement_id)
     {
         $rearrangement = Sequence::airrRearrangementSingle($rearrangement_id);
-        $response = Sequence::airrRearrangementResponse($rearrangement);
+        $response = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
 
         return json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
