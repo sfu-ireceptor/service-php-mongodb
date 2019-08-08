@@ -780,7 +780,7 @@ class Sequence extends Model
     {
         //function that finds a single rearrangement based on the provided $rearrangement_id
         $query = new self();
-        $query = $query->where("_id", $rearrangement_id);
+        $query = $query->where('_id', $rearrangement_id);
         $result = $query->get();
 
         return $result->toArray();
@@ -824,7 +824,6 @@ class Sequence extends Model
         if (isset($params['size']) && is_int($params['size'])) {
             $options['limit'] = abs($params['size']);
         }
-
 
         //echo "<br/>\n Returning $query_string";
         //return ($query_string);
@@ -892,20 +891,19 @@ class Sequence extends Model
 
         return $return_array;
     }
+
     public static function airrRearrangementResponseSingle($rearrangement)
     {
         //take a single rearrangement from database query and create a response as per
         //  AIRR API standard
         $result = [];
         $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        foreach ($rearrangement as $key=>$value)
-        {
-            if (isset($response_mapping[$key]) && $response_mapping[$key]!="")
-            {
+        foreach ($rearrangement as $key=>$value) {
+            if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 $result[$response_mapping[$key]] = $value;
             }
         }
-        return $result;
 
+        return $result;
     }
 }

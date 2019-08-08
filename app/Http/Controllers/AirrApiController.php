@@ -13,7 +13,9 @@ class AirrApiController extends Controller
         $response['result'] = 'success';
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        return response($response)->header("Content-Type", "application/json; charset=utf-8");    }
+
+        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+    }
 
     public function info()
     {
@@ -21,7 +23,8 @@ class AirrApiController extends Controller
         $response['version'] = '0.1.0';
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        return response($response)->header("Content-Type", "application/json; charset=utf-8");
+
+        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
     }
 
     public function swagger()
@@ -55,7 +58,9 @@ class AirrApiController extends Controller
             }
         }
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        return response($response)->header("Content-Type", "application/json; charset=utf-8");    }
+
+        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+    }
 
     public function airr_repertoire_single($repertoire_id)
     {
@@ -63,7 +68,9 @@ class AirrApiController extends Controller
         $response = Sample::airrRepertoireResponseSingle($repertoire);
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        return response($response)->header("Content-Type", "application/json; charset=utf-8");    }
+
+        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+    }
 
     public function airr_rearrangement(Request $request)
     {
@@ -92,7 +99,9 @@ class AirrApiController extends Controller
             }
         }
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        return response($response)->header("Content-Type", "application/json; charset=utf-8");   }
+
+        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+    }
 
     public function airr_rearrangement_single($rearrangement_id)
     {
@@ -100,5 +109,7 @@ class AirrApiController extends Controller
         $response = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        return response($response)->header("Content-Type", "application/json; charset=utf-8");    }
+
+        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+    }
 }
