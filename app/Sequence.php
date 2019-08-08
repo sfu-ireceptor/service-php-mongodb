@@ -878,13 +878,16 @@ class Sequence extends Model
     public static function airrRearrangementFacetsResponse($response_list)
     {
         $return_array = [];
+        $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
-        //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
+        //  AIRR expects {column: value, count: sum} {column: value2, count: sum}      
         foreach ($response_list as $response) {
             $temp = [];
             $facet = $response['_id'];
             $count = $response['count'];
-            $temp[key($facet)] = $facet[key($facet)];
+            $facet_name = $response_mapping[key($facet)];
+            $temp[$facet_name] = $facet[key($facet)];
             $temp['count'] = $count;
             $return_array[] = $temp;
         }

@@ -168,6 +168,8 @@ class Sample extends Model
     public static function airrRepertoireFacetsResponse($response_list)
     {
         $return_array = [];
+        $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         //  This method fills the AIRR API response with values from MongoDB query
@@ -175,7 +177,8 @@ class Sample extends Model
             $temp = [];
             $facet = $response['_id'];
             $count = $response['count'];
-            $temp[key($facet)] = $facet[key($facet)];
+            $facet_name = $response_mapping[key($facet)];
+            $temp[$facet_name] = $facet[key($facet)];
             $temp['count'] = $count;
             $return_array[] = $temp;
         }
