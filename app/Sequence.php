@@ -780,7 +780,7 @@ class Sequence extends Model
     {
         //function that finds a single rearrangement based on the provided $rearrangement_id
         $query = new self();
-        $query = $query->where('_id', $rearrangement_id);
+        $query = $query->where("_id", $rearrangement_id);
         $result = $query->get();
 
         return $result->toArray();
@@ -825,6 +825,7 @@ class Sequence extends Model
             $options['limit'] = abs($params['size']);
         }
 
+
         //echo "<br/>\n Returning $query_string";
         //return ($query_string);
 
@@ -850,7 +851,6 @@ class Sequence extends Model
 
         //first, we need some mappings to convert database values to AIRR terms
         //  and bucket them into appropriate AIRR classes
-        $airr_classes = FileMapping::createMappingArray('ir_mongo_database', 'airr_full_path', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $db_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
@@ -864,10 +864,8 @@ class Sequence extends Model
             $return_array = [];
 
             foreach ($repertoire as $return_key => $return_element) {
-                if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] != '') {
-                    //$key_array =  $airr_classes[$return_key].".".$repository_to_airr[$return_key];
-                    array_set($return_array, $airr_classes[$return_key], $return_element);
-                    //$return_array=[$repository_to_airr[$return_key] => $return_element];
+                if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
+                    array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 }
             }
 
@@ -894,19 +892,20 @@ class Sequence extends Model
 
         return $return_array;
     }
-
     public static function airrRearrangementResponseSingle($rearrangement)
     {
         //take a single rearrangement from database query and create a response as per
         //  AIRR API standard
         $result = [];
         $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        foreach ($rearrangement as $key=>$value) {
-            if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
+        foreach ($rearrangement as $key=>$value)
+        {
+            if (isset($response_mapping[$key]) && $response_mapping[$key]!="")
+            {
                 $result[$response_mapping[$key]] = $value;
             }
         }
-
         return $result;
+
     }
 }

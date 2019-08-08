@@ -73,7 +73,6 @@ class Sample extends Model
             $aggOptions[1]['$group']['count'] = ['$sum' => 1];
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
-        // $list = DB::collection($query->getCollection())->raw()->find(json_decode($query_string, true), $options);
         } else {
             $list = DB::collection($query->getCollection())->raw()->find(json_decode($query_string, true), $options);
         }

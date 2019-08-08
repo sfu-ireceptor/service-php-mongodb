@@ -73,37 +73,37 @@ class AirrUtils extends Model
                 }
             case '!=':
                 if ($field != '' && $value != '') {
-                    return '{"' . $field . '":{"$ne":"' . $value . '"}}';
+                    return '{"' . $field . '":{"$ne":' . $value . '}}';
                 } else {
                     return;
                 }
             case '<':
                 if ($field != '' && $value != '') {
-                    return '{"' . $field . '":{"$lt":"' . $value . '"}}';
+                    return '{"' . $field . '":{"$lt":' . $value . '}}';
                 } else {
                     return;
                 }
             case '>':
                 if ($field != '' && $value != '') {
-                    return '{"' . $field . '":{"$gt":"' . $value . '"}}';
+                    return '{"' . $field . '":{"$gt":' . $value . '}}';
                 } else {
                     return;
                 }
             case '<=':
                 if ($field != '' && $value != '') {
-                    return '{"' . $field . '":{"$le":"' . $value . '"}}';
+                    return '{"' . $field . '":{"$le":' . $value . '}}';
                 } else {
                     return;
                 }
             case '>=':
                 if ($field != '' && $value != '') {
-                    return '{"' . $field . '":{"$ge":"' . $value . '"}}';
+                    return '{"' . $field . '":{"$ge":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'contains':
                 if ($field != '' && $value != '') {
-                    return '{"' . $field . '":{"$regex":"' . $value . '","$options":"i"}}';
+                    return '{"' . $field . '":{"$regex":' . $value . ',"$options":"i"}}';
                 } else {
                     return;
                 }
@@ -121,13 +121,13 @@ class AirrUtils extends Model
                 }
             case 'in':
                 if ($field != '' && $value != '' && is_array($value)) {
-                    return '{"' . $field . '":{"$in":"' . $value . '"}}';
+                    return '{"' . $field . '":{"$in":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'exclude':
                 if ($field != '' && $value != '' && is_array($value)) {
-                    return '{"' . $field . '":{"$nin":"' . $value . '"}}';
+                    return '{"' . $field . '":{"$nin":' . $value . '}}';
                 } else {
                     return;
                 }

@@ -91,7 +91,6 @@ class FileMapping
             if ($skip_row) {
                 continue;
             }
-
             if (isset($mapping_row[$key]) && ($mapping_row[$key] != '')) {
                 $return_key = $mapping_row[$key];
                 $return_value = $mapping_row[$value];
