@@ -881,7 +881,7 @@ class Sequence extends Model
         $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
 
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
-        //  AIRR expects {column: value, count: sum} {column: value2, count: sum}      
+        //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         foreach ($response_list as $response) {
             $temp = [];
             $facet = $response['_id'];
