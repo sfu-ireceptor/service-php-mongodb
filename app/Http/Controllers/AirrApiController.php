@@ -90,7 +90,6 @@ class AirrApiController extends Controller
             $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
             return response($response)->header('Content-Type', 'application/json; charset=utf-8');
- 
         } else {
             $response['success'] = 'true';
             if (isset($params['facets'])) {

@@ -868,7 +868,7 @@ class Sequence extends Model
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 }
             }
-            echo (json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+            echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             //$return_list[] = $return_array;
         }
 
