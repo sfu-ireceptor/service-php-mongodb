@@ -803,7 +803,8 @@ class Sequence extends Model
         if (isset($params['filters']) && $params['filters'] != '') {
             $query_string = AirrUtils::processAirrFilter($params['filters'], $airr_names, $airr_types);
             if ($query_string == null) {
-                return;
+                //something went wrong
+                return "error";
             }
         }
         // if fields parameter is set, we only want to return the fields specified
@@ -844,7 +845,7 @@ class Sequence extends Model
         return $list;
     }
 
-    public static function airrRearrangementResponse($response_list)
+    public static function airrRearrangementResponse($response_list, $response_type)
     {
         //method that takes an array of AIRR terms and returns a JSON string
         //  that represents a repertoire response as defined in AIRR API
@@ -854,26 +855,58 @@ class Sequence extends Model
         $db_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        //V-, D-, J-call might be stored as an array, which need to be serialized before they can be outputted in TSV format
+        $v_call_airr_name = array_search('v_call', $airr_names);
+        $j_call_airr_name = array_search('j_call', $airr_names);
+        $d_call_airr_name = array_search('d_call', $airr_names);
 
         //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
         //  associated with it, so we will take the array of samples and place each element into an appropriate section
         //  of AIRR reperotoire response
 
-        $return_list = [];
-        foreach ($response_list as $repertoire) {
-            $return_array = [];
+        $headers = true;
+        if ($response_type == 'json')
+        {
+            header('Content-Type: application/json; charset=utf-8');
+        }
+        if ($response_type == 'tsv')
+        {
+            header('Content-Type: text/tsv; charset=utf-8');
+            header('Content-Disposition: attachment;filename="data.tsv"');
+        }
+        foreach ($response_list as $repertoire) {            
 
+            $return_array = [];
             foreach ($repertoire as $return_key => $return_element) {
-                if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
+                if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') 
+                {
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
+
+                    if ($response_type == 'tsv')
+                    {
+                        // mongodb BSON array needs to be serialized or it can't be used in TSV output
+                        if (in_array($return_key, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) 
+                            && $return_element != null && ! is_string($return_element)) {
+                                $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
+                            }
+                    }
                 }
             }
-            echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-            //$return_list[] = $return_array;
+            // first time through, if we have tsv, dump the return array's keys as headers
+            if ($headers && $response_type == 'tsv')
+            {
+                echo implode(array_keys($return_array), chr(9)) . "\n";
+                $headers = false;
+            }
+            if ($response_type == 'tsv')
+            {
+                echo implode($return_array, chr(9)) . "\n";
+            }
+            else
+            {
+               echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+           }
         }
-
-        //return $return_list;
-        //return (json_encode($return_list, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
 
     public static function airrRearrangementFacetsResponse($response_list)

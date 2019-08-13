@@ -85,13 +85,19 @@ class AirrApiController extends Controller
 
         $response = [];
         $l = Sequence::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
-        if ($l == null) {
+        if ($l == 'error') {
             $response['succes'] = 'false';
             $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
             return response($response)->header('Content-Type', 'application/json; charset=utf-8');
         } else {
-            $response['success'] = 'true';
+            //check what kind of response we have, default to JSON
+            $response_type = "json";
+            if (isset($params['format']) && $params['format']!="")
+            {
+                $response_type = strtolower($params['format']);
+            }
+
             if (isset($params['facets'])) {
                 //facets have different formatting requirements
                 $response['result'] = Sequence::airrRearrangementFacetsResponse($l);
@@ -99,7 +105,7 @@ class AirrApiController extends Controller
                 //regular response, needs to be formatted as per AIRR standard, as
                 //  iReceptor repertoires are flat collections in MongoDB
                 //$response['result'] = Sequence::airrRearrangementResponse($l);
-                Sequence::airrRearrangementResponse($l);
+                Sequence::airrRearrangementResponse($l, $response_type);
             }
         }
         //$return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
