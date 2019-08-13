@@ -840,7 +840,8 @@ class Sequence extends Model
             $list = DB::collection($query->getCollection())->raw()->find(json_decode($query_string, true), $options);
         }
 
-        return $list->toArray();
+        //return $list->toArray();
+        return $list;
     }
 
     public static function airrRearrangementResponse($response_list)
@@ -867,11 +868,11 @@ class Sequence extends Model
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 }
             }
-
-            $return_list[] = $return_array;
+            echo (json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+            //$return_list[] = $return_array;
         }
 
-        return $return_list;
+        //return $return_list;
         //return (json_encode($return_list, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
 

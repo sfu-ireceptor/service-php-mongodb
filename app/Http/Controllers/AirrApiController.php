@@ -87,6 +87,10 @@ class AirrApiController extends Controller
         $l = Sequence::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
         if ($l == null) {
             $response['succes'] = 'false';
+            $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+            return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+ 
         } else {
             $response['success'] = 'true';
             if (isset($params['facets'])) {
@@ -95,12 +99,13 @@ class AirrApiController extends Controller
             } else {
                 //regular response, needs to be formatted as per AIRR standard, as
                 //  iReceptor repertoires are flat collections in MongoDB
-                $response['result'] = Sequence::airrRearrangementResponse($l);
+                //$response['result'] = Sequence::airrRearrangementResponse($l);
+                Sequence::airrRearrangementResponse($l);
             }
         }
-        $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        //$return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+        //return response($response)->header('Content-Type', 'application/json; charset=utf-8');
     }
 
     public function airr_rearrangement_single($rearrangement_id)

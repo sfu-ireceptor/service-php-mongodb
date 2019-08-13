@@ -4,6 +4,7 @@
 
 namespace App;
 
+use Log;
 use Illuminate\Database\Eloquent\Model;
 
 class AirrUtils extends Model
