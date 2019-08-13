@@ -92,9 +92,8 @@ class AirrApiController extends Controller
             return response($response)->header('Content-Type', 'application/json; charset=utf-8');
         } else {
             //check what kind of response we have, default to JSON
-            $response_type = "json";
-            if (isset($params['format']) && $params['format']!="")
-            {
+            $response_type = 'json';
+            if (isset($params['format']) && $params['format'] != '') {
                 $response_type = strtolower($params['format']);
             }
 
