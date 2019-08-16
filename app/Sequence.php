@@ -804,7 +804,7 @@ class Sequence extends Model
             $query_string = AirrUtils::processAirrFilter($params['filters'], $airr_names, $airr_types);
             if ($query_string == null) {
                 //something went wrong
-                return "error";
+                return 'error';
             }
         }
         // if fields parameter is set, we only want to return the fields specified
@@ -865,47 +865,38 @@ class Sequence extends Model
         //  of AIRR reperotoire response
 
         $headers = true;
-        if ($response_type == 'json')
-        {
+        if ($response_type == 'json') {
             header('Content-Type: application/json; charset=utf-8');
         }
-        if ($response_type == 'tsv')
-        {
+        if ($response_type == 'tsv') {
             header('Content-Type: text/tsv; charset=utf-8');
             header('Content-Disposition: attachment;filename="data.tsv"');
         }
-        foreach ($response_list as $repertoire) {            
-
+        foreach ($response_list as $repertoire) {
             $return_array = [];
             foreach ($repertoire as $return_key => $return_element) {
-                if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') 
-                {
+                if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
 
-                    if ($response_type == 'tsv')
-                    {
+                    if ($response_type == 'tsv') {
                         // mongodb BSON array needs to be serialized or it can't be used in TSV output
-                        if (in_array($return_key, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) 
+                        if (in_array($return_key, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name])
                             && $return_element != null && ! is_string($return_element)) {
-                                $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
-                            }
+                            $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
+                        }
                     }
                 }
             }
             // first time through, if we have tsv, dump the return array's keys as headers
-            if ($headers && $response_type == 'tsv')
-            {
+            if ($headers && $response_type == 'tsv') {
                 echo implode(array_keys($return_array), chr(9)) . "\n";
                 $headers = false;
             }
-            if ($response_type == 'tsv')
-            {
+            if ($response_type == 'tsv') {
                 echo implode($return_array, chr(9)) . "\n";
+            } else {
+                echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             }
-            else
-            {
-               echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-           }
         }
     }
 
