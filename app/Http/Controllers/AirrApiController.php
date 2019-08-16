@@ -39,8 +39,8 @@ class AirrApiController extends Controller
 
         $response = [];
         $l = Sample::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
-        if ($l == null) {
-            $response['succes'] = 'false';
+        if ($l == 'error') {
+            $response['success'] = 'false';
         } else {
             $response['Info']['Title'] = 'AIRR Data Commons API';
             $response['Info']['description'] = 'API response for repertoire query';
@@ -86,7 +86,7 @@ class AirrApiController extends Controller
         $response = [];
         $l = Sequence::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
         if ($l == 'error') {
-            $response['succes'] = 'false';
+            $response['success'] = 'false';
             $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
             return response($response)->header('Content-Type', 'application/json; charset=utf-8');

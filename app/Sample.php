@@ -40,7 +40,7 @@ class Sample extends Model
         if (isset($params['filters']) && $params['filters'] != '') {
             $query_string = AirrUtils::processAirrFilter($params['filters'], $airr_names, $airr_types);
             if ($query_string == null) {
-                return;
+                return 'error';
             }
         }
         // if fields parameter is set, we only want to return the fields specified
