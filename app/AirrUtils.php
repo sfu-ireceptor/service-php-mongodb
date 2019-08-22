@@ -121,13 +121,13 @@ class AirrUtils extends Model
                     return;
                 }
             case 'in':
-                if ($field != '' && $value != '' && is_array($value)) {
+                if ($field != '' && $value != '') {
                     return '{"' . $field . '":{"$in":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'exclude':
-                if ($field != '' && $value != '' && is_array($value)) {
+                if ($field != '' && $value != '') {
                     return '{"' . $field . '":{"$nin":' . $value . '}}';
                 } else {
                     return;
