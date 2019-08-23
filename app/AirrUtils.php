@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AirrUtils extends Model
 {
-    public static function processAirrFilter($f, $service_to_airr_array, $airr_types_array)
+    public static function processAirrFilter($f, $airr_to_service_array, $airr_types_array)
     {
         //method to process an AIRR API filter object
         //  based on design by Scott Christley
@@ -27,9 +27,16 @@ class AirrUtils extends Model
 
         if (isset($content['field']) && $content['field'] != '') {
             // fields are of form sample.subject.subject_id
-            //   we only want the last part, as it will define the field in database
-            $field_array = explode('.', $content['field']);
-            $field = end($field_array);
+            //   use the mapping from airr terms to repository terms to create queries
+            if (isset($airr_to_service_array[$content['field']]) && $airr_to_service_array[$content['field']] !=null 
+                && $airr_to_service_array[$content['field']] != '')
+            {
+                $field = $airr_to_service_array[$content['field']];
+            }
+            else 
+            {
+                return null;
+            }
 
             // check if the field provided exists in the mapping file
             if (isset($airr_types_array[$field])) {
@@ -136,7 +143,7 @@ class AirrUtils extends Model
                 if (is_array($content) && count($content) > 1) {
                     $exp_list = [];
                     foreach ($content as $content_chunk) {
-                        $exp = self::processAirrFilter($content_chunk, $service_to_airr_array, $airr_types_array);
+                        $exp = self::processAirrFilter($content_chunk, $airr_to_service_array, $airr_types_array);
                         if (isset($exp)) {
                             array_push($exp_list, $exp);
                         } else {
@@ -152,7 +159,7 @@ class AirrUtils extends Model
                 if (is_array($content) && count($content) > 1) {
                     $exp_list = [];
                     foreach ($content as $content_chunk) {
-                        $exp = self::processAirrFilter($content_chunk, $service_to_airr_array, $airr_types_array);
+                        $exp = self::processAirrFilter($content_chunk, $airr_to_service_array, $airr_types_array);
                         if (isset($exp)) {
                             array_push($exp_list, $exp);
                         } else {
