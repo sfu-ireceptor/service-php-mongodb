@@ -28,7 +28,7 @@ class Sample extends Model
         //function that processes AIRR API request and returns a response
         //  currently the response is iReceptor API response
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
-        $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $airr_names = FileMapping::createMappingArray('airr_full_path', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
         $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
         $airr_types = FileMapping::createMappingArray('airr', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire']]);
 

@@ -110,7 +110,6 @@ class AirrApiController extends Controller
             if (isset($params['format']) && $params['format'] != '') {
                 $response_type = strtolower($params['format']);
             }
-
             if (isset($params['facets'])) {
                 //facets have different formatting requirements
                 $response['result'] = Sequence::airrRearrangementFacetsResponse($l);
@@ -123,7 +122,7 @@ class AirrApiController extends Controller
         }
         //$return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        //return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
     }
 
     public function airr_rearrangement_single($rearrangement_id)
