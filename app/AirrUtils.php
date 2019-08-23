@@ -28,14 +28,11 @@ class AirrUtils extends Model
         if (isset($content['field']) && $content['field'] != '') {
             // fields are of form sample.subject.subject_id
             //   use the mapping from airr terms to repository terms to create queries
-            if (isset($airr_to_service_array[$content['field']]) && $airr_to_service_array[$content['field']] !=null 
-                && $airr_to_service_array[$content['field']] != '')
-            {
+            if (isset($airr_to_service_array[$content['field']]) && $airr_to_service_array[$content['field']] != null
+                && $airr_to_service_array[$content['field']] != '') {
                 $field = $airr_to_service_array[$content['field']];
-            }
-            else 
-            {
-                return null;
+            } else {
+                return;
             }
 
             // check if the field provided exists in the mapping file
