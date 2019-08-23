@@ -74,7 +74,12 @@ class AirrApiController extends Controller
     public function airr_repertoire_single($repertoire_id)
     {
         $repertoire = Sample::airrRepertoireSingle($repertoire_id);
-        $response = Sample::airrRepertoireResponseSingle($repertoire);
+        $response['Info']['Title'] = 'AIRR Data Commons API';
+        $response['Info']['description'] = 'API response for repertoire query';
+        $response['Info']['version'] = 1.3;
+        $response['Info']['contact']['name'] = 'AIRR Community';
+        $response['Info']['contact']['url'] = 'https://github.com/airr-community';
+        $response['Repertoire']= Sample::airrRepertoireResponseSingle($repertoire);
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
@@ -110,7 +115,13 @@ class AirrApiController extends Controller
             }
             if (isset($params['facets'])) {
                 //facets have different formatting requirements
+                $response['Info']['Title'] = 'AIRR Data Commons API';
+                $response['Info']['description'] = 'API response for repertoire query';
+                $response['Info']['version'] = 1.3;
+                $response['Info']['contact']['name'] = 'AIRR Community';
+                $response['Info']['contact']['url'] = 'https://github.com/airr-community';
                 $response['result'] = Sequence::airrRearrangementFacetsResponse($l);
+                return response($response)->header('Content-Type', 'application/json; charset=utf-8');
             } else {
                 //regular response, needs to be formatted as per AIRR standard, as
                 //  iReceptor repertoires are flat collections in MongoDB
@@ -120,15 +131,18 @@ class AirrApiController extends Controller
         }
         //$return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
     }
 
     public function airr_rearrangement_single($rearrangement_id)
     {
         $rearrangement = Sequence::airrRearrangementSingle($rearrangement_id);
-        $response = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
-
+        $response['Info']['Title'] = 'AIRR Data Commons API';
+        $response['Info']['description'] = 'API response for repertoire query';
+        $response['Info']['version'] = 1.3;
+        $response['Info']['contact']['name'] = 'AIRR Community';
+        $response['Info']['contact']['url'] = 'https://github.com/airr-community';
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $response['Rearrangement'] = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
 
         return response($response)->header('Content-Type', 'application/json; charset=utf-8');
     }

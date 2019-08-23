@@ -867,6 +867,14 @@ class Sequence extends Model
         $headers = true;
         if ($response_type == 'json') {
             header('Content-Type: application/json; charset=utf-8');
+            echo "{Info:";
+            $response['Title'] = 'AIRR Data Commons API';
+            $response['description'] = 'API response for repertoire query';
+            $response['version'] = 1.3;
+            $response['contact']['name'] = 'AIRR Community';
+            $response['contact']['url'] = 'https://github.com/airr-community';
+            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            echo ", Rearrangement:[\n";
         }
         if ($response_type == 'tsv') {
             header('Content-Type: text/tsv; charset=utf-8');
@@ -897,6 +905,9 @@ class Sequence extends Model
             } else {
                 echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             }
+        }
+        if ($response_type == 'json') {
+            echo "]}\n";
         }
     }
 

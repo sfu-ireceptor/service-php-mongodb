@@ -162,7 +162,7 @@ class Sample extends Model
             $return_list[] = $return_array;
         }
 
-        return $return_list[0];
+        return $return_list;
     }
 
     public static function airrRepertoireFacetsResponse($response_list)
