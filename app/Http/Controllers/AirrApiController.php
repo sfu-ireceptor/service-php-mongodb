@@ -43,14 +43,14 @@ class AirrApiController extends Controller
         {
             //something went bad and Laravel cound't parse the parameters as JSON
             $response['sucess'] = false;
-            $response['message'] = "Unable to parse JSON parameters";
-            $response['error'] = json_last_error_msg();
-            return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+            $response['message'] = "Unable to parse JSON parameters:". json_last_error_msg();
+            return response($response, 400)->header('Content-Type', 'application/json; charset=utf-8');
         }
         $l = Sample::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
         if ($l == 'error') {
             $response['success'] = false;
             $response['message'] = "Unable to parse the filter.";
+            return response($response, 400)->header('Content-Type', 'application/json; charset=utf-8');
         } else {
             $response['Info']['Title'] = 'AIRR Data Commons API';
             $response['Info']['description'] = 'API response for repertoire query';
@@ -93,9 +93,9 @@ class AirrApiController extends Controller
         {
             //something went bad and Laravel cound't parse the parameters as JSON
             $response['sucess'] = false;
-            $response['message'] = "Unable to parse JSON parameters";
-            $response['error'] = json_last_error_msg();
-            return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+            $response['message'] = "Unable to parse the filter.";
+            $response['message'] = "Unable to parse JSON parameters:". json_last_error_msg();
+            return response($response, 400)->header('Content-Type', 'application/json; charset=utf-8');
         }
 
         $response = [];
@@ -103,8 +103,7 @@ class AirrApiController extends Controller
         if ($l == 'error') {
             $response['success'] = 'false';
             $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-
-            return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+            return response($response, 400)->header('Content-Type', 'application/json; charset=utf-8');
         } else {
             //check what kind of response we have, default to JSON
             $response_type = 'json';
