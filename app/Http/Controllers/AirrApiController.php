@@ -79,7 +79,7 @@ class AirrApiController extends Controller
         $response['Info']['version'] = 1.3;
         $response['Info']['contact']['name'] = 'AIRR Community';
         $response['Info']['contact']['url'] = 'https://github.com/airr-community';
-        $response['Repertoire']= Sample::airrRepertoireResponseSingle($repertoire);
+        $response['Repertoire'] = Sample::airrRepertoireResponseSingle($repertoire);
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
@@ -121,6 +121,7 @@ class AirrApiController extends Controller
                 $response['Info']['contact']['name'] = 'AIRR Community';
                 $response['Info']['contact']['url'] = 'https://github.com/airr-community';
                 $response['result'] = Sequence::airrRearrangementFacetsResponse($l);
+
                 return response($response)->header('Content-Type', 'application/json; charset=utf-8');
             } else {
                 //regular response, needs to be formatted as per AIRR standard, as
@@ -130,7 +131,6 @@ class AirrApiController extends Controller
             }
         }
         //$return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-
     }
 
     public function airr_rearrangement_single($rearrangement_id)
