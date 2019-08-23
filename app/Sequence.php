@@ -800,7 +800,7 @@ class Sequence extends Model
         $fields_to_retrieve = [];
         $query = new self();
         // if we have filters, process them
-        if (isset($params['filters']) && $params['filters'] != '') {
+        if (isset($params['filters']) && $params['filters'] != '' && !empty($params['filters'])) {
             $query_string = AirrUtils::processAirrFilter($params['filters'], $airr_names, $airr_types);
             if ($query_string == null) {
                 //something went wrong
