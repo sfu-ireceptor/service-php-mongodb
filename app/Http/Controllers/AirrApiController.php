@@ -39,18 +39,18 @@ class AirrApiController extends Controller
         $response = [];
         //if (! isset($params) ) {
         $error = json_last_error();
-        if ($error)
-        {
+        if ($error) {
             //something went bad and Laravel cound't parse the parameters as JSON
             $response['sucess'] = false;
-            $response['message'] = "Unable to parse JSON parameters";
+            $response['message'] = 'Unable to parse JSON parameters';
             $response['error'] = json_last_error_msg();
+
             return response($response)->header('Content-Type', 'application/json; charset=utf-8');
         }
         $l = Sample::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
         if ($l == 'error') {
             $response['success'] = false;
-            $response['message'] = "Unable to parse the filter.";
+            $response['message'] = 'Unable to parse the filter.';
         } else {
             $response['Info']['Title'] = 'AIRR Data Commons API';
             $response['Info']['description'] = 'API response for repertoire query';
@@ -89,12 +89,12 @@ class AirrApiController extends Controller
         $params = $request->json()->all();
 
         $error = json_last_error();
-        if ($error)
-        {
+        if ($error) {
             //something went bad and Laravel cound't parse the parameters as JSON
             $response['sucess'] = false;
-            $response['message'] = "Unable to parse JSON parameters";
+            $response['message'] = 'Unable to parse JSON parameters';
             $response['error'] = json_last_error_msg();
+
             return response($response)->header('Content-Type', 'application/json; charset=utf-8');
         }
 
