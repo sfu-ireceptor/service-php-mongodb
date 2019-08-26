@@ -36,8 +36,8 @@ class AirrUtils extends Model
             }
 
             // check if the field provided exists in the mapping file
-            if (isset($airr_types_array[$field])) {
-                $type = $airr_types_array[$field];
+            if (isset($airr_types_array[$content['field']])) {
+                $type = $airr_types_array[$content['field']];
             } else {
                 return;
             }
@@ -60,10 +60,27 @@ class AirrUtils extends Model
                     break;
                 case 'string':
                 default:
+                    // special case: repertoire_id is string in API but int
+                    //  in iReceptor database
                     if (is_array($content['value'])) {
-                        $value = json_encode($content['value']);
+                        if ($content['field'] == 'repertoire_id')
+                        {
+                            $value = json_encode(array_map('intval', $content['value']));
+                        }
+                        else
+                        {
+
+                            $value = json_encode($content['value']);
+                        }
                     } else {
-                        $value = '"' . $content['value'] . '"';
+                        if ($content['field'] == 'repertoire_id')
+                        {
+                            $value = '"' . (int)$content['value'] . '"';
+                        }
+                        else
+                        {
+                            $value = '"' . $content['value'] . '"';
+                        }
                     }
                     break;
             }
