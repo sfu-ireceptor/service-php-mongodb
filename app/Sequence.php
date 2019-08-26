@@ -867,7 +867,7 @@ class Sequence extends Model
         $headers = true;
         if ($response_type == 'json') {
             header('Content-Type: application/json; charset=utf-8');
-            echo "{Info:";
+            echo '{Info:';
             $response['Title'] = 'AIRR Data Commons API';
             $response['description'] = 'API response for repertoire query';
             $response['version'] = 1.3;
