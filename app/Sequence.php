@@ -906,13 +906,10 @@ class Sequence extends Model
             if ($response_type == 'tsv') {
                 echo implode($return_array, chr(9)) . "\n";
             } else {
-                if ($first)
-                {
-                    $first=false;
-                }
-                else
-                {
-                    echo ",";
+                if ($first) {
+                    $first = false;
+                } else {
+                    echo ',';
                 }
                 echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             }
