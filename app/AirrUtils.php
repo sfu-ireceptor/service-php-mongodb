@@ -63,22 +63,15 @@ class AirrUtils extends Model
                     // special case: repertoire_id is string in API but int
                     //  in iReceptor database
                     if (is_array($content['value'])) {
-                        if ($content['field'] == 'repertoire_id')
-                        {
+                        if ($content['field'] == 'repertoire_id') {
                             $value = json_encode(array_map('intval', $content['value']));
-                        }
-                        else
-                        {
-
+                        } else {
                             $value = json_encode($content['value']);
                         }
                     } else {
-                        if ($content['field'] == 'repertoire_id')
-                        {
-                            $value = '"' . (int)$content['value'] . '"';
-                        }
-                        else
-                        {
+                        if ($content['field'] == 'repertoire_id') {
+                            $value = '"' . (int) $content['value'] . '"';
+                        } else {
                             $value = '"' . $content['value'] . '"';
                         }
                     }

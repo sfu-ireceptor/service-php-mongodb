@@ -102,7 +102,7 @@ class AirrApiController extends Controller
 
         $response = [];
         //check if we can optimize the ADC API query for our repository
-        //  if so, go down optimizied query path 
+        //  if so, go down optimizied query path
         /*if (AirrUtils::queryOptimizable($params, JSON_OBJECT_AS_ARRAY))
         {
             Sequence::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
