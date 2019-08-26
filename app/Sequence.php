@@ -793,7 +793,7 @@ class Sequence extends Model
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_names = FileMapping::createMappingArray('airr_full_path', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_types = FileMapping::createMappingArray('airr', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_types = FileMapping::createMappingArray('airr_full_path', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
 
         $query_string = '{}';
         $options = [];
@@ -867,19 +867,22 @@ class Sequence extends Model
         $headers = true;
         if ($response_type == 'json') {
             header('Content-Type: application/json; charset=utf-8');
-            echo '{Info:';
+            echo '{"Info":';
             $response['Title'] = 'AIRR Data Commons API';
             $response['description'] = 'API response for repertoire query';
             $response['version'] = 1.3;
             $response['contact']['name'] = 'AIRR Community';
             $response['contact']['url'] = 'https://github.com/airr-community';
             echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-            echo ", Rearrangement:[\n";
+            echo ', "Rearrangement":[\n';
         }
         if ($response_type == 'tsv') {
             header('Content-Type: text/tsv; charset=utf-8');
             header('Content-Disposition: attachment;filename="data.tsv"');
         }
+        //have to put commas between JSON elements, but not on the last one, so figure out if this is the first time through
+
+        $first = true;
         foreach ($response_list as $repertoire) {
             $return_array = [];
             foreach ($repertoire as $return_key => $return_element) {
@@ -903,6 +906,14 @@ class Sequence extends Model
             if ($response_type == 'tsv') {
                 echo implode($return_array, chr(9)) . "\n";
             } else {
+                if ($first)
+                {
+                    $first=false;
+                }
+                else
+                {
+                    echo ",";
+                }
                 echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             }
         }
