@@ -874,7 +874,8 @@ class Sequence extends Model
             $response['contact']['name'] = 'AIRR Community';
             $response['contact']['url'] = 'https://github.com/airr-community';
             echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-            echo ', "Rearrangement":[\n';
+            echo ', "Rearrangement":[';
+            echo "\n";
         }
         if ($response_type == 'tsv') {
             header('Content-Type: text/tsv; charset=utf-8');
