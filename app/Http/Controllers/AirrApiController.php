@@ -101,6 +101,12 @@ class AirrApiController extends Controller
         }
 
         $response = [];
+        //check if we can optimize the ADC API query for our repository
+        //  if so, go down optimizied query path 
+        /*if (AirrUtils::queryOptimizable($params, JSON_OBJECT_AS_ARRAY))
+        {
+            Sequence::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
+        }*/
         $l = Sequence::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
         if ($l == 'error') {
             $response['message'] = 'Unable to parse the filter.';
@@ -130,7 +136,6 @@ class AirrApiController extends Controller
                 Sequence::airrRearrangementResponse($l, $response_type);
             }
         }
-        //$return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
 
     public function airr_rearrangement_single($rearrangement_id)
