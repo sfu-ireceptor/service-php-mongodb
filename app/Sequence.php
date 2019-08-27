@@ -890,13 +890,13 @@ class Sequence extends Model
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
 
-                    if ($response_type == 'tsv') {
-                        // mongodb BSON array needs to be serialized or it can't be used in TSV output
-                        if (in_array($return_key, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name])
-                            && $return_element != null && ! is_string($return_element)) {
-                            $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
-                        }
+                    // mongodb BSON array needs to be serialized or it can't be used in TSV output
+                    //  we also want to return a string, not an array, in JSON response
+                    if (in_array($return_key, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name])
+                         && $return_element != null && ! is_string($return_element)) {
+                          $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
                     }
+                    
                 }
             }
             // first time through, if we have tsv, dump the return array's keys as headers
