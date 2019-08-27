@@ -126,7 +126,7 @@ class AirrApiController extends Controller
                 $response['Info']['version'] = 1.3;
                 $response['Info']['contact']['name'] = 'AIRR Community';
                 $response['Info']['contact']['url'] = 'https://github.com/airr-community';
-                $response['result'] = Sequence::airrRearrangementFacetsResponse($l);
+                $response['Rearrangement'] = Sequence::airrRearrangementFacetsResponse($l);
 
                 return response($response)->header('Content-Type', 'application/json; charset=utf-8');
             } else {
