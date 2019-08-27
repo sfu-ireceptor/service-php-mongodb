@@ -894,9 +894,8 @@ class Sequence extends Model
                     //  we also want to return a string, not an array, in JSON response
                     if (in_array($return_key, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name])
                          && $return_element != null && ! is_string($return_element)) {
-                          $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
+                        $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
                     }
-                    
                 }
             }
             // first time through, if we have tsv, dump the return array's keys as headers
