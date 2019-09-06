@@ -510,6 +510,7 @@ class Sequence extends Model
                 return -1;
             }
         }
+	Log::error("Total time to aggregate was $total_time ");
 
         return $psa_list;
     }
@@ -528,6 +529,7 @@ class Sequence extends Model
         $result = [];
         $return_array = [];
         $result_array = [];
+	$start_time = microtime(true);
         foreach ($sample_list as $sample) {
             $needed_results = $num_results - $current_results;
             if ($needed_results < 1) {
@@ -602,6 +604,8 @@ class Sequence extends Model
             $return_array[] = $return_row;
         }
 
+	$total_time = (microtime(true) - $start_time)*1000;
+	Log::error("Total time to send 25 results is $total_time");
         return $return_array;
     }
 
