@@ -511,6 +511,11 @@ class Sequence extends Model
             }
         }
         Log::error("Total time to aggregate was $total_time ");
+	if (isset($sequence_match))
+	{
+		$output_query_string = json_encode($sequence_match);
+		Log::error("Query was $output_query_string");
+	}
 
         return $psa_list;
     }
