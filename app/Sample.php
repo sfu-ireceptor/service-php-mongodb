@@ -117,6 +117,7 @@ class Sample extends Model
 
                     //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
                     //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
+                    $fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
                     $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
                     array_set($return_array, $fully_qualified_path, $return_element);
                 }
@@ -154,6 +155,7 @@ class Sample extends Model
 
                     //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
                     //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
+                    $fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
                     $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
                     array_set($return_array, $fully_qualified_path, $return_element);
                 }
