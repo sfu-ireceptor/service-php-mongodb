@@ -69,7 +69,7 @@ class Sample extends Model
         if (isset($params['facets']) && $params['facets'] != '') {
             $aggOptions = [];
             $aggOptions[0]['$match'] = json_decode($query_string);
-            $aggOptions[1]['$group'] = ['_id'=> [$airr_to_repository[$params['facets']] => '$' . $airr_to_repository[$params['facets']]]];
+            $aggOptions[1]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
             $aggOptions[1]['$group']['count'] = ['$sum' => 1];
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
