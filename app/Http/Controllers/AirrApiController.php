@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Sample;
 use App\Sequence;
-use Illuminate\Http\Request;
 use App\AirrUtils;
+use Illuminate\Http\Request;
 
 class AirrApiController extends Controller
 {
@@ -109,7 +109,7 @@ class AirrApiController extends Controller
             Sequence::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
         }*/
         $l = Sequence::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
- 
+
         if ($l == 'error') {
             $response['message'] = 'Unable to parse the filter.';
             $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
@@ -138,7 +138,6 @@ class AirrApiController extends Controller
                 Sequence::airrRearrangementResponse($l, $response_type);
             }
         }
-        
     }
 
     public function airr_rearrangement_single($rearrangement_id)
