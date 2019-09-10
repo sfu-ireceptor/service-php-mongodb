@@ -833,12 +833,12 @@ class Sequence extends Model
         if (isset($params['facets']) && $params['facets'] != '') {
             $aggOptions = [];
             $aggOptions[0]['$match'] = json_decode($query_string);
-            $aggOptions[1]['$group'] = ['_id'=> [$airr_to_repository[$params['facets']] => '$' . $airr_to_repository[$params['facets']]]];
+            $aggOptions[1]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
             $aggOptions[1]['$group']['count'] = ['$sum' => 1];
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
         } else {
-            $list = DB::collection($query->getCollection())->raw()->find(json_decode($query_string, true), $options);
+            $list = DB::collection($query->getCollection())->raw()->find(json_decode(preg_replace("/\\\\/", "\\\\\\\\", $query_string), true), $options);
         }
 
         //return $list->toArray();
@@ -952,5 +952,108 @@ class Sequence extends Model
         }
 
         return $result;
+    }
+
+    public static function airrOptimizedRearrangementRequest($request)
+    {
+        //method to run an optimized MongoDB query on the filters that can support it
+        //  a single '=' search on an indexed field, a search on indexed field and 
+        //  repertoire id, or an aggregation on prior two cases on repertoire_id
+
+        $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+
+        $query = new self();
+        if (isset($filter['ir_project_sample_id_list'])) {
+            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
+        }
+        $filter = "";
+        $facets = "";
+        if (isset ($request['filters']) && sizeof($request['filters'])> 0)
+        {
+            $filter = $request['filters'];
+        }
+        if (isset ($request['facets']))
+        {
+            $facets = $request['facets'];
+        }
+
+        //if we have no filter except repertoire_id, and facets are on repertoire_id, we don't need to go to rearrangement at all
+        // we can just pull the cached value from our repertoire collection 
+        if ($facets == "repertoire_id" && ($filter=="" || 
+            ($filter["op"]!="and" && $filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id'])))
+        {
+            $sample_id_query = new Sample();
+            if ($filter != "")
+            {
+                if (is_array ($filter['content']['value']))
+                {
+                    $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['content']['value']));
+                }
+                else
+                {
+                    $sample_id_query = $sample_id_query->where('_id', "=", (int)$filter['content']['value']);
+                }
+            }
+            $result = $sample_id_query->get();
+            $sample_id_list = Array();
+
+            foreach ($result as $repertoire) {
+                $return[$service_to_airr_mapping["ir_project_sample_id"]] = $repertoire['_id'];
+                $return['count'] = $repertoire["ir_sequence_count"];
+                $sample_id_list[] = $return;
+            }
+            var_dump($sample_id_list);die();
+        }
+
+         // if it's a facets query, we will have to do a count on repertoire_ids
+        if ($facets =="repertoire_id")
+        {
+            $sample_id_list = Array();
+            $query_params = Array();
+            // if our top-level op is 'and', that means we have a list of repertoire_ids and another query parameter
+            //   (otherwise, the query would not be optimizable)
+            if ($filter['op'] == 'and')
+            {
+                foreach ($filter['content'] as $filter_piece)
+                {
+                    // repertoire query goes into sample_id_list
+                    if ($filter_piece['content']['field'] == $service_to_airr_mapping['ir_project_sample_id'])
+                    {
+                        if (is_array($filter_piece['content']['value']))
+                        {
+                            $sample_id_list = array_map('intval', $filter_piece['content']['value']);
+                        }
+                        else
+                        {
+                            $sample_id_list[] = intval($filter_piece['content']['value']);
+                        }
+                    }
+                    else
+                    {
+                        $query_params[$filter_piece['content']['field']] = $filter_piece['content']['value'];
+                    }
+                }
+            }
+            else
+            {
+                //we have a single query parameter, either repertoire id or filter
+                if ($filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id'])
+                {
+                    if (is_array($filter['content']['value']))
+                    {
+                        $sample_id_list = array_map('intval', $filter['content']['value']);
+                    }
+                    else
+                    {
+                        $sample_id_list[] = intval($filter['content']['value']);
+                    }
+                }
+                else
+                {
+                    $query_params[$filter['content']['field']] = $filter['content']['value'];
+                }
+            }
+        } 
+
     }
 }

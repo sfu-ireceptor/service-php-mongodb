@@ -118,7 +118,7 @@ class AirrUtils extends Model
                 }
             case 'contains':
                 if ($field != '' && $value != '') {
-                    return '{"' . $field . '":{"$regex":' . $value . ',"$options":"i"}}';
+                    return '{"' . $field . '":{"$regex":' . preg_quote($value) . ',"$options":"i"}}';
                 } else {
                     return;
                 }
