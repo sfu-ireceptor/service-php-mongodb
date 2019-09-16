@@ -68,13 +68,13 @@ class Sample extends Model
         //if facets is set we want to aggregate by that fields using the sum operation
         if (isset($params['facets']) && $params['facets'] != '') {
             $aggOptions = [];
-            $aggOptions[0]['$match'] = json_decode($query_string);
+            $aggOptions[0]['$match'] = json_decode(preg_replace('/\\\\/', '\\\\\\\\',$query_string));
             $aggOptions[1]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
             $aggOptions[1]['$group']['count'] = ['$sum' => 1];
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
         } else {
-            $list = DB::collection($query->getCollection())->raw()->find(json_decode($query_string, true), $options);
+            $list = DB::collection($query->getCollection())->raw()->find(json_decode(preg_replace('/\\\\/', '\\\\\\\\',$query_string), true), $options);
         }
 
         return $list->toArray();
