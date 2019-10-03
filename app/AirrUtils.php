@@ -217,10 +217,8 @@ class AirrUtils extends Model
 
             if (isset($query['facets'])) {
                 $facets = $query['facets'];
-            }
-            else
-            {
-                //for now, let's only optimize facets queries. the count() vs aggregate() is about a 
+            } else {
+                //for now, let's only optimize facets queries. the count() vs aggregate() is about a
                 //  factor of 10 in performance, whereas downloading tsv/json data would do index scan
                 //  either way
                 return false;
