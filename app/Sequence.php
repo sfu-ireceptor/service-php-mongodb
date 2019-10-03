@@ -1018,15 +1018,12 @@ class Sequence extends Model
                             $sample_id_list[] = intval($filter_piece['content']['value']);
                         }
                     } else {
-                                // if we have junction_aa, we do a query on substring field instead
-                                if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa'])
-                                {
-                                    $db_filters[$service_to_db_mapping['substring']] = $filter_piece['content']['value'];
-                                }
-                                else
-                                {
-                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
-                                }
+                        // if we have junction_aa, we do a query on substring field instead
+                        if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
+                            $db_filters[$service_to_db_mapping['substring']] = $filter_piece['content']['value'];
+                        } else {
+                            $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
+                        }
                     }
                 }
             } else {
@@ -1039,12 +1036,9 @@ class Sequence extends Model
                     }
                 } else {
                     // if we have junction_aa, we do a query on substring field instead
-                    if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa'])
-                    {
+                    if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                         $db_filters[$service_to_db_mapping['substring']] = $filter['content']['value'];
-                    }
-                    else
-                    {
+                    } else {
                         $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
                     }
                 }
