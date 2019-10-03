@@ -833,8 +833,9 @@ class Sequence extends Model
         if (isset($params['facets']) && $params['facets'] != '') {
             $aggOptions = [];
             $aggOptions[0]['$match'] = json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string));
-            $aggOptions[1]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
-            $aggOptions[1]['$group']['count'] = ['$sum' => 1];
+            $aggOptions[1]['$unwind'] = '$'.$airr_names[$params['facets']];
+            $aggOptions[2]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
+            $aggOptions[2]['$group']['count'] = ['$sum' => 1];
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
         } else {
@@ -923,7 +924,6 @@ class Sequence extends Model
     {
         $return_array = [];
         $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         foreach ($response_list as $response) {
@@ -961,7 +961,8 @@ class Sequence extends Model
         //  repertoire id, or an aggregation on prior two cases on repertoire_id
 
         $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-
+        $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_to_repository_mapping = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $query = new self();
         if (isset($filter['ir_project_sample_id_list'])) {
             $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
@@ -991,18 +992,20 @@ class Sequence extends Model
             $sample_id_list = [];
 
             foreach ($result as $repertoire) {
-                $return[$service_to_airr_mapping['ir_project_sample_id']] = $repertoire['_id'];
+                $return["_id"][$service_to_db_mapping['ir_project_sample_id']] = $repertoire['_id'];
                 $return['count'] = $repertoire['ir_sequence_count'];
                 $sample_id_list[] = $return;
             }
-            var_dump($sample_id_list);
-            die();
+            return($sample_id_list);
+
         }
 
         // if it's a facets query, we will have to do a count on repertoire_ids
         if ($facets == 'repertoire_id') {
             $sample_id_list = [];
             $query_params = [];
+            $db_filters = [];
+            $return_list = [];
             // if our top-level op is 'and', that means we have a list of repertoire_ids and another query parameter
             //   (otherwise, the query would not be optimizable)
             if ($filter['op'] == 'and') {
@@ -1015,7 +1018,7 @@ class Sequence extends Model
                             $sample_id_list[] = intval($filter_piece['content']['value']);
                         }
                     } else {
-                        $query_params[$filter_piece['content']['field']] = $filter_piece['content']['value'];
+                        $db_filters[$filter_piece['content']['field']] = $filter_piece['content']['value'];
                     }
                 }
             } else {
@@ -1027,9 +1030,22 @@ class Sequence extends Model
                         $sample_id_list[] = intval($filter['content']['value']);
                     }
                 } else {
-                    $query_params[$filter['content']['field']] = $filter['content']['value'];
+                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
                 }
             }
+            foreach ($sample_id_list as $current_sample_id)
+            {
+                $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
+                $total = DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
+                $return["_id"][$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
+                $return['count'] = $total;
+                $return_list[] = $return;
+            }
+            return($return_list);
+
         }
+
+        //it's a data query, either tsv or JSON, run it by repertoire_id and echo the results as a stream
+        
     }
 }
