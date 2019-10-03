@@ -268,7 +268,7 @@ class AirrUtils extends Model
                 foreach ($filters['content'] as $filter) {
                     //first, check if op is '=', 'in' or 'contains'. Anything else we can't do
                     if ($filter['op'] != '=' && $filter['op'] !== 'contains' & $filter['op'] != 'in') {
-                       // echo 'bad op ' . $filter['op'];
+                        // echo 'bad op ' . $filter['op'];
 
                         return false;
                     }
