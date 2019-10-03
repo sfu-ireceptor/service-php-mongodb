@@ -1018,7 +1018,15 @@ class Sequence extends Model
                             $sample_id_list[] = intval($filter_piece['content']['value']);
                         }
                     } else {
-                        $db_filters[$filter_piece['content']['field']] = $filter_piece['content']['value'];
+                                // if we have junction_aa, we do a query on substring field instead
+                                if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa'])
+                                {
+                                    $db_filters[$service_to_db_mapping['substring']] = $filter_piece['content']['value'];
+                                }
+                                else
+                                {
+                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
+                                }
                     }
                 }
             } else {
@@ -1030,7 +1038,15 @@ class Sequence extends Model
                         $sample_id_list[] = intval($filter['content']['value']);
                     }
                 } else {
-                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
+                    // if we have junction_aa, we do a query on substring field instead
+                    if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa'])
+                    {
+                        $db_filters[$service_to_db_mapping['substring']] = $filter['content']['value'];
+                    }
+                    else
+                    {
+                        $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
+                    }
                 }
             }
             foreach ($sample_id_list as $current_sample_id) {

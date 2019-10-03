@@ -225,14 +225,14 @@ class AirrUtils extends Model
             }
             // no filters, no facets - doesn't matter, so go through the regular pipeline
             if (($filters == '' || count($filters) == 0) && $facets == '') {
-                echo 'no filter';
+                //echo 'no filter';
 
                 return false;
             }
 
             //first pass is easiest, any facets query not on repertoire_id will not be optimized
             if ($facets != '' && $facets != 'repertoire_id') {
-                echo 'bad facet ' . $facets;
+                //echo 'bad facet ' . $facets;
 
                 return false;
             }
@@ -244,7 +244,7 @@ class AirrUtils extends Model
 
             //if filter is not 'and', '=', 'contains' or 'in', we can't do it
             if (! in_array($filters['op'], ['and', '=', 'contains', 'in'])) {
-                echo 'bad op ' . $filters['op'];
+                //echo 'bad op ' . $filters['op'];
 
                 return false;
             }
@@ -268,28 +268,28 @@ class AirrUtils extends Model
                 foreach ($filters['content'] as $filter) {
                     //first, check if op is '=', 'in' or 'contains'. Anything else we can't do
                     if ($filter['op'] != '=' && $filter['op'] !== 'contains' & $filter['op'] != 'in') {
-                        echo 'bad op ' . $filter['op'];
+                       // echo 'bad op ' . $filter['op'];
 
                         return false;
                     }
 
                     //can't do anything good if field isn't indexed
                     if (! in_array($filter['content']['field'], $indexed_fields, true)) {
-                        echo 'unindex field ' . $filter['content']['field'];
+                        //echo 'unindex field ' . $filter['content']['field'];
 
                         return false;
                     }
 
                     //we can only do 'contains' on junction_aa
                     if ($filter['op'] == 'contains' && $filter['content']['field'] != $airr_names['junction_aa']) {
-                        echo 'bad contains ' . $filter['content']['field'];
+                        //echo 'bad contains ' . $filter['content']['field'];
 
                         return false;
                     }
 
                     //'in' only works on repertoire_id
                     if ($filter['op'] == 'in' && $filter['content']['field'] != $airr_names['ir_project_sample_id']) {
-                        echo 'bad in on ' . $filter['content']['field'];
+                        //echo 'bad in on ' . $filter['content']['field'];
 
                         return false;
                     }
@@ -298,7 +298,7 @@ class AirrUtils extends Model
                     //  indexed field and repertoir_id
                     if ($filter['op'] == '=') {
                         if ($has_indexed) {
-                            echo 'Attempt to AND multiple fields ' . var_dump($filters);
+                            //echo 'Attempt to AND multiple fields ' . var_dump($filters);
 
                             return false;
                         } else {
@@ -312,7 +312,7 @@ class AirrUtils extends Model
                 return true;
             }
             // shouldn't get here
-            echo 'no return';
+            //echo 'no return';
             die();
 
             return false;
