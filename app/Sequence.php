@@ -833,7 +833,7 @@ class Sequence extends Model
         if (isset($params['facets']) && $params['facets'] != '') {
             $aggOptions = [];
             $aggOptions[0]['$match'] = json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string));
-            $aggOptions[1]['$unwind'] = '$'.$airr_names[$params['facets']];
+            $aggOptions[1]['$unwind'] = '$' . $airr_names[$params['facets']];
             $aggOptions[2]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
             $aggOptions[2]['$group']['count'] = ['$sum' => 1];
 
@@ -992,12 +992,12 @@ class Sequence extends Model
             $sample_id_list = [];
 
             foreach ($result as $repertoire) {
-                $return["_id"][$service_to_db_mapping['ir_project_sample_id']] = $repertoire['_id'];
+                $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = $repertoire['_id'];
                 $return['count'] = $repertoire['ir_sequence_count'];
                 $sample_id_list[] = $return;
             }
-            return($sample_id_list);
 
+            return $sample_id_list;
         }
 
         // if it's a facets query, we will have to do a count on repertoire_ids
@@ -1033,19 +1033,17 @@ class Sequence extends Model
                     $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
                 }
             }
-            foreach ($sample_id_list as $current_sample_id)
-            {
+            foreach ($sample_id_list as $current_sample_id) {
                 $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
                 $total = DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
-                $return["_id"][$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
+                $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
                 $return['count'] = $total;
                 $return_list[] = $return;
             }
-            return($return_list);
 
+            return $return_list;
         }
 
         //it's a data query, either tsv or JSON, run it by repertoire_id and echo the results as a stream
-        
     }
 }
