@@ -791,9 +791,9 @@ class Sequence extends Model
         //function that processes AIRR API request and returns an array of fields matching
         //   the filters, with optional start number and max number of results
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_names = FileMapping::createMappingArray('airr_full_path', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_names = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_types = FileMapping::createMappingArray('airr_full_path', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_types = FileMapping::createMappingArray('airr', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
 
         $query_string = '{}';
         $options = [];
@@ -963,6 +963,8 @@ class Sequence extends Model
         $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_to_repository_mapping = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_types = FileMapping::createMappingArray('airr', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+
         $query = new self();
         if (isset($filter['ir_project_sample_id_list'])) {
             $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
@@ -1020,9 +1022,23 @@ class Sequence extends Model
                     } else {
                         // if we have junction_aa, we do a query on substring field instead
                         if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
-                            $db_filters[$service_to_db_mapping['substring']] = $filter_piece['content']['value'];
+                            $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
                         } else {
-                            $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
+                            switch ($airr_types[$filter_piece['content']['field']]){
+                                case 'integer':
+                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
+                                    break;
+                                case 'string':
+                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (string) $filter_piece['content']['value'];
+                                    break;
+                                case 'boolean':
+                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (bool) $filter_piece['content']['value'];
+                                    break;
+                                default:
+                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
+                                    break;
+                            }
+
                         }
                     }
                 }
@@ -1037,9 +1053,22 @@ class Sequence extends Model
                 } else {
                     // if we have junction_aa, we do a query on substring field instead
                     if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
-                        $db_filters[$service_to_db_mapping['substring']] = $filter['content']['value'];
+                        $db_filters[$service_to_db_mapping['substring']] = (string) $filter['content']['value'];
                     } else {
-                        $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
+                        switch ($airr_types[$filter_piece['content']['field']]){
+                                case 'integer':
+                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
+                                    break;
+                                case 'string':
+                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (string) $filter_piece['content']['value'];
+                                    break;
+                                case 'boolean':
+                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (bool) $filter_piece['content']['value'];
+                                    break;
+                                default:
+                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
+                                    break;
+                            }
                     }
                 }
             }
