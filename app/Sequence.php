@@ -1024,7 +1024,7 @@ class Sequence extends Model
                         if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                             $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
                         } else {
-                            switch ($airr_types[$filter_piece['content']['field']]){
+                            switch ($airr_types[$filter_piece['content']['field']]) {
                                 case 'integer':
                                     $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
                                     break;
@@ -1038,7 +1038,6 @@ class Sequence extends Model
                                     $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
                                     break;
                             }
-
                         }
                     }
                 }
@@ -1055,7 +1054,7 @@ class Sequence extends Model
                     if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                         $db_filters[$service_to_db_mapping['substring']] = (string) $filter['content']['value'];
                     } else {
-                        switch ($airr_types[$filter_piece['content']['field']]){
+                        switch ($airr_types[$filter_piece['content']['field']]) {
                                 case 'integer':
                                     $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
                                     break;
