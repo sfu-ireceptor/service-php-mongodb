@@ -1056,7 +1056,7 @@ class Sequence extends Model
                     $sample_id_list = [];
 
                     foreach ($result as $repertoire) {
-                        $sample_id_list[] = $repertoire["_id"];
+                        $sample_id_list[] = $repertoire['_id'];
                     }
                     // if we have junction_aa, we do a query on substring field instead
                     if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
