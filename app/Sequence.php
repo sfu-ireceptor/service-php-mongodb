@@ -1062,18 +1062,18 @@ class Sequence extends Model
                     if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                         $db_filters[$service_to_db_mapping['substring']] = (string) $filter['content']['value'];
                     } else {
-                        switch ($airr_types[$filter_piece['content']['field']]) {
+                        switch ($airr_types[$filter['content']['field']]) {
                                 case 'integer':
-                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
+                                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (int) $filter['content']['value'];
                                     break;
                                 case 'string':
-                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (string) $filter_piece['content']['value'];
+                                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (string) $filter['content']['value'];
                                     break;
                                 case 'boolean':
-                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (bool) $filter_piece['content']['value'];
+                                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (bool) $filter['content']['value'];
                                     break;
                                 default:
-                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
+                                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
                                     break;
                             }
                     }
