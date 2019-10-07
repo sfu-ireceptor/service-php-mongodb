@@ -1050,6 +1050,16 @@ class Sequence extends Model
                         $sample_id_list[] = intval($filter['content']['value']);
                     }
                 } else {
+                    // we need to get all the possible sample ids to align our filters
+                    $sample_id_query = new Sample();
+                    $result = $sample_id_query->get();
+                    $sample_id_list = [];
+
+                    foreach ($result as $repertoire) {
+                        $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = $repertoire['_id'];
+                        $return['count'] = $repertoire['ir_sequence_count'];
+                        $sample_id_list[] = $return;
+                    }
                     // if we have junction_aa, we do a query on substring field instead
                     if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                         $db_filters[$service_to_db_mapping['substring']] = (string) $filter['content']['value'];
