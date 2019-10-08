@@ -834,8 +834,8 @@ class Sequence extends Model
             $aggOptions = [];
             $aggOptions[0]['$match'] = json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string));
             //$aggOptions[1]['$unwind'] = '$' . $airr_names[$params['facets']];
-            $aggOptions[2]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
-            $aggOptions[2]['$group']['count'] = ['$sum' => 1];
+            $aggOptions[1]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
+            $aggOptions[1]['$group']['count'] = ['$sum' => 1];
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
         } else {
