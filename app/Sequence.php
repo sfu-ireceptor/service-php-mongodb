@@ -833,7 +833,7 @@ class Sequence extends Model
         if (isset($params['facets']) && $params['facets'] != '') {
             $aggOptions = [];
             $aggOptions[0]['$match'] = json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string));
-            $aggOptions[1]['$unwind'] = '$' . $airr_names[$params['facets']];
+            //$aggOptions[1]['$unwind'] = '$' . $airr_names[$params['facets']];
             $aggOptions[2]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
             $aggOptions[2]['$group']['count'] = ['$sum' => 1];
 
