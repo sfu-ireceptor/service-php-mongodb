@@ -11,7 +11,7 @@
 
 		<!-- css -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-		<link href="/css/main.css?v=1" rel="stylesheet">
+		<link href="css/main.css?v=1" rel="stylesheet">
 
 		<!-- IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -24,7 +24,7 @@
 
 		<div class="container">
 			<h1>
-				<img src="/images/ireceptor_logo.png">
+				<img src="images/ireceptor_logo.png">
 				iReceptor Repository
 			</h1>
 
@@ -41,8 +41,8 @@
 
 					<h2>iReceptor API</h2>
 					<ul>
-						<li><a href="/v2/samples">/v2/samples</a></li>
-						<li><a href="/v2/sequences_summary">/v2/sequences_summary</a></li>
+						<li><a href="v2/samples">/v2/samples</a></li>
+						<li><a href="v2/sequences_summary">/v2/sequences_summary</a></li>
 					</ul>
 					<p>For more information about the iReceptor API, visit the <a href="https://github.com/sfu-ireceptor/api">iReceptor API definition</a> on GitHub.</p>
 
