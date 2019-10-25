@@ -82,7 +82,7 @@ class AirrUtils extends Model
                             return;
                         }
                     }
-                    break;                
+                    break;
                 case 'string':
                     // special case: repertoire_id is string in API but int
                     //  in iReceptor database
