@@ -49,16 +49,71 @@ class AirrUtils extends Model
 
         if (isset($content['value']) && $content['value'] != '') {
             switch ($type) {
+                // make sure that type actually matches value or fail
                 case 'integer':
+                    if (is_array($content['value'])) {
+                        $value = json_encode($content['value']);
+                    }
+                    else
+                    {
+                        if (is_int($content['value']))
+                        {
+                            $value = $content['value'];
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    break;
                 case 'number':
+                    if (is_array($content['value'])) {
+                        $value = json_encode($content['value']);
+                    }
+                    else
+                    {
+                        if (is_numeric($content['value']))
+                        {
+                            $value = $content['value'];
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    break;
                 case 'boolean':
                     if (is_array($content['value'])) {
                         $value = json_encode($content['value']);
-                    } else {
-                        $value = $content['value'];
+                    }
+                    else
+                    {
+                        if (is_bool($content['value']))
+                        {
+                            $value = $content['value'];
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                     break;
                 case 'string':
+                    if (is_array($content['value'])) {
+                        $value = json_encode($content['value']);
+                    }
+                    else
+                    {
+                        if (is_string($content['value']))
+                        {
+                            $value = '"'.$content['value'].'"';
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    break;
                 default:
                     // special case: repertoire_id is string in API but int
                     //  in iReceptor database
@@ -69,7 +124,7 @@ class AirrUtils extends Model
                             $value = json_encode($content['value']);
                         }
                     } else {
-                        if ($content['field'] == 'repertoire_id') {
+                        if ($field == 'repertoire_id') {
                             $value = '"' . (int) $content['value'] . '"';
                         } else {
                             $value = '"' . $content['value'] . '"';
@@ -81,67 +136,67 @@ class AirrUtils extends Model
 
         switch ($f['op']) {
             case '=':
-                if ($field != '' && isset($value) && $value != '') {
+                if (isset($field) && $field != '' && isset($value) && $value != '') {
                     return '{"' . $field . '":' . $value . '}';
                 } else {
                     return;
                 }
             case '!=':
-                if ($field != '' && isset($value) && $value != '') {
+                if (isset($field) && $field != '' && isset($value) && $value != '') {
                     return '{"' . $field . '":{"$ne":' . $value . '}}';
                 } else {
                     return;
                 }
             case '<':
-                if ($field != '' && isset($value) && $value != '') {
+                if (isset($field) && $field != '' && isset($value) && $value != '') {
                     return '{"' . $field . '":{"$lt":' . $value . '}}';
                 } else {
                     return;
                 }
             case '>':
-                if ($field != '' && isset($value) && $value != '') {
+                if (isset($field) && $field != '' && isset($value) && $value != '') {
                     return '{"' . $field . '":{"$gt":' . $value . '}}';
                 } else {
                     return;
                 }
             case '<=':
-                if ($field != '' && isset($value) && $value != '') {
+                if (isset($field) && $field != '' && isset($value) && $value != '') {
                     return '{"' . $field . '":{"$lte":' . $value . '}}';
                 } else {
                     return;
                 }
             case '>=':
-                if ($field != '' && isset($value) && $value != '') {
+                if (isset($field) && $field != '' && isset($value) && $value != '') {
                     return '{"' . $field . '":{"$gte":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'contains':
-                if ($field != '' && isset($value) && $value != '') {
+                if (isset($field) && $field != '' && isset($value) && $value != '') {
                     return '{"' . $field . '":{"$regex":' . preg_quote($value) . ',"$options":"i"}}';
                 } else {
                     return;
                 }
             case 'is':
-                if ($field != '') {
+                if (isset($field) && $field != '') {
                     return '{"' . $field . '":{"$exists":"false"}}';
                 } else {
                     return;
                 }
             case 'not':
-                if ($field != '') {
+                if (isset($field) && $field != '') {
                     return '{"' . $field . '":{"$exists":"true"}}';
                 } else {
                     return;
                 }
             case 'in':
-                if ($field != '' && isset($value) && $value != '') {
+                if (isset($field) && $field != '' && isset($value) && $value != '') {
                     return '{"' . $field . '":{"$in":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'exclude':
-                if ($field != '' && isset($value) && $value != '') {
+                if (isset($field) && $field != '' && isset($value) && $value != '') {
                     return '{"' . $field . '":{"$nin":' . $value . '}}';
                 } else {
                     return;
