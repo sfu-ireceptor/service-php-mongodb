@@ -53,15 +53,10 @@ class AirrUtils extends Model
                 case 'integer':
                     if (is_array($content['value'])) {
                         $value = json_encode($content['value']);
-                    }
-                    else
-                    {
-                        if (is_int($content['value']))
-                        {
+                    } else {
+                        if (is_int($content['value'])) {
                             $value = $content['value'];
-                        }
-                        else
-                        {
+                        } else {
                             return;
                         }
                     }
@@ -69,15 +64,10 @@ class AirrUtils extends Model
                 case 'number':
                     if (is_array($content['value'])) {
                         $value = json_encode($content['value']);
-                    }
-                    else
-                    {
-                        if (is_numeric($content['value']))
-                        {
+                    } else {
+                        if (is_numeric($content['value'])) {
                             $value = $content['value'];
-                        }
-                        else
-                        {
+                        } else {
                             return;
                         }
                     }
@@ -85,15 +75,10 @@ class AirrUtils extends Model
                 case 'boolean':
                     if (is_array($content['value'])) {
                         $value = json_encode($content['value']);
-                    }
-                    else
-                    {
-                        if (is_bool($content['value']))
-                        {
+                    } else {
+                        if (is_bool($content['value'])) {
                             $value = $content['value'];
-                        }
-                        else
-                        {
+                        } else {
                             return;
                         }
                     }
@@ -101,15 +86,10 @@ class AirrUtils extends Model
                 case 'string':
                     if (is_array($content['value'])) {
                         $value = json_encode($content['value']);
-                    }
-                    else
-                    {
-                        if (is_string($content['value']))
-                        {
-                            $value = '"'.$content['value'].'"';
-                        }
-                        else
-                        {
+                    } else {
+                        if (is_string($content['value'])) {
+                            $value = '"' . $content['value'] . '"';
+                        } else {
                             return;
                         }
                     }
