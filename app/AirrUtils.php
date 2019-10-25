@@ -82,19 +82,8 @@ class AirrUtils extends Model
                             return;
                         }
                     }
-                    break;
+                    break;                
                 case 'string':
-                    if (is_array($content['value'])) {
-                        $value = json_encode($content['value']);
-                    } else {
-                        if (is_string($content['value'])) {
-                            $value = '"' . $content['value'] . '"';
-                        } else {
-                            return;
-                        }
-                    }
-                    break;
-                default:
                     // special case: repertoire_id is string in API but int
                     //  in iReceptor database
                     if (is_array($content['value'])) {
@@ -110,6 +99,10 @@ class AirrUtils extends Model
                             $value = '"' . $content['value'] . '"';
                         }
                     }
+                    break;
+                default:
+                    //bad data type
+                    return;
                     break;
             }
         }
@@ -235,6 +228,8 @@ class AirrUtils extends Model
 
         //create helper mappings to avoid hard-coding terms
         //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
+
+        return false;
 
         try {
             $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
