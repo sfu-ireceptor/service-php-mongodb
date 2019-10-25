@@ -81,43 +81,43 @@ class AirrUtils extends Model
 
         switch ($f['op']) {
             case '=':
-                if ($field != '' && $value != '') {
+                if ($field != '' &&isset($value) && $value != '') {
                     return '{"' . $field . '":' . $value . '}';
                 } else {
                     return;
                 }
             case '!=':
-                if ($field != '' && $value != '') {
+                if ($field != '' &&isset($value) && $value != '') {
                     return '{"' . $field . '":{"$ne":' . $value . '}}';
                 } else {
                     return;
                 }
             case '<':
-                if ($field != '' && $value != '') {
+                if ($field != '' &&isset($value) && $value != '') {
                     return '{"' . $field . '":{"$lt":' . $value . '}}';
                 } else {
                     return;
                 }
             case '>':
-                if ($field != '' && $value != '') {
+                if ($field != '' &&isset($value) && $value != '') {
                     return '{"' . $field . '":{"$gt":' . $value . '}}';
                 } else {
                     return;
                 }
             case '<=':
-                if ($field != '' && $value != '') {
+                if ($field != '' &&isset($value) && $value != '') {
                     return '{"' . $field . '":{"$lte":' . $value . '}}';
                 } else {
                     return;
                 }
             case '>=':
-                if ($field != '' && $value != '') {
+                if ($field != '' &&isset($value) && $value != '') {
                     return '{"' . $field . '":{"$gte":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'contains':
-                if ($field != '' && $value != '') {
+                if ($field != '' &&isset($value) && $value != '') {
                     return '{"' . $field . '":{"$regex":' . preg_quote($value) . ',"$options":"i"}}';
                 } else {
                     return;
@@ -135,13 +135,13 @@ class AirrUtils extends Model
                     return;
                 }
             case 'in':
-                if ($field != '' && $value != '') {
+                if ($field != '' &&isset($value) && $value != '') {
                     return '{"' . $field . '":{"$in":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'exclude':
-                if ($field != '' && $value != '') {
+                if ($field != '' &&isset($value) && $value != '') {
                     return '{"' . $field . '":{"$nin":' . $value . '}}';
                 } else {
                     return;
@@ -221,7 +221,7 @@ class AirrUtils extends Model
                 //for now, let's only optimize facets queries. the count() vs aggregate() is about a
                 //  factor of 10 in performance, whereas downloading tsv/json data would do index scan
                 //  either way
-                return false;
+                //return false;
             }
             // no filters, no facets - doesn't matter, so go through the regular pipeline
             if (($filters == '' || count($filters) == 0) && $facets == '') {
@@ -319,5 +319,75 @@ class AirrUtils extends Model
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    //if given a filter, map it to appropriate database field, create a MongoDB query,
+    //  separate repertoire ids (if any) into a list and return it for further processing
+    public static function optimizeRearrangementFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters)
+    {
+        // if our top-level op is 'and', that means we have a list of repertoire_ids and another query parameter
+        //   (otherwise, the query would not be optimizable)
+        if ($filter['op'] == 'and') {
+            foreach ($filter['content'] as $filter_piece) {
+                // repertoire query goes into sample_id_list
+                if ($filter_piece['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
+                    if (is_array($filter_piece['content']['value'])) {
+                        $sample_id_list = array_map('intval', $filter_piece['content']['value']);
+                    } else {
+                        $sample_id_list[] = intval($filter_piece['content']['value']);
+                    }
+                } else {
+                    // if we have junction_aa, we do a query on substring field instead
+                    if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
+                        $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
+                    } else {
+                        switch ($airr_types[$filter_piece['content']['field']]) {
+                            case 'integer':
+                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
+                                break;
+                            case 'string':
+                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (string) $filter_piece['content']['value'];
+                                break;
+                            case 'boolean':
+                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (bool) $filter_piece['content']['value'];
+                                break;
+                            default:
+                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
+                                break;
+                        }
+                    }
+                }
+            }
+        } else {
+            //we have a single query parameter, either repertoire id or filter
+            if ($filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
+                if (is_array($filter['content']['value'])) {
+                    $sample_id_list = array_map('intval', $filter['content']['value']);
+                } else {
+                    $sample_id_list[] = intval($filter['content']['value']);
+                }
+            } else {
+                // if we have junction_aa, we do a query on substring field instead
+                if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
+                    $db_filters[$service_to_db_mapping['substring']] = (string) $filter['content']['value'];
+                } else {
+                    switch ($airr_types[$filter['content']['field']]) {
+                            case 'integer':
+                                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (int) $filter['content']['value'];
+                                break;
+                            case 'string':
+                                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (string) $filter['content']['value'];
+                                break;
+                            case 'boolean':
+                                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (bool) $filter['content']['value'];
+                                break;
+                            default:
+                                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
+                                break;
+                        }
+                }
+            }
+        }
+        return;
     }
 }
