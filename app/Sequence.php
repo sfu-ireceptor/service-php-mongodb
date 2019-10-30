@@ -885,9 +885,10 @@ class Sequence extends Model
         //have to put commas between JSON elements, but not on the last one, so figure out if this is the first time through
 
         $first = true;
-        foreach ($response_list as $repertoire) {
+        foreach ($response_list as $rearrangement) {
             $return_array = [];
-            foreach ($repertoire as $return_key => $return_element) {
+
+            foreach ($rearrangement as $return_key => $return_element) {
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
 
@@ -964,6 +965,9 @@ class Sequence extends Model
         $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_to_repository_mapping = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_types = FileMapping::createMappingArray('airr', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $sample_id_list = [];
+        $query_params = [];
+        $db_filters = [];
 
         $query = new self();
         if (isset($filter['ir_project_sample_id_list'])) {
@@ -991,7 +995,6 @@ class Sequence extends Model
                 }
             }
             $result = $sample_id_query->get();
-            $sample_id_list = [];
 
             foreach ($result as $repertoire) {
                 $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = $repertoire['_id'];
@@ -1002,83 +1005,27 @@ class Sequence extends Model
             return $sample_id_list;
         }
 
+        //create a list of repertoire ids we'll be looping over, and a filter we can pass to MongoDB
+        AirrUtils::optimizeRearrangementFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters);
+
+
+        //if we don't have a list of repertoire ids, we will be looping over all the database entries
+        if (sizeof($sample_id_list) == 0)
+        {
+            $sample_id_query = new Sample();
+            $result = $sample_id_query->get();
+            foreach ($result as $repertoire) 
+            {
+                $sample_id_list[] = $repertoire['_id'];
+            }
+        }
         // if it's a facets query, we will have to do a count on repertoire_ids
         if ($facets == 'repertoire_id') {
-            $sample_id_list = [];
-            $query_params = [];
-            $db_filters = [];
             $return_list = [];
-            // if our top-level op is 'and', that means we have a list of repertoire_ids and another query parameter
-            //   (otherwise, the query would not be optimizable)
-            if ($filter['op'] == 'and') {
-                foreach ($filter['content'] as $filter_piece) {
-                    // repertoire query goes into sample_id_list
-                    if ($filter_piece['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
-                        if (is_array($filter_piece['content']['value'])) {
-                            $sample_id_list = array_map('intval', $filter_piece['content']['value']);
-                        } else {
-                            $sample_id_list[] = intval($filter_piece['content']['value']);
-                        }
-                    } else {
-                        // if we have junction_aa, we do a query on substring field instead
-                        if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
-                            $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
-                        } else {
-                            switch ($airr_types[$filter_piece['content']['field']]) {
-                                case 'integer':
-                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
-                                    break;
-                                case 'string':
-                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (string) $filter_piece['content']['value'];
-                                    break;
-                                case 'boolean':
-                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (bool) $filter_piece['content']['value'];
-                                    break;
-                                default:
-                                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
-                                    break;
-                            }
-                        }
-                    }
-                }
-            } else {
-                //we have a single query parameter, either repertoire id or filter
-                if ($filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
-                    if (is_array($filter['content']['value'])) {
-                        $sample_id_list = array_map('intval', $filter['content']['value']);
-                    } else {
-                        $sample_id_list[] = intval($filter['content']['value']);
-                    }
-                } else {
-                    // we need to get all the possible sample ids to align our filters
-                    $sample_id_query = new Sample();
-                    $result = $sample_id_query->get();
-                    $sample_id_list = [];
 
-                    foreach ($result as $repertoire) {
-                        $sample_id_list[] = $repertoire['_id'];
-                    }
-                    // if we have junction_aa, we do a query on substring field instead
-                    if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
-                        $db_filters[$service_to_db_mapping['substring']] = (string) $filter['content']['value'];
-                    } else {
-                        switch ($airr_types[$filter['content']['field']]) {
-                                case 'integer':
-                                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (int) $filter['content']['value'];
-                                    break;
-                                case 'string':
-                                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (string) $filter['content']['value'];
-                                    break;
-                                case 'boolean':
-                                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (bool) $filter['content']['value'];
-                                    break;
-                                default:
-                                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
-                                    break;
-                            }
-                    }
-                }
-            }
+            $count_timeout = $query->getCountTimeout();
+            $query_params['maxTimeMS'] = $count_timeout;
+
             foreach ($sample_id_list as $current_sample_id) {
                 $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
                 $total = DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
@@ -1086,10 +1033,158 @@ class Sequence extends Model
                 $return['count'] = $total;
                 $return_list[] = $return;
             }
-
             return $return_list;
         }
 
         //it's a data query, either tsv or JSON, run it by repertoire_id and echo the results as a stream
+        $start_at = 0;
+        $max_values = 0;
+        $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
+
+        //check what kind of response we have, default to JSON
+        $response_type = 'json';
+        if (isset($request['format']) && $request['format'] != '') {
+            $response_type = strtolower($request['format']);
+        }
+ 
+        // rev_comp and functional field are sometimes stored with annotation values
+        //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
+        //  for those two values here so we don't have to do it on every sequence.
+        // For similar reason, we want a translation of ir_project_sample_id value, which connects
+        //  rearrangement with repertoire
+        $rev_comp_airr_name = array_search('rev_comp', $service_to_airr_mapping);
+        $functional_arr_name = array_search('functional', $service_to_airr_mapping);
+
+        //few other variables we use in other arrays, simply to avoid triple-nested array references
+        // e.g. $psa_list[$sequence_list[$database_fields['ir_project_sample_id']]];
+        $ir_project_sample_id_repository_name = $service_to_db_mapping['ir_project_sample_id'];
+        $v_call_airr_name = array_search('v_call', $service_to_airr_mapping);
+        $j_call_airr_name = array_search('j_call', $service_to_airr_mapping);
+        $d_call_airr_name = array_search('d_call', $service_to_airr_mapping);
+
+        // check if we have a start value or max value. with max, we stop sending data after that many results
+        //  start is a bit iffier - we'll run our query and not output till we have seen that many results, but...
+        //  this may not be consistent accross requests
+        if (isset($request["size"]) && intval($request["size"])> 0)
+        {
+            $max_values = intval($request["size"]);
+        }
+        if (isset($request["from"]) && intval($request["from"])>0)
+        {
+            $start_at = intval($request["from"]);
+        }
+        $fields_to_retrieve = [];
+        $fields_to_display = [];
+        // if fields value is set, we will be using them in projection
+        if (isset($request['fields']) && $request['fields'] != '') {
+            foreach ($request['fields'] as $airr_field_name) {
+                if (isset($airr_to_repository_mapping[$airr_field_name]) && $airr_to_repository_mapping[$airr_field_name] != '') {
+                    $fields_to_retrieve[$airr_to_repository_mapping[$airr_field_name]] = 1;
+                    array_push($fields_to_display, $airr_field_name);
+                }
+            }
+            $query_params['projection'] = $fields_to_retrieve;
+        }
+        //if we didn't have the fields variable, we want to display all the AIRR fields
+        if (sizeof($fields_to_retrieve)==0)
+        {
+            $fields_to_display = array_keys($airr_to_repository_mapping);
+        }
+        $written_results = 0;
+        if ($response_type == 'json') {
+            header('Content-Type: application/json; charset=utf-8');
+            echo '{"Info":';
+            $response['Title'] = 'AIRR Data Commons API';
+            $response['description'] = 'API response for repertoire query';
+            $response['version'] = 1.3;
+            $response['contact']['name'] = 'AIRR Community';
+            $response['contact']['url'] = 'https://github.com/airr-community';
+            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            echo ', "Rearrangement":[';
+            echo "\n";
+        }
+        if ($response_type == 'tsv') {
+            header('Content-Type: text/tsv; charset=utf-8');
+            header('Content-Disposition: attachment;filename="data.tsv"');
+            //output the headers
+            echo implode($fields_to_display, chr(9))."\n";
+
+        }
+        $current_result = 0;
+        $first = true;
+        foreach ($sample_id_list as $current_sample_id) 
+        {
+            $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
+            $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
+            foreach ($result as $row) {
+                    $sequence_list = $row;
+                    $airr_list = [];
+
+                    foreach ($airr_to_repository_mapping as $airr_name => $service_name) {
+                        if (isset($service_name) && isset($service_to_db_mapping[$service_name])) {
+                            if (isset($sequence_list[$service_to_db_mapping[$service_name]])) {
+                                $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
+                                if ($service_name == 'rev_comp') {
+                                    if ($airr_list[$rev_comp_airr_name] == '+') {
+                                        $airr_list[$rev_comp_airr_name] = 'true';
+                                    }
+                                    if ($airr_list[$rev_comp_airr_name] == '-') {
+                                        $airr_list[$rev_comp_airr_name] = 'false';
+                                    }
+                                }
+                                if ($service_name == 'functional') {
+                                    if ($airr_list[$functional_arr_name] == 1) {
+                                        $airr_list[$functional_arr_name] = 'true';
+                                    } elseif ($airr_list[$functional_arr_name] == 0) {
+                                        $airr_list[$functional_arr_name] = 'false';
+                                    }
+                                }
+                            }
+                        } else {
+                            $airr_list[$airr_name] = '';
+                        }
+                    }
+                    
+                    $current_result++;
+                    $new_line = [];
+                    foreach ($fields_to_display as $current_header) {
+                        if (isset($airr_list[$current_header])) {
+                            if (is_array($airr_list[$current_header])) {
+                                $new_line[$current_header] = implode($airr_list[$current_header], ', or');
+                            } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
+                                $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
+                            } else {
+                                $new_line[$current_header] = $airr_list[$current_header];
+                            }
+                        } else {
+                            $new_line[$current_header] = '';
+                        }
+                    }
+                    if ($current_result > $start_at)
+                    {
+                        if ($response_type == "tsv"){
+                            echo implode($new_line, chr(9)) . "\n";
+                        }
+                        else{
+                            if ($first) {
+                                $first = false;
+                            } else {
+                                echo ',';
+                            }
+                            echo json_encode($new_line, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                        }
+                        $written_results ++;
+                    }
+                    if ($max_values>0 && $written_results >= $max_values)
+                    {
+                        break 2;
+                    }
+
+            }  
+        } 
+        if ($response_type == 'json') {
+            echo "]}\n";
+        }
+        exit();
     }
 }

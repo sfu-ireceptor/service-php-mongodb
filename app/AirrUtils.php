@@ -229,7 +229,7 @@ class AirrUtils extends Model
         //create helper mappings to avoid hard-coding terms
         //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
 
-        return false;
+        //return false;
 
         try {
             $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
