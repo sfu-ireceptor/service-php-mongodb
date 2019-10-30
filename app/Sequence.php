@@ -1008,14 +1008,11 @@ class Sequence extends Model
         //create a list of repertoire ids we'll be looping over, and a filter we can pass to MongoDB
         AirrUtils::optimizeRearrangementFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters);
 
-
         //if we don't have a list of repertoire ids, we will be looping over all the database entries
-        if (sizeof($sample_id_list) == 0)
-        {
+        if (count($sample_id_list) == 0) {
             $sample_id_query = new Sample();
             $result = $sample_id_query->get();
-            foreach ($result as $repertoire) 
-            {
+            foreach ($result as $repertoire) {
                 $sample_id_list[] = $repertoire['_id'];
             }
         }
@@ -1033,6 +1030,7 @@ class Sequence extends Model
                 $return['count'] = $total;
                 $return_list[] = $return;
             }
+
             return $return_list;
         }
 
@@ -1046,7 +1044,7 @@ class Sequence extends Model
         if (isset($request['format']) && $request['format'] != '') {
             $response_type = strtolower($request['format']);
         }
- 
+
         // rev_comp and functional field are sometimes stored with annotation values
         //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
         //  for those two values here so we don't have to do it on every sequence.
@@ -1065,13 +1063,11 @@ class Sequence extends Model
         // check if we have a start value or max value. with max, we stop sending data after that many results
         //  start is a bit iffier - we'll run our query and not output till we have seen that many results, but...
         //  this may not be consistent accross requests
-        if (isset($request["size"]) && intval($request["size"])> 0)
-        {
-            $max_values = intval($request["size"]);
+        if (isset($request['size']) && intval($request['size']) > 0) {
+            $max_values = intval($request['size']);
         }
-        if (isset($request["from"]) && intval($request["from"])>0)
-        {
-            $start_at = intval($request["from"]);
+        if (isset($request['from']) && intval($request['from']) > 0) {
+            $start_at = intval($request['from']);
         }
         $fields_to_retrieve = [];
         $fields_to_display = [];
@@ -1086,8 +1082,7 @@ class Sequence extends Model
             $query_params['projection'] = $fields_to_retrieve;
         }
         //if we didn't have the fields variable, we want to display all the AIRR fields
-        if (sizeof($fields_to_retrieve)==0)
-        {
+        if (count($fields_to_retrieve) == 0) {
             $fields_to_display = array_keys($airr_to_repository_mapping);
         }
         $written_results = 0;
@@ -1107,81 +1102,75 @@ class Sequence extends Model
             header('Content-Type: text/tsv; charset=utf-8');
             header('Content-Disposition: attachment;filename="data.tsv"');
             //output the headers
-            echo implode($fields_to_display, chr(9))."\n";
-
+            echo implode($fields_to_display, chr(9)) . "\n";
         }
         $current_result = 0;
         $first = true;
-        foreach ($sample_id_list as $current_sample_id) 
-        {
+        foreach ($sample_id_list as $current_sample_id) {
             $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
             $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
             foreach ($result as $row) {
-                    $sequence_list = $row;
-                    $airr_list = [];
+                $sequence_list = $row;
+                $airr_list = [];
 
-                    foreach ($airr_to_repository_mapping as $airr_name => $service_name) {
-                        if (isset($service_name) && isset($service_to_db_mapping[$service_name])) {
-                            if (isset($sequence_list[$service_to_db_mapping[$service_name]])) {
-                                $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
-                                if ($service_name == 'rev_comp') {
-                                    if ($airr_list[$rev_comp_airr_name] == '+') {
-                                        $airr_list[$rev_comp_airr_name] = 'true';
-                                    }
-                                    if ($airr_list[$rev_comp_airr_name] == '-') {
-                                        $airr_list[$rev_comp_airr_name] = 'false';
-                                    }
+                foreach ($airr_to_repository_mapping as $airr_name => $service_name) {
+                    if (isset($service_name) && isset($service_to_db_mapping[$service_name])) {
+                        if (isset($sequence_list[$service_to_db_mapping[$service_name]])) {
+                            $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
+                            if ($service_name == 'rev_comp') {
+                                if ($airr_list[$rev_comp_airr_name] == '+') {
+                                    $airr_list[$rev_comp_airr_name] = 'true';
                                 }
-                                if ($service_name == 'functional') {
-                                    if ($airr_list[$functional_arr_name] == 1) {
-                                        $airr_list[$functional_arr_name] = 'true';
-                                    } elseif ($airr_list[$functional_arr_name] == 0) {
-                                        $airr_list[$functional_arr_name] = 'false';
-                                    }
+                                if ($airr_list[$rev_comp_airr_name] == '-') {
+                                    $airr_list[$rev_comp_airr_name] = 'false';
                                 }
                             }
-                        } else {
-                            $airr_list[$airr_name] = '';
-                        }
-                    }
-                    
-                    $current_result++;
-                    $new_line = [];
-                    foreach ($fields_to_display as $current_header) {
-                        if (isset($airr_list[$current_header])) {
-                            if (is_array($airr_list[$current_header])) {
-                                $new_line[$current_header] = implode($airr_list[$current_header], ', or');
-                            } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
-                                $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
-                            } else {
-                                $new_line[$current_header] = $airr_list[$current_header];
+                            if ($service_name == 'functional') {
+                                if ($airr_list[$functional_arr_name] == 1) {
+                                    $airr_list[$functional_arr_name] = 'true';
+                                } elseif ($airr_list[$functional_arr_name] == 0) {
+                                    $airr_list[$functional_arr_name] = 'false';
+                                }
                             }
-                        } else {
-                            $new_line[$current_header] = '';
                         }
+                    } else {
+                        $airr_list[$airr_name] = '';
                     }
-                    if ($current_result > $start_at)
-                    {
-                        if ($response_type == "tsv"){
-                            echo implode($new_line, chr(9)) . "\n";
-                        }
-                        else{
-                            if ($first) {
-                                $first = false;
-                            } else {
-                                echo ',';
-                            }
-                            echo json_encode($new_line, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-                        }
-                        $written_results ++;
-                    }
-                    if ($max_values>0 && $written_results >= $max_values)
-                    {
-                        break 2;
-                    }
+                }
 
-            }  
-        } 
+                $current_result++;
+                $new_line = [];
+                foreach ($fields_to_display as $current_header) {
+                    if (isset($airr_list[$current_header])) {
+                        if (is_array($airr_list[$current_header])) {
+                            $new_line[$current_header] = implode($airr_list[$current_header], ', or');
+                        } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
+                            $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
+                        } else {
+                            $new_line[$current_header] = $airr_list[$current_header];
+                        }
+                    } else {
+                        $new_line[$current_header] = '';
+                    }
+                }
+                if ($current_result > $start_at) {
+                    if ($response_type == 'tsv') {
+                        echo implode($new_line, chr(9)) . "\n";
+                    } else {
+                        if ($first) {
+                            $first = false;
+                        } else {
+                            echo ',';
+                        }
+                        echo json_encode($new_line, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                    }
+                    $written_results++;
+                }
+                if ($max_values > 0 && $written_results >= $max_values) {
+                    break 2;
+                }
+            }
+        }
         if ($response_type == 'json') {
             echo "]}\n";
         }
