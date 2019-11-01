@@ -202,7 +202,7 @@ class AirrUtils extends Model
                         }
                     }
 
-                    return '{"$or":[' . implode($exp_list) . ']}';
+                    return '{"$or":[' . implode(',', $exp_list) . ']}';
                 } else {
                     return;
                 }
