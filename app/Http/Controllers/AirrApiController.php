@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\AirrUtils;
 use App\Sample;
 use App\Sequence;
-use App\AirrUtils;
 use Illuminate\Http\Request;
 
 class AirrApiController extends Controller
