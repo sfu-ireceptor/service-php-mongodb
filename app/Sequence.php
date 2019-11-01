@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Log;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Mongodb\Eloquent\Model;
+use Log;
 
 class Sequence extends Model
 {
