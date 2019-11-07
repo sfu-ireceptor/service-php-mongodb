@@ -629,7 +629,7 @@ class Sequence extends Model
         //   as well as which sequence fields we want to fetch (fewer fields make query faster)
         $database_fields = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_fields = FileMapping::createMappingArray('airr_tsv', 'service_name');
-        $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
+        $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
 
         // These are needed for MongoDB query. Here we store max timeout and which fields we want
         //   pulled from databse
