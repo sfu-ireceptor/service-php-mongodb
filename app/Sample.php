@@ -119,6 +119,9 @@ class Sample extends Model
                     //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
                     $fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
                     $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
+
+                    //likewise for data_processing
+                    $fully_qualified_path = preg_replace("/^data_processing\./", 'data_processing.0.', $fully_qualified_path);
                     array_set($return_array, $fully_qualified_path, $return_element);
                 }
             }
