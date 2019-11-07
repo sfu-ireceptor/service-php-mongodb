@@ -102,6 +102,7 @@ class Sample extends Model
         $db_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['repertoire', 'ir_repertoire']]);
         $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $db_names_to_airr_types = FileMapping::createMappingArray('ir_mongo_database', 'airr_type',['ir_class'=>['repertoire', 'ir_repertoire']]);
 
         //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
         //  associated with it, so we will take the array of samples and place each element into an appropriate section
@@ -122,7 +123,47 @@ class Sample extends Model
 
                     //likewise for data_processing
                     $fully_qualified_path = preg_replace("/^data_processing\./", 'data_processing.0.', $fully_qualified_path);
-                    array_set($return_array, $fully_qualified_path, $return_element);
+
+                    // typecast the return values
+                    $return_value = $return_element;
+                    if (isset($db_names_to_airr_types[$return_key]))
+                    {
+                        switch ($db_names_to_airr_types[$return_key]) {
+                            // make sure that type actually matches value or fail
+                            case 'integer':
+                                if (is_array($return_element)) {
+                                    $return_value =  array_map('intval',$return_element);
+                                } else {
+                                     $return_value = (int) $return_element;
+                                }
+                                break;
+                            case 'number':
+                                if (is_array($return_element)) {
+                                    $return_value =  array_map('floatval',$return_element);
+                                } else {
+                                     $return_value = (float) $return_element;
+                                }
+                                break;
+                            case 'boolean':
+                                if (is_array($return_element)) {
+                                    $return_value = array_map('boolval', $content['value']);
+                                } else {
+                                    $return_value = (bool) $return_element;
+                                }
+                                break;
+                            case 'string':
+                                if (is_array($return_element)) {
+                                    $return_value = array_map('strval', $content['value']);
+                                } else {
+                                    $return_value = (string) $return_element;
+                                }
+                                break;
+                            default:
+                                //bad data type
+                                break;
+                                }
+                    }
+                    array_set($return_array, $fully_qualified_path, $return_value);
                 }
             }
 
