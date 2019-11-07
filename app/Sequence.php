@@ -965,6 +965,7 @@ class Sequence extends Model
         $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_to_repository_mapping = FileMapping::createMappingArray('airr', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_types = FileMapping::createMappingArray('airr', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('airr', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $sample_id_list = [];
         $query_params = [];
         $db_filters = [];
@@ -1113,7 +1114,7 @@ class Sequence extends Model
                 $sequence_list = $row;
                 $airr_list = [];
 
-                foreach ($airr_to_repository_mapping as $airr_name => $service_name) {
+                foreach ($airr_to_service_mapping as $airr_name => $service_name) {
                     if (isset($service_name) && isset($service_to_db_mapping[$service_name])) {
                         if (isset($sequence_list[$service_to_db_mapping[$service_name]])) {
                             $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
