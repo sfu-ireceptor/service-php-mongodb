@@ -1050,8 +1050,8 @@ class Sequence extends Model
         //  for those two values here so we don't have to do it on every sequence.
         // For similar reason, we want a translation of ir_project_sample_id value, which connects
         //  rearrangement with repertoire
-        $rev_comp_airr_name = array_search('rev_comp', $service_to_airr_mapping);
-        $functional_arr_name = array_search('functional', $service_to_airr_mapping);
+        $rev_comp_airr_name = $service_to_airr_mapping['rev_comp'];
+        $functional_arr_name = $service_to_airr_mapping['functional'];
 
         //few other variables we use in other arrays, simply to avoid triple-nested array references
         // e.g. $psa_list[$sequence_list[$database_fields['ir_project_sample_id']]];
