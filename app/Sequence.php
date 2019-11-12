@@ -440,7 +440,7 @@ class Sequence extends Model
         $match = [];
         $sample_id_query = new Sample();
         if (isset($filter['ir_project_sample_id_list'])) {
-            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
+            $sample_id_query = $sample_id_query->whereIn('_id', $filter['ir_project_sample_id_list']);
         }
 
         // translate repertoire-level terms to api output terms if they are different
@@ -718,10 +718,10 @@ class Sequence extends Model
                                 $airr_list[$airr_name] = $sequence_list[$database_fields[$service_name]];
                                 if ($service_name == 'rev_comp') {
                                     if ($airr_list[$rev_comp_airr_name] == '+') {
-                                        $airr_list[$rev_comp_airr_name] = 'true';
+                                        $airr_list[$rev_comp_airr_name] = 'false';
                                     }
                                     if ($airr_list[$rev_comp_airr_name] == '-') {
-                                        $airr_list[$rev_comp_airr_name] = 'false';
+                                        $airr_list[$rev_comp_airr_name] = 'true';
                                     }
                                 }
                                 if ($service_name == 'functional') {
@@ -856,10 +856,20 @@ class Sequence extends Model
         $db_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $db_to_service = FileMapping::createMappingArray('ir_mongo_database', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         //V-, D-, J-call might be stored as an array, which need to be serialized before they can be outputted in TSV format
         $v_call_airr_name = array_search('v_call', $airr_names);
         $j_call_airr_name = array_search('j_call', $airr_names);
         $d_call_airr_name = array_search('d_call', $airr_names);
+
+        // rev_comp and functional field are sometimes stored with annotation values
+        //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
+        //  for those two values here so we don't have to do it on every sequence.
+        // For similar reason, we want a translation of ir_project_sample_id value, which connects
+        //  rearrangement with repertoire
+        $rev_comp_airr_name = $airr_names['rev_comp'];
+        $functional_arr_name = $airr_names['functional'];
+
 
         //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
         //  associated with it, so we will take the array of samples and place each element into an appropriate section
@@ -890,6 +900,22 @@ class Sequence extends Model
 
             foreach ($rearrangement as $return_key => $return_element) {
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
+                    $service_name = $db_to_service[$return_key];
+                    if ($service_name == 'rev_comp') {
+                        if ($return_element == '+') {
+                            $return_element = false;
+                        }
+                        if ($return_element == '-') {
+                            $return_element = true;
+                        }
+                    }
+                    if ($service_name == 'functional') {
+                        if ($return_element == 1) {
+                            $return_element = true;
+                        } elseif ($return_element == 0) {
+                            $return_element = false;
+                        }
+                    }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
 
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
@@ -898,6 +924,7 @@ class Sequence extends Model
                          && $return_element != null && ! is_string($return_element)) {
                         $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
                     }
+
                 }
             }
             // first time through, if we have tsv, dump the return array's keys as headers
@@ -1120,17 +1147,17 @@ class Sequence extends Model
                             $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
                             if ($service_name == 'rev_comp') {
                                 if ($airr_list[$rev_comp_airr_name] == '+') {
-                                    $airr_list[$rev_comp_airr_name] = 'true';
+                                    $airr_list[$rev_comp_airr_name] = false;
                                 }
                                 if ($airr_list[$rev_comp_airr_name] == '-') {
-                                    $airr_list[$rev_comp_airr_name] = 'false';
+                                    $airr_list[$rev_comp_airr_name] = true;
                                 }
                             }
                             if ($service_name == 'functional') {
                                 if ($airr_list[$functional_arr_name] == 1) {
-                                    $airr_list[$functional_arr_name] = 'true';
+                                    $airr_list[$functional_arr_name] = true;
                                 } elseif ($airr_list[$functional_arr_name] == 0) {
-                                    $airr_list[$functional_arr_name] = 'false';
+                                    $airr_list[$functional_arr_name] = false;
                                 }
                             }
                         }
