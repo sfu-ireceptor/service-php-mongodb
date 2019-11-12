@@ -870,7 +870,6 @@ class Sequence extends Model
         $rev_comp_airr_name = $airr_names['rev_comp'];
         $functional_arr_name = $airr_names['functional'];
 
-
         //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
         //  associated with it, so we will take the array of samples and place each element into an appropriate section
         //  of AIRR reperotoire response
@@ -924,7 +923,6 @@ class Sequence extends Model
                          && $return_element != null && ! is_string($return_element)) {
                         $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
                     }
-
                 }
             }
             // first time through, if we have tsv, dump the return array's keys as headers
