@@ -47,7 +47,7 @@ class AirrUtils extends Model
             Log::error("Type not found $field");
         }
 
-        if (isset($content['value']) ) {
+        if (isset($content['value'])) {
             switch ($type) {
                 // make sure that type actually matches value or fail
                 case 'integer':
@@ -55,7 +55,7 @@ class AirrUtils extends Model
                         $value = json_encode($content['value']);
                     } else {
                         if (is_int($content['value'])) {
-                            $value =(int) $content['value'];
+                            $value = (int) $content['value'];
                         } else {
                             return;
                         }
@@ -66,7 +66,7 @@ class AirrUtils extends Model
                         $value = json_encode($content['value']);
                     } else {
                         if (is_numeric($content['value'])) {
-                            $value = (double)$content['value'];
+                            $value = (float) $content['value'];
                         } else {
                             return;
                         }
@@ -109,7 +109,7 @@ class AirrUtils extends Model
 
         switch ($f['op']) {
             case '=':
-                if (isset($field) && $field != '' && isset($value) ) {
+                if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":' . $value . '}';
                 } else {
                     return;
@@ -121,31 +121,31 @@ class AirrUtils extends Model
                     return;
                 }
             case '<':
-                if (isset($field) && $field != '' && isset($value) ) {
+                if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$lt":' . $value . '}}';
                 } else {
                     return;
                 }
             case '>':
-                if (isset($field) && $field != '' && isset($value) ) {
+                if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$gt":' . $value . '}}';
                 } else {
                     return;
                 }
             case '<=':
-                if (isset($field) && $field != '' && isset($value) ) {
+                if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$lte":' . $value . '}}';
                 } else {
                     return;
                 }
             case '>=':
-                if (isset($field) && $field != '' && isset($value) ) {
+                if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$gte":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'contains':
-                if (isset($field) && $field != '' && isset($value) ) {
+                if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$regex":' . preg_quote($value) . ',"$options":"i"}}';
                 } else {
                     return;
@@ -163,13 +163,13 @@ class AirrUtils extends Model
                     return;
                 }
             case 'in':
-                if (isset($field) && $field != '' && isset($value) ) {
+                if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$in":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'exclude':
-                if (isset($field) && $field != '' && isset($value) ) {
+                if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$nin":' . $value . '}}';
                 } else {
                     return;
