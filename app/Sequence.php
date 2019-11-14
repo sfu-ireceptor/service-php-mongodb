@@ -919,14 +919,10 @@ class Sequence extends Model
                     }
 
                     //in TSV we want our boolean values to be 'T' and 'F'
-                    if ($airr_type[$repository_to_airr[$return_key]] == 'boolean' && $response_type == 'tsv')
-                    {
-                        if (strtolower($return_element) == "true" || $return_element == true)
-                        {
+                    if ($airr_type[$repository_to_airr[$return_key]] == 'boolean' && $response_type == 'tsv') {
+                        if (strtolower($return_element) == 'true' || $return_element == true) {
                             $return_element = 'T';
-                        }
-                        else
-                        {
+                        } else {
                             $return_element = 'F';
                         }
                     }
@@ -1195,14 +1191,10 @@ class Sequence extends Model
                     }
 
                     //in TSV we want our boolean values to be 'T' and 'F'
-                    if (isset($new_line[$current_header]) && $airr_types[$current_header] == 'boolean' && $response_type == 'tsv')
-                    {
-                        if (strtolower($new_line[$current_header]) == "true" || $new_line[$current_header] == true)
-                        {
+                    if (isset($new_line[$current_header]) && $airr_types[$current_header] == 'boolean' && $response_type == 'tsv') {
+                        if (strtolower($new_line[$current_header]) == 'true' || $new_line[$current_header] == true) {
                             $new_line[$current_header] = 'T';
-                        }
-                        else
-                        {
+                        } else {
                             $new_line[$current_header] = 'F';
                         }
                     }
