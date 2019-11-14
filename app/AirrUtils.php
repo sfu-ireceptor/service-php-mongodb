@@ -379,7 +379,8 @@ class AirrUtils extends Model
                                 $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (string) $filter_piece['content']['value'];
                                 break;
                             case 'boolean':
-                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (bool) $filter_piece['content']['value'];
+                                //we store booleans as ints
+                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
                                 break;
                             default:
                                 $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
