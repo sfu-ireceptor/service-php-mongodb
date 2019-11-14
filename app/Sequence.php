@@ -857,6 +857,8 @@ class Sequence extends Model
         $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
         $db_to_service = FileMapping::createMappingArray('ir_mongo_database', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $airr_type = FileMapping::createMappingArray('airr', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+
         //V-, D-, J-call might be stored as an array, which need to be serialized before they can be outputted in TSV format
         $v_call_airr_name = array_search('v_call', $airr_names);
         $j_call_airr_name = array_search('j_call', $airr_names);
@@ -913,6 +915,19 @@ class Sequence extends Model
                             $return_element = true;
                         } elseif ($return_element == 0) {
                             $return_element = false;
+                        }
+                    }
+
+                    //in TSV we want our boolean values to be 'T' and 'F'
+                    if ($airr_type[$repository_to_airr[$return_key]] == 'boolean' && $response_type == 'tsv')
+                    {
+                        if (strtolower($return_element) == "true" || $return_element == true)
+                        {
+                            $return_element = 'T';
+                        }
+                        else
+                        {
+                            $return_element = 'F';
                         }
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
@@ -1160,7 +1175,7 @@ class Sequence extends Model
                             }
                         }
                     } else {
-                        $airr_list[$airr_name] = '';
+                        $airr_list[$airr_name] = null;
                     }
                 }
 
@@ -1176,7 +1191,20 @@ class Sequence extends Model
                             $new_line[$current_header] = $airr_list[$current_header];
                         }
                     } else {
-                        $new_line[$current_header] = '';
+                        $new_line[$current_header] = null;
+                    }
+
+                    //in TSV we want our boolean values to be 'T' and 'F'
+                    if (isset($new_line[$current_header]) && $airr_types[$current_header] == 'boolean' && $response_type == 'tsv')
+                    {
+                        if (strtolower($new_line[$current_header]) == "true" || $new_line[$current_header] == true)
+                        {
+                            $new_line[$current_header] = 'T';
+                        }
+                        else
+                        {
+                            $new_line[$current_header] = 'F';
+                        }
                     }
                 }
                 if ($current_result > $start_at) {
