@@ -14,11 +14,11 @@ class SequencesCollectionSeeder extends Seeder
         $data = json_decode($json, true);
 
         foreach ($data as $t) {
-	        // unset "_id" field
+            // unset "_id" field
             unset($t['_id']);
-	
+
             // add to collection
-	        DB::collection('sequences')->insert($t);
+            DB::collection('sequences')->insert($t);
         }
     }
 }

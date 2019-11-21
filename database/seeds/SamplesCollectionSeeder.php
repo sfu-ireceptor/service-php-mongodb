@@ -14,8 +14,8 @@ class SamplesCollectionSeeder extends Seeder
         $data = json_decode($json, true);
 
         foreach ($data as $t) {
-           // add to collection
- 	       DB::collection('samples')->insert($t);
+            // add to collection
+            DB::collection('samples')->insert($t);
         }
     }
 }
