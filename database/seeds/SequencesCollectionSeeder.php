@@ -15,11 +15,10 @@ class SequencesCollectionSeeder extends Seeder
 
         // unset "_id" field
         foreach ($data as $i => $obj) {
-        	unset($obj->_id);
+            unset($obj->_id);
         }
 
         // populate collection
         DB::collection('sequences')->insert($data);
-
     }
 }
