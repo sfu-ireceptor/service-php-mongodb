@@ -11,9 +11,11 @@ class SamplesCollectionSeeder extends Seeder
 
         // get data
         $json = File::get('database/seeds/samples.json');
-        $data = json_decode($json);
+        $data = json_decode($json, true);
 
-        // populate collection
-        DB::collection('samples')->insert($data);
+        foreach ($data as $t) {
+           // add to collection
+ 	       DB::collection('samples')->insert($t);
+        }
     }
 }
