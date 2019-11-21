@@ -9,11 +9,11 @@ class SamplesCollectionSeeder extends Seeder
         // delete existing collection
         DB::table('samples')->delete();
 
-        // create/seed collection
+        // get data
         $json = File::get('database/seeds/samples.json');
         $data = json_decode($json);
-        foreach ($data as $obj) {
-            DB::collection('samples')->insert($data);
-        }
+
+        // populate collection
+        DB::collection('samples')->insert($data);
     }
 }
