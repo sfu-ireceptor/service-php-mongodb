@@ -39,7 +39,7 @@ class RepertoireTest extends TestCase
     public function correct_JSON()
     {
         $response = $this->postJson('/airr/v1/repertoire');
-        
+
         // has info and repertoire objects
         $response->assertJson(['Info' => []]);
         $response->assertJson(['Repertoire' => []]);
