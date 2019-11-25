@@ -54,7 +54,18 @@ class RepertoireTest extends TestCase
     /** @test */
     public function filter_invalid_json()
     {
-        $s = '{"filters": {"op": "=","content":{"field": "subject.sex","value": "Female"}}}}';
+        // extra closing brace at the end
+        $s = <<<EOT
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "subject.sex",
+      "value": "Female"
+    }
+  }
+}}
+EOT;
         $response = $this->postJsonString('/airr/v1/repertoire', $s);
 
         // HTTP status
@@ -71,7 +82,17 @@ class RepertoireTest extends TestCase
     /** @test */
     public function unknown_filter()
     {
-        $s = '{"filters": {"op": "=","content":{"field": "subject.magic","value": "low"}}}';
+        $s = <<<EOT
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "subject.magic",
+      "value": "low"
+    }
+  }
+}
+EOT;
         $response = $this->postJsonString('/airr/v1/repertoire', $s);
 
         // HTTP status
@@ -88,7 +109,17 @@ class RepertoireTest extends TestCase
     /** @test */
     public function sex_filter_female()
     {
-        $s = '{"filters": {"op": "=","content":{"field": "subject.sex","value": "Female"}}}';
+        $s = <<<EOT
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "subject.sex",
+      "value": "Female"
+    }
+  }
+}
+EOT;
         $response = $this->postJsonString('/airr/v1/repertoire', $s);
 
         $json = $response->content();
@@ -105,7 +136,17 @@ class RepertoireTest extends TestCase
     /** @test */
     public function sex_filter_male()
     {
-        $s = '{"filters": {"op": "=","content":{"field": "subject.sex","value": "Male"}}}';
+        $s = <<<EOT
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "subject.sex",
+      "value": "Male"
+    }
+  }
+}
+EOT;
         $response = $this->postJsonString('/airr/v1/repertoire', $s);
 
         $json = $response->content();
