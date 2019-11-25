@@ -52,6 +52,40 @@ class RepertoireTest extends TestCase
     }
 
     /** @test */
+    public function filter_invalid_json()
+    {
+        $s = '{"filters": {"op": "=","content":{"field": "subject.sex","value": "Female"}}}}';
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        // HTTP status
+        $response->assertStatus(400);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        // error message
+        $error_message = data_get($t, 'message');
+        $this->assertEquals($error_message, 'Unable to parse JSON parameters:Syntax error');
+    }
+
+    /** @test */
+    public function unknown_filter()
+    {
+        $s = '{"filters": {"op": "=","content":{"field": "subject.magic","value": "low"}}}';
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        // HTTP status
+        $response->assertStatus(400);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        // error message
+        $error_message = data_get($t, 'message');
+        $this->assertEquals($error_message, 'Unable to parse the filter.');
+    }
+
+    /** @test */
     public function sex_filter_female()
     {
         $s = '{"filters": {"op": "=","content":{"field": "subject.sex","value": "Female"}}}';
