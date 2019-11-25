@@ -55,7 +55,7 @@ class RepertoireTest extends TestCase
     public function filter_invalid_json()
     {
         // extra closing brace at the end
-        $s = <<<EOT
+        $s = <<<'EOT'
 {
   "filters": {
     "op": "=",
@@ -82,7 +82,7 @@ EOT;
     /** @test */
     public function unknown_filter()
     {
-        $s = <<<EOT
+        $s = <<<'EOT'
 {
   "filters": {
     "op": "=",
@@ -109,7 +109,7 @@ EOT;
     /** @test */
     public function sex_filter_female()
     {
-        $s = <<<EOT
+        $s = <<<'EOT'
 {
   "filters": {
     "op": "=",
@@ -136,7 +136,7 @@ EOT;
     /** @test */
     public function sex_filter_male()
     {
-        $s = <<<EOT
+        $s = <<<'EOT'
 {
   "filters": {
     "op": "=",
