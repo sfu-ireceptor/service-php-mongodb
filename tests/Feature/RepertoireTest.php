@@ -27,7 +27,7 @@ class RepertoireTest extends TestCase
     }
 
     /** @test */
-    public function valid_JSON()
+    public function check_valid_JSON_response()
     {
         $response = $this->postJson('/airr/v1/repertoire');
         $response->assertStatus(200);
@@ -36,7 +36,7 @@ class RepertoireTest extends TestCase
     }
 
     /** @test */
-    public function correct_JSON()
+    public function check_correct_JSON_response()
     {
         $response = $this->postJson('/airr/v1/repertoire');
 
@@ -52,7 +52,7 @@ class RepertoireTest extends TestCase
     }
 
     /** @test */
-    public function filter_invalid_json()
+    public function query_with_invalid_json()
     {
         // extra closing brace at the end
         $s = <<<'EOT'
@@ -80,7 +80,7 @@ EOT;
     }
 
     /** @test */
-    public function unknown_filter()
+    public function query_with_unknown_filter()
     {
         $s = <<<'EOT'
 {
@@ -158,5 +158,56 @@ EOT;
         // male sample
         $sex = data_get($t, 'Repertoire.0.subject.sex');
         $this->assertEquals($sex, 'Male');
+    }
+
+    /** @test */
+    public function age_filter()
+    {
+        $s = <<<'EOT'
+{
+    "filters": {
+        "op": "and",
+        "content": [
+            {
+                "op": ">=",
+                "content": {
+                    "field": "subject.age_min",
+                    "value": 15
+                }
+            },
+            {
+                "op": "<=",
+                "content": {
+                    "field": "subject.age_max",
+                    "value": 25
+                }
+            },
+            {
+                "op": "contains",
+                "content": {
+                    "field": "subject.age_unit.value",
+                    "value": "year"
+                }
+            }
+        ]
+    }
+} 
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        // has exactly 1 sample
+        $this->assertCount(1, $t->Repertoire);
+
+        // check age min value
+        $age_min = data_get($t, 'Repertoire.0.subject.age_min');
+        $this->assertEquals($age_min, 20);
+
+        // check age max value
+        $age_max = data_get($t, 'Repertoire.0.subject.age_max');
+        $this->assertEquals($age_max, 20);
+
     }
 }
