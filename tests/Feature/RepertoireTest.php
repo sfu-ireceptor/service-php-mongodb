@@ -208,6 +208,5 @@ EOT;
         // check age max value
         $age_max = data_get($t, 'Repertoire.0.subject.age_max');
         $this->assertEquals($age_max, 20);
-
     }
 }
