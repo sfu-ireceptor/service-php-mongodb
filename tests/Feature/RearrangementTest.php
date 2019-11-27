@@ -54,10 +54,10 @@ class RearrangementTest extends TestCase
 }
 EOT;
 
-		// $this->setOutputCallback(function() {});
-	    
-	    $response = $this->postJsonString('/airr/v1/rearrangement', $s);
-		// $response->assertStatus(200);
+        // $this->setOutputCallback(function() {});
+
+        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        // $response->assertStatus(200);
 
         $json = $response->content();
         $t = json_decode($json);
