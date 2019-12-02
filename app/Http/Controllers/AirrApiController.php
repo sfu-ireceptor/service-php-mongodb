@@ -110,7 +110,7 @@ class AirrApiController extends Controller
             });
         } else {
             $l = Sequence::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
-            
+
             if ($l == 'error') {
                 $response['message'] = 'Unable to parse the filter.';
                 $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
