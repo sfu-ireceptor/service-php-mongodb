@@ -136,7 +136,9 @@ class AirrApiController extends Controller
                     //regular response, needs to be formatted as per AIRR standard, as
                     //  iReceptor repertoires are flat collections in MongoDB
                     //$response['result'] = Sequence::airrRearrangementResponse($l);
-                    Sequence::airrRearrangementResponse($l, $response_type);
+                    return response()->streamDownload(function () use ($l, $response_type) {
+                        Sequence::airrRearrangementResponse($l, $response_type);
+                    });
                 }
             }
         }

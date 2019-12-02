@@ -26,16 +26,38 @@ class RearrangementTest extends TestCase
         $this->seed(SequencesCollectionSeeder::class);
     }
 
-    // TODO not sure why there's a warning about the headers??
-    // /** @test */
-    // public function check_valid_JSON_response()
-    // {
-    //     $response = $this->postJson('/airr/v1/rearrangement');
-    //     // dd($response);
-    //     $response->assertStatus(200);
+    /** @test */
+    public function check_valid_JSON_response()
+    {
+        $response = $this->postJson('/airr/v1/rearrangement');
+        $response->assertStatus(200);
 
-    //     // $response->assertJson([]);
-    // }
+        $json = $response->streamedContent();
+        $t = json_decode($json);
+
+        if (is_null($t) || $t === false) {
+            $this->fail('Invalid JSON');
+        }
+    }
+
+    /** @test */
+    public function check_correct_JSON_response()
+    {
+        $response = $this->postJson('/airr/v1/rearrangement');
+
+        $json = $response->streamedContent();
+        $t = json_decode($json);
+
+        if( ! is_object(data_get($t, 'Info'))) {
+            $this->fail('No Info object');
+        }
+
+        if( ! is_object(data_get($t, 'Info'))) {
+            $this->fail('No Rearrangement object');
+        }
+
+        $this->assertCount(20, $t->Rearrangement);
+    }
 
     /** @test */
     public function repertoire_id()
@@ -59,13 +81,10 @@ EOT;
 
         $json = $response->streamedContent();
         $t = json_decode($json);
-        // dd($t);
 
-        // has exactly 1 sample
-        $this->assertCount(1, $t->Rearrangement);
+        $this->assertCount(10, $t->Rearrangement);
 
-        // // female sample
-        // $sex = data_get($t, 'Repertoire.0.subject.sex');
-        // $this->assertEquals($sex, 'Female');
+        $first_repertoire_id = data_get($t, 'Rearrangement.0.repertoire_id');
+        $this->assertEquals($first_repertoire_id, '8');
     }
 }
