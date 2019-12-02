@@ -48,11 +48,11 @@ class RearrangementTest extends TestCase
         $json = $response->streamedContent();
         $t = json_decode($json);
 
-        if( ! is_object(data_get($t, 'Info'))) {
+        if (! is_object(data_get($t, 'Info'))) {
             $this->fail('No Info object');
         }
 
-        if( ! is_object(data_get($t, 'Info'))) {
+        if (! is_object(data_get($t, 'Info'))) {
             $this->fail('No Rearrangement object');
         }
 
