@@ -163,7 +163,7 @@ EOT;
         $this->assertCount(0, $t->Rearrangement);
     }
 
-   /** @test */
+    /** @test */
     // IR-1552 - Productive filter on gateway not working
     public function productive_filter_true_with_range()
     {
@@ -251,6 +251,4 @@ EOT;
 //         $first_repertoire_count = data_get($t, 'Facet.0.repertoire_count');
 //         $this->assertEquals($first_repertoire_count, 10);
 //     }
-
-
 }
