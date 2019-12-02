@@ -878,7 +878,7 @@ class Sequence extends Model
 
         $headers = true;
         if ($response_type == 'json') {
-            header('Content-Type: application/json; charset=utf-8');
+            // header('Content-Type: application/json; charset=utf-8');
             echo '{"Info":';
             $response['Title'] = 'AIRR Data Commons API';
             $response['description'] = 'API response for repertoire query';
@@ -1124,7 +1124,7 @@ class Sequence extends Model
         }
         $written_results = 0;
         if ($response_type == 'json') {
-            header('Content-Type: application/json; charset=utf-8');
+            // header('Content-Type: application/json; charset=utf-8');
             echo '{"Info":';
             $response['Title'] = 'AIRR Data Commons API';
             $response['description'] = 'API response for repertoire query';
@@ -1220,6 +1220,5 @@ class Sequence extends Model
         if ($response_type == 'json') {
             echo "]}\n";
         }
-        exit();
     }
 }
