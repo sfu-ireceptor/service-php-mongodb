@@ -161,7 +161,7 @@ EOT;
     }
 
     /** @test */
-    // IR-1509: Age searches don't work
+    // IR-1509 - Age searches don't work
     public function age_filter()
     {
         $s = <<<'EOT'
