@@ -277,7 +277,6 @@ EOT;
         $this->assertEquals($cell_subset_value, 'Peripheral blood mononuclear cells');
     }
 
-
 //     // TODO why this doesn't work??
 //     /** @test */
 //     public function repertoire_id()
