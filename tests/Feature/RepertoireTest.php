@@ -210,4 +210,21 @@ EOT;
         $age_max = data_get($t, 'Repertoire.0.subject.age_max');
         $this->assertEquals($age_max, 20);
     }
+
+    /** @test */
+    public function data_processing_array()
+    // IR-1542 - No data displayed from the data processing block of repertoire metadata
+    {
+        $s = <<<'EOT'
+{}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $data_processing = data_get($t, 'Repertoire.0.data_processing');
+        $this->assertIsArray($data_processing);
+        $this->assertCount(1, $data_processing);
+    }
 }
