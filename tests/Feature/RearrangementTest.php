@@ -253,4 +253,31 @@ EOT;
 //     }
 
 
+    /** @test */
+    // IR-1544 - no productive and rev_comp fields displayed on gateway
+    public function correct_rev_comp_value()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "in",
+    "content": {
+      "field": "repertoire_id",
+      "value": [
+        "8"
+      ]
+    }
+  }
+}
+EOT;
+
+        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $json = $response->streamedContent();
+        $t = json_decode($json);
+
+        $first_rearrangement = data_get($t, 'Rearrangement.0');
+        $this->assertEquals($first_rearrangement->rev_comp, true);
+    }
+
+
 }
