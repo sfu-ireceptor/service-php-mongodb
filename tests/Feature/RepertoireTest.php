@@ -227,4 +227,21 @@ EOT;
         $this->assertIsArray($data_processing);
         $this->assertCount(1, $data_processing);
     }
+
+    /** @test */
+    public function subject_diagnosis_array()
+    // IR-1540 - None of the disease diagnosis fields are displaying
+    {
+        $s = <<<'EOT'
+{}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $diagnosis = data_get($t, 'Repertoire.0.subject.diagnosis');
+        $this->assertIsArray($diagnosis);
+        $this->assertCount(1, $diagnosis);
+    }
 }
