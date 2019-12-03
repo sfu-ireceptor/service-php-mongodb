@@ -86,6 +86,75 @@ EOT;
     }
 
     /** @test */
+    public function range()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "in",
+    "content": {
+      "field": "repertoire_id",
+      "value": [
+        "8"
+      ]
+    }
+  },
+  "from": 0,
+  "size": 4
+}
+EOT;
+
+        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $json = $response->streamedContent();
+        $t = json_decode($json);
+
+        $this->assertCount(4, $t->Rearrangement);
+
+        $first_repertoire_id = data_get($t, 'Rearrangement.0.repertoire_id');
+        $this->assertEquals($first_repertoire_id, '8');
+    }
+
+    /** @test */
+    public function range_with_fields()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "in",
+    "content": {
+      "field": "repertoire_id",
+      "value": [
+        "8"
+      ]
+    }
+  },
+  "from": 0,
+  "size": 3,
+  "fields": [
+    "v_call",
+    "d_call",
+    "junction_aa"
+  ]
+}
+EOT;
+
+        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $json = $response->streamedContent();
+        $t = json_decode($json);
+
+        $this->assertCount(3, $t->Rearrangement);
+
+        $first_rearrangement = data_get($t, 'Rearrangement.0');
+        $this->assertObjectHasAttribute('v_call', $first_rearrangement);
+        $this->assertObjectHasAttribute('d_call', $first_rearrangement);
+        $this->assertObjectHasAttribute('junction_aa', $first_rearrangement);
+
+        if(isset($first_rearrangement->j_call)) {
+            $this->fail('Unexpected field: j_call');
+        }
+    }
+
+    /** @test */
     // IR-1552 - Productive filter on gateway not working
     public function productive_filter_true()
     {
