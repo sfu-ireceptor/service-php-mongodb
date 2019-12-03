@@ -163,7 +163,7 @@ EOT;
         $this->assertCount(0, $t->Rearrangement);
     }
 
-   /** @test */
+    /** @test */
     // IR-1552 - Productive filter on gateway not working
     public function productive_filter_true_with_range()
     {
@@ -252,7 +252,6 @@ EOT;
 //         $this->assertEquals($first_repertoire_count, 10);
 //     }
 
-
     /** @test */
     // IR-1544 - no productive and rev_comp fields displayed on gateway
     public function correct_rev_comp_value()
@@ -278,6 +277,5 @@ EOT;
         $first_rearrangement = data_get($t, 'Rearrangement.0');
         $this->assertEquals($first_rearrangement->rev_comp, true);
     }
-
 
 }
