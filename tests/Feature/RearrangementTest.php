@@ -213,7 +213,7 @@ EOT;
 //     public function productive_filter_true_with_facet()
 //     {
 //         $s = <<<'EOT'
-// {
+    // {
 //     "filters": {
 //         "op": "and",
 //         "content": [
@@ -236,8 +236,8 @@ EOT;
 //         ]
 //     },
 //     "facets": "repertoire_id"
-// }
-// EOT;
+    // }
+    // EOT;
 
 //         $response = $this->postJsonString('/airr/v1/rearrangement', $s);
 //         $json = $response->content();
@@ -277,5 +277,4 @@ EOT;
         $first_rearrangement = data_get($t, 'Rearrangement.0');
         $this->assertEquals($first_rearrangement->rev_comp, true);
     }
-
 }
