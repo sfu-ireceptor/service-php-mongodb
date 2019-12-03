@@ -260,4 +260,45 @@ EOT;
         $synthetic = data_get($t, 'Repertoire.0.subject.synthetic');
         $this->assertIsBool($synthetic);
     }
+
+    /** @test */
+    public function cell_subset_value()
+    // IR-1537 - cell_subset field not displaying on Gateway
+    {
+        $s = <<<'EOT'
+{}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $cell_subset_value = data_get($t, 'Repertoire.0.sample.0.cell_subset.value');
+        $this->assertEquals($cell_subset_value, 'Peripheral blood mononuclear cells');
+    }
+
+
+//     // TODO why this doesn't work??
+//     /** @test */
+//     public function repertoire_id()
+//     {
+//         $s = <<<'EOT'
+// {
+//   "filters": {
+//     "op": "=",
+//     "content": {
+//       "field": "repertoire_id",
+//       "value": "8"
+//     }
+//   }
+// }
+// EOT;
+//         $response = $this->postJsonString('/airr/v1/repertoire', $s);
+//         $json = $response->content();
+//         $t = json_decode($json);
+
+//         // dd($t);
+
+//         $this->assertCount(1, $t->Repertoire);
+//     }
 }
