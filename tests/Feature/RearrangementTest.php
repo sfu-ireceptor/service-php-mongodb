@@ -149,7 +149,7 @@ EOT;
         $this->assertObjectHasAttribute('d_call', $first_rearrangement);
         $this->assertObjectHasAttribute('junction_aa', $first_rearrangement);
 
-        if(isset($first_rearrangement->j_call)) {
+        if (isset($first_rearrangement->j_call)) {
             $this->fail('Unexpected field: j_call');
         }
     }
