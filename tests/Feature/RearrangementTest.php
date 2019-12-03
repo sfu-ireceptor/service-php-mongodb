@@ -346,4 +346,45 @@ EOT;
         $first_rearrangement = data_get($t, 'Rearrangement.0');
         $this->assertEquals($first_rearrangement->rev_comp, true);
     }
+
+//     // TODO: facet not working??
+//     /** @test */
+//     // IR-1485 - MongoDB error for facet query
+//     public function d_call_contains()
+//     {
+//         $s = <<<'EOT'
+// {
+//   "filters": {
+//     "op": "and",
+//     "content": [
+//       {
+//         "op": "contains",
+//         "content": {
+//           "field": "d_call",
+//           "value": "IGHD4-11*01"
+//         }
+//       },
+//       {
+//         "op": "in",
+//         "content": {
+//           "field": "repertoire_id",
+//           "value": [
+//             "8"
+//           ]
+//         }
+//       }
+//     ]
+//   },
+//   "facets": "repertoire_id"
+// }
+// EOT;
+
+//         $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+//         $json = $response->content();
+//         $t = json_decode($json);
+
+//         $this->assertCount(5, $t->Rearrangement);
+//         $d_call = data_get($t, 'Rearrangement.0.d_call');
+//         $this->assertEquals($d_call, 'IGHD4-11*01');
+//     }
 }
