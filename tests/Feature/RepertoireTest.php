@@ -244,4 +244,20 @@ EOT;
         $this->assertIsArray($diagnosis);
         $this->assertCount(1, $diagnosis);
     }
+
+    /** @test */
+    public function subject_synthetic_boolean()
+    // IR-1541 - single_cell_sort boolean displaying as 0
+    {
+        $s = <<<'EOT'
+{}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $synthetic = data_get($t, 'Repertoire.0.subject.synthetic');
+        $this->assertIsBool($synthetic);
+    }
 }
