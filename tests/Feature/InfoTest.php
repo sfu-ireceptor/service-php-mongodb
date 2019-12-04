@@ -12,7 +12,7 @@ class InfoTest extends TestCase
         $response = $this->getJson('/');
         $response->assertStatus(200);
 
-		$response->assertSeeText('About iReceptor');
+        $response->assertSeeText('About iReceptor');
     }
 
     /** @test */
@@ -30,9 +30,9 @@ class InfoTest extends TestCase
         $response = $this->postJson('/airr/v1/info');
         $response->assertStatus(200);
 
-         $response->assertJsonStructure([
+        $response->assertJsonStructure([
             'name',
-            'version'
+            'version',
         ]);
     }
 
