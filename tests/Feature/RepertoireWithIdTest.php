@@ -37,7 +37,7 @@ class RepertoireWithIdTest extends TestCase
         $t = json_decode($json);
 
         $this->assertCount(1, $t->Repertoire);
-        
+
         $repertoire_id = data_get($t, 'Repertoire.0.repertoire_id');
         $this->assertEquals('9', $repertoire_id);
     }
