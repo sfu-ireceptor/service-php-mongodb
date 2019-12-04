@@ -32,6 +32,8 @@ class RearrangementTest extends TestCase
         $response = $this->postJson('/airr/v1/rearrangement');
         $response->assertStatus(200);
 
+        $response->assertHeader('content-type', 'application/json');
+
         $json = $response->streamedContent();
         $t = json_decode($json);
 

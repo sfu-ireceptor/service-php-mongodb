@@ -32,6 +32,8 @@ class RepertoireTest extends TestCase
         $response = $this->postJson('/airr/v1/repertoire');
         $response->assertStatus(200);
 
+        $response->assertHeader('content-type', 'application/json');
+
         $response->assertJson([]);
     }
 
