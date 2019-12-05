@@ -53,7 +53,7 @@ class RearrangementTest extends TestCase
             $this->fail('No Info object');
         }
 
-        if (! is_object(data_get($t, 'Info'))) {
+        if (! is_object(data_get($t, 'Rearrangement'))) {
             $this->fail('No Rearrangement object');
         }
 
