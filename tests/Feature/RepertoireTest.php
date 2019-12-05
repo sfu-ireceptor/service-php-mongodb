@@ -204,6 +204,46 @@ EOT;
     }
 
     /** @test */
+    public function or_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "or",
+    "content": [
+      {
+        "op": ">=",
+        "content": {
+          "field": "subject.age_min",
+          "value": 60
+        }
+      },
+      {
+        "op": "=",
+        "content": {
+          "field": "subject.sex",
+          "value": "Female"
+        }
+      }
+    ]
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $this->assertCount(1, $t->Repertoire);
+
+        $sex = data_get($t, 'Repertoire.0.subject.sex');
+        $this->assertEquals($sex, 'Female');
+
+        $age_min = data_get($t, 'Repertoire.0.subject.age_min');
+        $this->assertLessThan(60, $age_min);
+    }
+
+    /** @test */
     public function sex_filter_male()
     {
         $s = <<<'EOT'
