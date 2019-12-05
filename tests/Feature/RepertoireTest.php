@@ -244,6 +244,58 @@ EOT;
     }
 
     /** @test */
+    public function and_or_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "and",
+    "content": [
+      {
+        "op": "or",
+        "content": [
+          {
+            "op": "=",
+            "content": {
+              "field": "sample.total_reads_passing_qc_filter",
+              "value": 20617
+            }
+          },
+          {
+            "op": "=",
+            "content": {
+              "field": "sample.total_reads_passing_qc_filter",
+              "value": 3
+            }
+          }
+        ]
+      },
+      {
+        "op": "=",
+        "content": {
+          "field": "sample.pcr_target.pcr_target_locus",
+          "value": "CDR3"
+        }
+      }
+    ]
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $this->assertCount(1, $t->Repertoire);
+
+        $total_reads_passing_qc_filter = data_get($t, 'Repertoire.0.sample.0.total_reads_passing_qc_filter');
+        $this->assertEquals($total_reads_passing_qc_filter, 20617);
+
+        $pcr_target_locus = data_get($t, 'Repertoire.0.sample.0.pcr_target.0.pcr_target_locus');
+        $this->assertEquals($pcr_target_locus, "CDR3");
+    }
+
+    /** @test */
     public function sex_filter_male()
     {
         $s = <<<'EOT'
