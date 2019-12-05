@@ -82,6 +82,34 @@ EOT;
     }
 
     /** @test */
+    public function query_with_invalid_operator()
+    {
+        // extra closing brace at the end
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "bogus",
+    "content": {
+      "field": "subject.sex",
+      "value": "Female"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        // HTTP status
+        $response->assertStatus(400);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        // error message
+        $error_message = data_get($t, 'message');
+        $this->assertEquals($error_message, 'Unable to parse the filter.');
+    }
+
+    /** @test */
     public function query_with_unknown_filter()
     {
         $s = <<<'EOT'
@@ -133,6 +161,46 @@ EOT;
         // female sample
         $sex = data_get($t, 'Repertoire.0.subject.sex');
         $this->assertEquals($sex, 'Female');
+    }
+
+    /** @test */
+    public function and_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "and",
+    "content": [
+      {
+        "op": ">=",
+        "content": {
+          "field": "subject.age_min",
+          "value": 15
+        }
+      },
+      {
+        "op": "=",
+        "content": {
+          "field": "subject.sex",
+          "value": "Female"
+        }
+      }
+    ]
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $this->assertCount(1, $t->Repertoire);
+
+        $sex = data_get($t, 'Repertoire.0.subject.sex');
+        $this->assertEquals($sex, 'Female');
+
+        $age_min = data_get($t, 'Repertoire.0.subject.age_min');
+        $this->assertGreaterThanOrEqual(15, $age_min);
     }
 
     /** @test */
