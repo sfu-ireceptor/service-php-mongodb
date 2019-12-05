@@ -292,7 +292,7 @@ EOT;
         $this->assertEquals($total_reads_passing_qc_filter, 20617);
 
         $pcr_target_locus = data_get($t, 'Repertoire.0.sample.0.pcr_target.0.pcr_target_locus');
-        $this->assertEquals($pcr_target_locus, "CDR3");
+        $this->assertEquals($pcr_target_locus, 'CDR3');
     }
 
     /** @test */
