@@ -146,7 +146,11 @@ class AirrApiController extends Controller
         $rearrangement = Sequence::airrRearrangementSingle($rearrangement_id);
         $response = AirrUtils::airrHeader();
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        $response['Rearrangement'] = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
+        if (isset ($rearrangement[0]))
+        {
+            $response['Rearrangement'] = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
+        }
+        else { $response['Rearrangement'] = "{}";}
 
         return response($response)->header('Content-Type', 'application/json');
     }
