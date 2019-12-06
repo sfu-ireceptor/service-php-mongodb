@@ -464,7 +464,7 @@ EOT;
         $this->assertEquals(10000, $cell_number);
 
         $pcr_target_locus = data_get($t, 'Repertoire.0.sample.0.pcr_target.0.pcr_target_locus');
-        $this->assertEquals("CDR3", $pcr_target_locus);
+        $this->assertEquals('CDR3', $pcr_target_locus);
     }
 
     /** @test */
@@ -488,7 +488,7 @@ EOT;
         $this->assertCount(2, $t->Repertoire);
 
         $pcr_target_locus = data_get($t, 'Repertoire.0.sample.0.pcr_target.0.pcr_target_locus');
-        $this->assertEquals("CDR3", $pcr_target_locus);
+        $this->assertEquals('CDR3', $pcr_target_locus);
     }
 
     /** @test */
@@ -516,7 +516,7 @@ EOT;
         $this->assertCount(1, $t->Repertoire);
 
         $repertoire_id = data_get($t, 'Repertoire.0.repertoire_id');
-        $this->assertEquals("9", $repertoire_id);
+        $this->assertEquals('9', $repertoire_id);
     }
 
     /** @test */
@@ -664,6 +664,7 @@ EOT;
     }
 
     // TODO - why this doesn't work?
+
     /** @testx */
     public function repertoire_id()
     {
