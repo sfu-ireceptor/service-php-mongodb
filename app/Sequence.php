@@ -1039,7 +1039,10 @@ class Sequence extends Model
                 $sample_id_list[] = $return;
             }
 
-            return $sample_id_list;
+            $response = AirrUtils::airrHeader();
+            $response['Facet'] = Sequence::airrRearrangementFacetsResponse($sample_id_list);        
+            $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            echo $json;
         }
 
         //create a list of repertoire ids we'll be looping over, and a filter we can pass to MongoDB

@@ -101,7 +101,6 @@ class AirrApiController extends Controller
             return response($response, 400)->header('Content-Type', 'application/json');
         }
 
-        $response = [];
         //check if we can optimize the ADC API query for our repository
         //  if so, go down optimizied query path
         if (AirrUtils::queryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
@@ -112,6 +111,7 @@ class AirrApiController extends Controller
             $l = Sequence::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
 
             if ($l == 'error') {
+                $response = [];
                 $response['message'] = 'Unable to parse the filter.';
                 $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
@@ -123,12 +123,9 @@ class AirrApiController extends Controller
                     $response_type = strtolower($params['format']);
                 }
                 if (isset($params['facets'])) {
+                    $response = AirrUtils::airrHeader();
+                    
                     //facets have different formatting requirements
-                    $response['Info']['Title'] = 'AIRR Data Commons API';
-                    $response['Info']['description'] = 'API response for repertoire query';
-                    $response['Info']['version'] = 1.3;
-                    $response['Info']['contact']['name'] = 'AIRR Community';
-                    $response['Info']['contact']['url'] = 'https://github.com/airr-community';
                     $response['Facet'] = Sequence::airrRearrangementFacetsResponse($l);
 
                     return response($response)->header('Content-Type', 'application/json');
@@ -147,11 +144,7 @@ class AirrApiController extends Controller
     public function airr_rearrangement_single($rearrangement_id)
     {
         $rearrangement = Sequence::airrRearrangementSingle($rearrangement_id);
-        $response['Info']['Title'] = 'AIRR Data Commons API';
-        $response['Info']['description'] = 'API response for repertoire query';
-        $response['Info']['version'] = 1.3;
-        $response['Info']['contact']['name'] = 'AIRR Community';
-        $response['Info']['contact']['url'] = 'https://github.com/airr-community';
+        $response = AirrUtils::airrHeader();
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         $response['Rearrangement'] = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
 
