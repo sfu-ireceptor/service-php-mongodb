@@ -520,6 +520,54 @@ EOT;
     }
 
     /** @test */
+    public function facets1()
+    {
+        $s = <<<'EOT'
+{
+    "facets":"sample.pcr_target.pcr_target_locus"
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Facet);
+
+
+        $facet = data_get($t, 'Facet.0');
+        $this->assertEquals($facet->pcr_target_locus, 'CDR3');
+        $this->assertEquals($facet->count, 2);
+    }
+
+    /** @test */
+    public function facets2()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "sample.pcr_target.pcr_target_locus",
+      "value": "CDR3"
+    }
+  },
+  "facets": "subject.subject_id"
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $this->assertCount(2, $t->Facet);
+
+        $this->assertContains(data_get($t, 'Facet.0.subject_id'), ['14711_CSF', '26712_CSF']);
+        $this->assertContains(data_get($t, 'Facet.1.subject_id'), ['14711_CSF', '26712_CSF']);
+        $this->assertEquals(data_get($t, 'Facet.0.count'), 1);
+        $this->assertEquals(data_get($t, 'Facet.1.count'), 1);
+    }
+
+    /** @test */
     public function sex_filter_male()
     {
         $s = <<<'EOT'
