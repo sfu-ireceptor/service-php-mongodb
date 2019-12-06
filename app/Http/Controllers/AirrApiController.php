@@ -124,7 +124,7 @@ class AirrApiController extends Controller
                 }
                 if (isset($params['facets'])) {
                     $response = AirrUtils::airrHeader();
-                    
+
                     //facets have different formatting requirements
                     $response['Facet'] = Sequence::airrRearrangementFacetsResponse($l);
 

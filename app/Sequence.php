@@ -1040,12 +1040,10 @@ class Sequence extends Model
             }
 
             $response = AirrUtils::airrHeader();
-            $response['Facet'] = Sequence::airrRearrangementFacetsResponse($sample_id_list);        
+            $response['Facet'] = self::airrRearrangementFacetsResponse($sample_id_list);
             $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             echo $json;
-        }
-
-        else {
+        } else {
             //create a list of repertoire ids we'll be looping over, and a filter we can pass to MongoDB
             AirrUtils::optimizeRearrangementFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters);
 
@@ -1073,11 +1071,10 @@ class Sequence extends Model
                 }
 
                 $response = AirrUtils::airrHeader();
-                $response['Facet'] = Sequence::airrRearrangementFacetsResponse($return_list);        
+                $response['Facet'] = self::airrRearrangementFacetsResponse($return_list);
                 $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 echo $json;
-            }
-            else {
+            } else {
                 //it's a data query, either tsv or JSON, run it by repertoire_id and echo the results as a stream
                 $start_at = 0;
                 $max_values = 0;
