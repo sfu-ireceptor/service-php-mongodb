@@ -96,7 +96,7 @@
     "sequencing_kit": null,
     "total_reads_passing_qc_filter": 20617,
     "tissue": "Blood",
-    "lab_address": "University of California San Francisco (UCSF)",
+    "lab_address": "University of California test San Francisco (UCSF)",
     "study_id": "PRJNA248411",
     "ir_updated_at": "Mon Jul 15 2019 19:54:01 UTC+00:00",
     "grants": null,

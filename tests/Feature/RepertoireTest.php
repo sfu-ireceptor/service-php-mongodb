@@ -296,6 +296,73 @@ EOT;
     }
 
     /** @test */
+    public function boolean_equals_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "sample.single_cell",
+      "value": true
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $this->assertCount(0, $t->Repertoire);
+    }
+
+    /** @test */
+    public function boolean_not_equals_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "!=",
+    "content": {
+      "field": "sample.single_cell",
+      "value": true
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+
+        $this->assertCount(2, $t->Repertoire);
+    }
+
+    /** @test */
+    public function contains_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "contains",
+    "content": {
+      "field": "study.lab_address",
+      "value": "test"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+        $lab_address = data_get($t, 'Repertoire.0.study.lab_address');
+        $this->assertStringContainsString('test', $lab_address);
+    }
+
+    /** @test */
     public function sex_filter_male()
     {
         $s = <<<'EOT'
