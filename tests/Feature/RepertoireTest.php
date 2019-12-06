@@ -362,6 +362,163 @@ EOT;
         $this->assertStringContainsString('test', $lab_address);
     }
 
+    /** @testx */
+    public function deep_and_operators()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "and",
+    "content": [
+      {
+        "op": "and",
+        "content": [
+          {
+            "op": "<",
+            "content": {
+              "field": "sample.cell_number",
+              "value": 10000
+            }
+          },
+          {
+            "op": "=",
+            "content": {
+              "field": "sample.pcr_target.pcr_target_locus",
+              "value": "CDR3"
+            }
+          }
+        ]
+      },
+      {
+        "op": "and",
+        "content": [
+          {
+            "op": "<",
+            "content": {
+              "field": "sample.cell_number",
+              "value": 10000
+            }
+          },
+          {
+            "op": "=",
+            "content": {
+              "field": "sample.pcr_target.pcr_target_locus",
+              "value": "CDR3"
+            }
+          },
+          {
+            "op": "and",
+            "content": [
+              {
+                "op": "and",
+                "content": [
+                  {
+                    "op": "<",
+                    "content": {
+                      "field": "sample.cell_number",
+                      "value": 10000
+                    }
+                  },
+                  {
+                    "op": "=",
+                    "content": {
+                      "field": "sample.pcr_target.pcr_target_locus",
+                      "value": "CDR3"
+                    }
+                  }
+                ]
+              },
+              {
+                "op": "and",
+                "content": [
+                  {
+                    "op": "<",
+                    "content": {
+                      "field": "sample.cell_number",
+                      "value": 10000
+                    }
+                  },
+                  {
+                    "op": "=",
+                    "content": {
+                      "field": "sample.pcr_target.pcr_target_locus",
+                      "value": "CDR3"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+        $cell_number = data_get($t, 'Repertoire.0.sample.0.cell_number');
+        $this->assertEquals(10000, $cell_number);
+
+        $pcr_target_locus = data_get($t, 'Repertoire.0.sample.0.pcr_target.0.pcr_target_locus');
+        $this->assertEquals("CDR3", $pcr_target_locus);
+    }
+
+    /** @test */
+    public function equals_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "sample.pcr_target.pcr_target_locus",
+      "value": "CDR3"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+
+        $pcr_target_locus = data_get($t, 'Repertoire.0.sample.0.pcr_target.0.pcr_target_locus');
+        $this->assertEquals("CDR3", $pcr_target_locus);
+    }
+
+    /** @test */
+    public function exclude_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "exclude",
+    "content": {
+      "field": "repertoire_id",
+      "value": [
+        "8",
+        "10",
+        "11"
+      ]
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+
+        $repertoire_id = data_get($t, 'Repertoire.0.repertoire_id');
+        $this->assertEquals("9", $repertoire_id);
+    }
+
     /** @test */
     public function sex_filter_male()
     {
@@ -506,27 +663,29 @@ EOT;
         $this->assertEquals($cell_subset_value, 'Peripheral blood mononuclear cells');
     }
 
-//     // TODO why this doesn't work??
-//     /** @test */
-//     public function repertoire_id()
-//     {
-//         $s = <<<'EOT'
-// {
-//   "filters": {
-//     "op": "=",
-//     "content": {
-//       "field": "repertoire_id",
-//       "value": "8"
-//     }
-//   }
-// }
-// EOT;
-//         $response = $this->postJsonString('/airr/v1/repertoire', $s);
-//         $json = $response->content();
-//         $t = json_decode($json);
+    // TODO - why this doesn't work?
+    /** @testx */
+    public function repertoire_id()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "repertoire_id",
+      "value": "8"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $json = $response->content();
+        $t = json_decode($json);
 
-//         // dd($t);
+        dd($t);
 
-//         $this->assertCount(1, $t->Repertoire);
-//     }
+        $this->assertCount(1, $t->Repertoire);
+        $repertoire_id = data_get($t, 'Repertoire.0.repertoire_id');
+        $this->assertEquals('8', $repertoire_id);
+    }
 }
