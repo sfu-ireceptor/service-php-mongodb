@@ -372,49 +372,49 @@ EOT;
 
 
     // TODO: "facets" parameter not picked up?!?
-//     /** @test */
-//     // IR-1552 - Productive filter on gateway not working
-//     public function productive_filter_true_with_facet()
-//     {
-//         $s = <<<'EOT'
-    // {
-//     "filters": {
-//         "op": "and",
-//         "content": [
-//             {
-//                 "op": "=",
-//                 "content": {
-//                     "field": "productive",
-//                     "value": true
-//                 }
-//             },
-//             {
-//                 "op": "in",
-//                 "content": {
-//                     "field": "repertoire_id",
-//                     "value": [
-//                         "8"
-//                     ]
-//                 }
-//             }
-//         ]
-//     },
-//     "facets": "repertoire_id"
-    // }
-    // EOT;
+    /** @test */
+    // IR-1552 - Productive filter on gateway not working
+    public function productive_filter_true_with_facet()
+    {
+        $s = <<<'EOT'
+{
+"filters": {
+    "op": "and",
+    "content": [
+        {
+            "op": "=",
+            "content": {
+                "field": "productive",
+                "value": true
+            }
+        },
+        {
+            "op": "in",
+            "content": {
+                "field": "repertoire_id",
+                "value": [
+                    "8"
+                ]
+            }
+        }
+    ]
+},
+"facets": "repertoire_id"
+}
+EOT;
 
-//         $response = $this->postJsonString('/airr/v1/rearrangement', $s);
-//         $json = $response->content();
-//         $t = json_decode($json);
+        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $json = $response->streamedContent();
+        $t = json_decode($json);
 
-//         $this->assertCount(2, $t->Facet);
+        $this->assertCount(1, $t->Facet);
 
-//         $first_repertoire_id = data_get($t, 'Facet.0.repertoire_id');
-//         $this->assertEquals($first_repertoire_id, '8');
+        $first_repertoire_id = data_get($t, 'Facet.0.repertoire_id');
+        $this->assertEquals($first_repertoire_id, '8');
 
-//         $first_repertoire_count = data_get($t, 'Facet.0.repertoire_count');
-//         $this->assertEquals($first_repertoire_count, 10);
-//     }
+        $first_repertoire_count = data_get($t, 'Facet.0.count');
+        $this->assertEquals($first_repertoire_count, 10);
+    }
 
     /** @test */
     // IR-1544 - no productive and rev_comp fields displayed on gateway

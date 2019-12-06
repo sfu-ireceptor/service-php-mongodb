@@ -1045,183 +1045,189 @@ class Sequence extends Model
             echo $json;
         }
 
-        //create a list of repertoire ids we'll be looping over, and a filter we can pass to MongoDB
-        AirrUtils::optimizeRearrangementFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters);
+        else {
+            //create a list of repertoire ids we'll be looping over, and a filter we can pass to MongoDB
+            AirrUtils::optimizeRearrangementFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters);
 
-        //if we don't have a list of repertoire ids, we will be looping over all the database entries
-        if (count($sample_id_list) == 0) {
-            $sample_id_query = new Sample();
-            $result = $sample_id_query->get();
-            foreach ($result as $repertoire) {
-                $sample_id_list[] = $repertoire['_id'];
-            }
-        }
-        // if it's a facets query, we will have to do a count on repertoire_ids
-        if ($facets == 'repertoire_id') {
-            $return_list = [];
-
-            $count_timeout = $query->getCountTimeout();
-            $query_params['maxTimeMS'] = $count_timeout;
-
-            foreach ($sample_id_list as $current_sample_id) {
-                $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
-                $total = DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
-                $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
-                $return['count'] = $total;
-                $return_list[] = $return;
-            }
-
-            return $return_list;
-        }
-
-        //it's a data query, either tsv or JSON, run it by repertoire_id and echo the results as a stream
-        $start_at = 0;
-        $max_values = 0;
-        $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
-
-        //check what kind of response we have, default to JSON
-        $response_type = 'json';
-        if (isset($request['format']) && $request['format'] != '') {
-            $response_type = strtolower($request['format']);
-        }
-
-        // rev_comp and functional field are sometimes stored with annotation values
-        //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
-        //  for those two values here so we don't have to do it on every sequence.
-        // For similar reason, we want a translation of ir_project_sample_id value, which connects
-        //  rearrangement with repertoire
-        $rev_comp_airr_name = $service_to_airr_mapping['rev_comp'];
-        $functional_arr_name = $service_to_airr_mapping['functional'];
-
-        //few other variables we use in other arrays, simply to avoid triple-nested array references
-        // e.g. $psa_list[$sequence_list[$database_fields['ir_project_sample_id']]];
-        $ir_project_sample_id_repository_name = $service_to_db_mapping['ir_project_sample_id'];
-        $v_call_airr_name = array_search('v_call', $service_to_airr_mapping);
-        $j_call_airr_name = array_search('j_call', $service_to_airr_mapping);
-        $d_call_airr_name = array_search('d_call', $service_to_airr_mapping);
-
-        // check if we have a start value or max value. with max, we stop sending data after that many results
-        //  start is a bit iffier - we'll run our query and not output till we have seen that many results, but...
-        //  this may not be consistent accross requests
-        if (isset($request['size']) && intval($request['size']) > 0) {
-            $max_values = intval($request['size']);
-        }
-        if (isset($request['from']) && intval($request['from']) > 0) {
-            $start_at = intval($request['from']);
-        }
-        $fields_to_retrieve = [];
-        $fields_to_display = [];
-        // if fields value is set, we will be using them in projection
-        if (isset($request['fields']) && $request['fields'] != '') {
-            foreach ($request['fields'] as $airr_field_name) {
-                if (isset($airr_to_repository_mapping[$airr_field_name]) && $airr_to_repository_mapping[$airr_field_name] != '') {
-                    $fields_to_retrieve[$airr_to_repository_mapping[$airr_field_name]] = 1;
-                    array_push($fields_to_display, $airr_field_name);
+            //if we don't have a list of repertoire ids, we will be looping over all the database entries
+            if (count($sample_id_list) == 0) {
+                $sample_id_query = new Sample();
+                $result = $sample_id_query->get();
+                foreach ($result as $repertoire) {
+                    $sample_id_list[] = $repertoire['_id'];
                 }
             }
-            $query_params['projection'] = $fields_to_retrieve;
-        }
-        //if we didn't have the fields variable, we want to display all the AIRR fields
-        if (count($fields_to_retrieve) == 0) {
-            $fields_to_display = array_keys($airr_to_repository_mapping);
-        }
-        $written_results = 0;
-        if ($response_type == 'json') {
-            // header('Content-Type: application/json; charset=utf-8');
-            echo '{"Info":';
-            $response['Title'] = 'AIRR Data Commons API';
-            $response['description'] = 'API response for repertoire query';
-            $response['version'] = 1.3;
-            $response['contact']['name'] = 'AIRR Community';
-            $response['contact']['url'] = 'https://github.com/airr-community';
-            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-            echo ', "Rearrangement":[';
-            echo "\n";
-        }
-        if ($response_type == 'tsv') {
-            header('Content-Type: text/tsv; charset=utf-8');
-            header('Content-Disposition: attachment;filename="data.tsv"');
-            //output the headers
-            echo implode($fields_to_display, chr(9)) . "\n";
-        }
-        $current_result = 0;
-        $first = true;
-        foreach ($sample_id_list as $current_sample_id) {
-            $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
-            $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
-            foreach ($result as $row) {
-                $sequence_list = $row;
-                $airr_list = [];
+            // if it's a facets query, we will have to do a count on repertoire_ids
+            if ($facets == 'repertoire_id') {
+                $return_list = [];
 
-                foreach ($airr_to_service_mapping as $airr_name => $service_name) {
-                    if (isset($service_name) && isset($service_to_db_mapping[$service_name])) {
-                        if (isset($sequence_list[$service_to_db_mapping[$service_name]])) {
-                            $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
-                            if ($service_name == 'rev_comp') {
-                                if ($airr_list[$rev_comp_airr_name] == '+') {
-                                    $airr_list[$rev_comp_airr_name] = false;
+                $count_timeout = $query->getCountTimeout();
+                $query_params['maxTimeMS'] = $count_timeout;
+
+                foreach ($sample_id_list as $current_sample_id) {
+                    $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
+                    $total = DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
+                    $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
+                    $return['count'] = $total;
+                    $return_list[] = $return;
+                }
+
+                $response = AirrUtils::airrHeader();
+                $response['Facet'] = Sequence::airrRearrangementFacetsResponse($return_list);        
+                $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                echo $json;
+            }
+            else {
+                //it's a data query, either tsv or JSON, run it by repertoire_id and echo the results as a stream
+                $start_at = 0;
+                $max_values = 0;
+                $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
+
+                //check what kind of response we have, default to JSON
+                $response_type = 'json';
+                if (isset($request['format']) && $request['format'] != '') {
+                    $response_type = strtolower($request['format']);
+                }
+
+                // rev_comp and functional field are sometimes stored with annotation values
+                //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
+                //  for those two values here so we don't have to do it on every sequence.
+                // For similar reason, we want a translation of ir_project_sample_id value, which connects
+                //  rearrangement with repertoire
+                $rev_comp_airr_name = $service_to_airr_mapping['rev_comp'];
+                $functional_arr_name = $service_to_airr_mapping['functional'];
+
+                //few other variables we use in other arrays, simply to avoid triple-nested array references
+                // e.g. $psa_list[$sequence_list[$database_fields['ir_project_sample_id']]];
+                $ir_project_sample_id_repository_name = $service_to_db_mapping['ir_project_sample_id'];
+                $v_call_airr_name = array_search('v_call', $service_to_airr_mapping);
+                $j_call_airr_name = array_search('j_call', $service_to_airr_mapping);
+                $d_call_airr_name = array_search('d_call', $service_to_airr_mapping);
+
+                // check if we have a start value or max value. with max, we stop sending data after that many results
+                //  start is a bit iffier - we'll run our query and not output till we have seen that many results, but...
+                //  this may not be consistent accross requests
+                if (isset($request['size']) && intval($request['size']) > 0) {
+                    $max_values = intval($request['size']);
+                }
+                if (isset($request['from']) && intval($request['from']) > 0) {
+                    $start_at = intval($request['from']);
+                }
+                $fields_to_retrieve = [];
+                $fields_to_display = [];
+                // if fields value is set, we will be using them in projection
+                if (isset($request['fields']) && $request['fields'] != '') {
+                    foreach ($request['fields'] as $airr_field_name) {
+                        if (isset($airr_to_repository_mapping[$airr_field_name]) && $airr_to_repository_mapping[$airr_field_name] != '') {
+                            $fields_to_retrieve[$airr_to_repository_mapping[$airr_field_name]] = 1;
+                            array_push($fields_to_display, $airr_field_name);
+                        }
+                    }
+                    $query_params['projection'] = $fields_to_retrieve;
+                }
+                //if we didn't have the fields variable, we want to display all the AIRR fields
+                if (count($fields_to_retrieve) == 0) {
+                    $fields_to_display = array_keys($airr_to_repository_mapping);
+                }
+                $written_results = 0;
+                if ($response_type == 'json') {
+                    // header('Content-Type: application/json; charset=utf-8');
+                    echo '{"Info":';
+                    $response['Title'] = 'AIRR Data Commons API';
+                    $response['description'] = 'API response for repertoire query';
+                    $response['version'] = 1.3;
+                    $response['contact']['name'] = 'AIRR Community';
+                    $response['contact']['url'] = 'https://github.com/airr-community';
+                    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                    echo ', "Rearrangement":[';
+                    echo "\n";
+                }
+                if ($response_type == 'tsv') {
+                    header('Content-Type: text/tsv; charset=utf-8');
+                    header('Content-Disposition: attachment;filename="data.tsv"');
+                    //output the headers
+                    echo implode($fields_to_display, chr(9)) . "\n";
+                }
+                $current_result = 0;
+                $first = true;
+                foreach ($sample_id_list as $current_sample_id) {
+                    $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
+                    $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
+                    foreach ($result as $row) {
+                        $sequence_list = $row;
+                        $airr_list = [];
+
+                        foreach ($airr_to_service_mapping as $airr_name => $service_name) {
+                            if (isset($service_name) && isset($service_to_db_mapping[$service_name])) {
+                                if (isset($sequence_list[$service_to_db_mapping[$service_name]])) {
+                                    $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
+                                    if ($service_name == 'rev_comp') {
+                                        if ($airr_list[$rev_comp_airr_name] == '+') {
+                                            $airr_list[$rev_comp_airr_name] = false;
+                                        }
+                                        if ($airr_list[$rev_comp_airr_name] == '-') {
+                                            $airr_list[$rev_comp_airr_name] = true;
+                                        }
+                                    }
+                                    if ($service_name == 'functional') {
+                                        if ($airr_list[$functional_arr_name] == 1) {
+                                            $airr_list[$functional_arr_name] = true;
+                                        } elseif ($airr_list[$functional_arr_name] == 0) {
+                                            $airr_list[$functional_arr_name] = false;
+                                        }
+                                    }
                                 }
-                                if ($airr_list[$rev_comp_airr_name] == '-') {
-                                    $airr_list[$rev_comp_airr_name] = true;
+                            } else {
+                                $airr_list[$airr_name] = null;
+                            }
+                        }
+
+                        $current_result++;
+                        $new_line = [];
+                        foreach ($fields_to_display as $current_header) {
+                            if (isset($airr_list[$current_header])) {
+                                if (is_array($airr_list[$current_header])) {
+                                    $new_line[$current_header] = implode($airr_list[$current_header], ', or');
+                                } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
+                                    $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
+                                } else {
+                                    $new_line[$current_header] = $airr_list[$current_header];
+                                }
+                            } else {
+                                $new_line[$current_header] = null;
+                            }
+
+                            //in TSV we want our boolean values to be 'T' and 'F'
+                            if (isset($new_line[$current_header]) && $airr_types[$current_header] == 'boolean' && $response_type == 'tsv') {
+                                if (strtolower($new_line[$current_header]) == 'true' || $new_line[$current_header] == true) {
+                                    $new_line[$current_header] = 'T';
+                                } else {
+                                    $new_line[$current_header] = 'F';
                                 }
                             }
-                            if ($service_name == 'functional') {
-                                if ($airr_list[$functional_arr_name] == 1) {
-                                    $airr_list[$functional_arr_name] = true;
-                                } elseif ($airr_list[$functional_arr_name] == 0) {
-                                    $airr_list[$functional_arr_name] = false;
+                        }
+                        if ($current_result > $start_at) {
+                            if ($response_type == 'tsv') {
+                                echo implode($new_line, chr(9)) . "\n";
+                            } else {
+                                if ($first) {
+                                    $first = false;
+                                } else {
+                                    echo ',';
                                 }
+                                echo json_encode($new_line, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                             }
+                            $written_results++;
                         }
-                    } else {
-                        $airr_list[$airr_name] = null;
-                    }
-                }
-
-                $current_result++;
-                $new_line = [];
-                foreach ($fields_to_display as $current_header) {
-                    if (isset($airr_list[$current_header])) {
-                        if (is_array($airr_list[$current_header])) {
-                            $new_line[$current_header] = implode($airr_list[$current_header], ', or');
-                        } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
-                            $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
-                        } else {
-                            $new_line[$current_header] = $airr_list[$current_header];
-                        }
-                    } else {
-                        $new_line[$current_header] = null;
-                    }
-
-                    //in TSV we want our boolean values to be 'T' and 'F'
-                    if (isset($new_line[$current_header]) && $airr_types[$current_header] == 'boolean' && $response_type == 'tsv') {
-                        if (strtolower($new_line[$current_header]) == 'true' || $new_line[$current_header] == true) {
-                            $new_line[$current_header] = 'T';
-                        } else {
-                            $new_line[$current_header] = 'F';
+                        if ($max_values > 0 && $written_results >= $max_values) {
+                            break 2;
                         }
                     }
                 }
-                if ($current_result > $start_at) {
-                    if ($response_type == 'tsv') {
-                        echo implode($new_line, chr(9)) . "\n";
-                    } else {
-                        if ($first) {
-                            $first = false;
-                        } else {
-                            echo ',';
-                        }
-                        echo json_encode($new_line, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-                    }
-                    $written_results++;
-                }
-                if ($max_values > 0 && $written_results >= $max_values) {
-                    break 2;
+                if ($response_type == 'json') {
+                    echo "]}\n";
                 }
             }
-        }
-        if ($response_type == 'json') {
-            echo "]}\n";
         }
     }
 }
