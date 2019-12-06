@@ -278,7 +278,6 @@ EOT;
         $this->assertEquals($first_repertoire_id, true);
     }
 
-
     /** @test */
     public function facet()
     {
@@ -301,7 +300,6 @@ EOT;
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/json');
 
-
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -316,7 +314,7 @@ EOT;
         if (! is_array(data_get($t, 'Facet'))) {
             $this->fail('No Facet object');
         }
- 
+
         $this->assertCount(1, $t->Facet);
 
         $first_facet = data_get($t, 'Facet.0');
@@ -347,7 +345,6 @@ EOT;
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/json');
 
-
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -362,14 +359,13 @@ EOT;
         if (! is_array(data_get($t, 'Facet'))) {
             $this->fail('No Facet object');
         }
- 
+
         $this->assertCount(2, $t->Facet);
 
         $first_facet = data_get($t, 'Facet.0');
         $this->assertEquals($first_facet->repertoire_id, 8);
         $this->assertIsInt($first_facet->count);
     }
-
 
     // TODO: "facets" parameter not picked up?!?
     /** @test */
