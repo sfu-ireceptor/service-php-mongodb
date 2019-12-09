@@ -533,7 +533,6 @@ EOT;
         $t = json_decode($json);
         $this->assertCount(1, $t->Facet);
 
-
         $facet = data_get($t, 'Facet.0');
         $this->assertEquals($facet->pcr_target_locus, 'CDR3');
         $this->assertEquals($facet->count, 2);
