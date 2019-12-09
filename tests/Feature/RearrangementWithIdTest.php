@@ -13,10 +13,10 @@ class RearrangementWithIdTest extends TestCase
         $this->seed(SequencesCollectionSeeder::class);
     }
 
-    /** @testx */
+    /** @test */
     public function check_valid_JSON_response()
     {
-        $response = $this->getJson('/airr/v1/rearrangement/5ddd883fa9832008fe088702');
+        $response = $this->getJson('/airr/v1/rearrangement/5d2cd9eb9a6c030b30832c00');
         $response->assertStatus(200);
 
         $response->assertHeader('content-type', 'application/json');
@@ -24,10 +24,10 @@ class RearrangementWithIdTest extends TestCase
         $response->assertJson([]);
     }
 
-    /** @testx */
+    /** @test */
     public function check_correct_JSON_response()
     {
-        $response = $this->getJson('/airr/v1/rearrangement/5ddd883fa9832008fe088702');
+        $response = $this->getJson('/airr/v1/rearrangement/5d2cd9eb9a6c030b30832c00');
 
         // has info and rearrangement objects
         $response->assertJson(['Info' => []]);
@@ -36,9 +36,7 @@ class RearrangementWithIdTest extends TestCase
         $json = $response->content();
         $t = json_decode($json);
 
-        $this->assertCount(1, $t->Rearrangement);
-
-        $rearrangement_id = data_get($t, 'Rearrangement.0.rearrangement_id');
-        $this->assertEquals('5ddd883fa9832008fe088702', $rearrangement_id);
+        $rearrangement_id = data_get($t, 'Rearrangement.rearrangement_id');
+        $this->assertEquals('5d2cd9eb9a6c030b30832c00', $rearrangement_id);
     }
 }
