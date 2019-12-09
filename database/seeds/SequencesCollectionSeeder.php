@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use MongoDB\BSON\ObjectID;
 
 class SequencesCollectionSeeder extends Seeder
 {
@@ -14,8 +15,8 @@ class SequencesCollectionSeeder extends Seeder
         $data = json_decode($json, true);
 
         foreach ($data as $t) {
-            // unset "_id" field
-            unset($t['_id']);
+            $id = $t['_id']['$oid'];
+            $t['_id'] = new ObjectID($id);
 
             // add to collection
             DB::collection('sequences')->insert($t);
