@@ -703,7 +703,91 @@ EOT;
         $t = json_decode($json);
         $this->assertCount(1, $t->Repertoire);
     }
-        
+
+    /** @test */
+    public function in_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "in",
+    "content": {
+      "field": "repertoire_id",
+      "value": [
+        "7",
+        "8",
+        "9"
+      ]
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+
+
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "in",
+    "content": {
+      "field": "repertoire_id",
+      "value": [
+        "1",
+        "8",
+        "15"
+      ]
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+
+    }
+
+    /** @test */
+    public function is_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "is",
+    "content": {
+      "field": "sample.cell_number"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "is",
+    "content": {
+      "field": "repertoire_id"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(0, $t->Repertoire);
+    }
+
     /** @test */
     public function sex_filter_male()
     {
