@@ -567,6 +567,84 @@ EOT;
     }
 
     /** @test */
+    public function organism_value_filter()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "subject.organism.value",
+      "value": "Homo sapiens"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+
+        $organism_value = data_get($t, 'Repertoire.0.subject.organism.value');
+        $this->assertEquals('Homo sapiens', $organism_value);
+    }    
+
+    /** @test */
+    public function pcr_target_locus_filter()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "sample.pcr_target.pcr_target_locus",
+      "value": "CDR3"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+
+        $pcr_target_locus = data_get($t, 'Repertoire.0.sample.0.pcr_target.0.pcr_target_locus');
+        $this->assertEquals('CDR3', $pcr_target_locus);
+    }
+
+    /** @test */
+    public function float_from()
+    {
+        $s = <<<'EOT'
+{
+  "from": 10.5
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+    }    
+
+    /** @test */
+    public function float_size()
+    {
+        $s = <<<'EOT'
+{
+  "size": 10.5
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+    }   
+
+    /** @test */
     public function sex_filter_male()
     {
         $s = <<<'EOT'
