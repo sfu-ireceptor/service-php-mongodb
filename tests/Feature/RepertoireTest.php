@@ -642,8 +642,68 @@ EOT;
         $json = $response->content();
         $t = json_decode($json);
         $this->assertCount(2, $t->Repertoire);
-    }   
+    } 
 
+    /** @test */
+    public function greater_than_equals_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": ">=",
+    "content": {
+      "field": "sample.total_reads_passing_qc_filter",
+      "value": 5000
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+
+
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": ">=",
+    "content": {
+      "field": "sample.total_reads_passing_qc_filter",
+      "value": 4854
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+    }      
+
+    /** @test */
+    public function greater_than_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": ">",
+    "content": {
+      "field": "sample.total_reads_passing_qc_filter",
+      "value": 4854
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+    }
+        
     /** @test */
     public function sex_filter_male()
     {
