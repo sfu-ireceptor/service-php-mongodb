@@ -77,7 +77,14 @@ class AirrUtils extends Model
                         $value = json_encode($content['value']);
                     } else {
                         if (is_bool($content['value'])) {
-                            $value = (int) $content['value'];
+                            if (($content['value']))
+                            {
+                                $value = 'true';
+                            }
+                            else
+                            {
+                                $value = 'false';
+                            }
                         } else {
                             return;
                         }
@@ -152,13 +159,13 @@ class AirrUtils extends Model
                 }
             case 'is':
                 if (isset($field) && $field != '') {
-                    return '{"' . $field . '":{"$exists":"false"}}';
+                    return '{"' . $field . '":{"$exists":false}}';
                 } else {
                     return;
                 }
             case 'not':
                 if (isset($field) && $field != '') {
-                    return '{"' . $field . '":{"$exists":"true"}}';
+                    return '{"' . $field . '":{"$exists":true}}';
                 } else {
                     return;
                 }
