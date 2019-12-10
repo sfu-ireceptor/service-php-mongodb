@@ -588,7 +588,7 @@ EOT;
 
         $organism_value = data_get($t, 'Repertoire.0.subject.organism.value');
         $this->assertEquals('Homo sapiens', $organism_value);
-    }    
+    }
 
     /** @test */
     public function pcr_target_locus_filter()
@@ -627,7 +627,7 @@ EOT;
         $json = $response->content();
         $t = json_decode($json);
         $this->assertCount(2, $t->Repertoire);
-    }    
+    }
 
     /** @test */
     public function float_size()
@@ -642,7 +642,7 @@ EOT;
         $json = $response->content();
         $t = json_decode($json);
         $this->assertCount(2, $t->Repertoire);
-    } 
+    }
 
     /** @test */
     public function greater_than_equals_operator()
@@ -664,7 +664,6 @@ EOT;
         $t = json_decode($json);
         $this->assertCount(1, $t->Repertoire);
 
-
         $s = <<<'EOT'
 {
   "filters": {
@@ -681,7 +680,7 @@ EOT;
         $json = $response->content();
         $t = json_decode($json);
         $this->assertCount(2, $t->Repertoire);
-    }      
+    }
 
     /** @test */
     public function greater_than_operator()
@@ -728,7 +727,6 @@ EOT;
         $t = json_decode($json);
         $this->assertCount(2, $t->Repertoire);
 
-
         $s = <<<'EOT'
 {
   "filters": {
@@ -749,7 +747,6 @@ EOT;
         $json = $response->content();
         $t = json_decode($json);
         $this->assertCount(1, $t->Repertoire);
-
     }
 
     /** @test */
