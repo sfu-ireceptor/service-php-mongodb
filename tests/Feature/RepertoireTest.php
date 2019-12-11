@@ -204,7 +204,7 @@ EOT;
     }
 
     /** @test */
-    public function or_operator()
+    public function or_operator2()
     {
         $s = <<<'EOT'
 {
@@ -767,6 +767,317 @@ EOT;
         $json = $response->content();
         $t = json_decode($json);
         $this->assertCount(0, $t->Repertoire);
+    }
+
+    /** @test */
+    public function less_than_equals_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "<=",
+    "content": {
+      "field": "sample.total_reads_passing_qc_filter",
+      "value": 5000
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "<=",
+    "content": {
+      "field": "sample.total_reads_passing_qc_filter",
+      "value": 20617
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+    }
+
+    /** @test */
+    public function less_than_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "<",
+    "content": {
+      "field": "sample.total_reads_passing_qc_filter",
+      "value": 20617
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+    }
+
+    /** @test */
+    public function not_equals_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "!=",
+    "content": {
+      "field": "sample.pcr_target.pcr_target_locus",
+      "value": "CDR3"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(0, $t->Repertoire);
+
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "!=",
+    "content": {
+      "field": "sample.pcr_target.pcr_target_locus",
+      "value": "CDR4"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+    }
+
+    /** @test */
+    public function not_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "not",
+    "content": {
+      "field": "sample.cell_number"
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
+    }
+
+    /** @test */
+    public function number_equals_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "sample.total_reads_passing_qc_filter",
+      "value": 4854
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+    }
+
+    /** @test */
+    public function number_exclude_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "exclude",
+    "content": {
+      "field": "sample.total_reads_passing_qc_filter",
+      "value": [
+        1000,
+        4854,
+        10000
+      ]
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+
+        $v = data_get($t, 'Repertoire.0.sample.0.total_reads_passing_qc_filter');
+        $this->assertEquals($v, 20617);
+    }
+
+    /** @test */
+    public function number_in_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "in",
+    "content": {
+      "field": "sample.total_reads_passing_qc_filter",
+      "value": [
+        1000,
+        4854,
+        10000
+      ]
+    }
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+
+        $v = data_get($t, 'Repertoire.0.sample.0.total_reads_passing_qc_filter');
+        $this->assertEquals($v, 4854);
+    }
+
+    /** @test */
+    public function or_operator()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "or",
+    "content": [
+      {
+        "op": "=",
+        "content": {
+          "field": "sample.cell_number",
+          "value": 500
+        }
+      },
+      {
+        "op": "=",
+        "content": {
+          "field": "sample.total_reads_passing_qc_filter",
+          "value": 4854
+        }
+      }
+    ]
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+
+        $v = data_get($t, 'Repertoire.0.sample.0.total_reads_passing_qc_filter');
+        $this->assertEquals($v, 4854);
+    }
+
+    /** @test */
+    public function test_1_2_repertoire()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "and",
+    "content": [
+      {
+        "op": "=",
+        "content": {
+          "field": "subject.organism.value",
+          "value": "Homo sapiens"
+        }
+      },
+      {
+        "op": "=",
+        "content": {
+          "field": "sample.pcr_target.pcr_target_locus",
+          "value": "CDR3"
+        }
+      }
+    ]
+  },
+  "from": 1,
+  "size": 5,
+  "fields": [
+    "repertoire_id"
+  ]
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(1, $t->Repertoire);
+
+        $v = data_get($t, 'Repertoire.0.sample.0.total_reads_passing_qc_filter');
+        $this->assertNull($v);
+    }
+
+    /** @test */
+    public function test_2_repertoire()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "and",
+    "content": [
+      {
+        "op": "=",
+        "content": {
+          "field": "subject.organism.value",
+          "value": "Homo sapiens"
+        }
+      },
+      {
+        "op": "=",
+        "content": {
+          "field": "sample.pcr_target.pcr_target_locus",
+          "value": "CDR3"
+        }
+      },
+      {
+        "op": "contains",
+        "content": {
+          "field": "subject.diagnosis.disease_diagnosis",
+          "value": "Sclerosis"
+        }
+      }
+    ]
+  }
+}
+EOT;
+        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+
+        $json = $response->content();
+        $t = json_decode($json);
+        $this->assertCount(2, $t->Repertoire);
     }
 
     /** @test */
