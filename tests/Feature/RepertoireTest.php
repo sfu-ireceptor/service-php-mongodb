@@ -766,22 +766,6 @@ EOT;
 
         $json = $response->content();
         $t = json_decode($json);
-        $this->assertCount(2, $t->Repertoire);
-
-        $s = <<<'EOT'
-{
-  "filters": {
-    "op": "is",
-    "content": {
-      "field": "repertoire_id"
-    }
-  }
-}
-EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
-
-        $json = $response->content();
-        $t = json_decode($json);
         $this->assertCount(0, $t->Repertoire);
     }
 
