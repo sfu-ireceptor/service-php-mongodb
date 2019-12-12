@@ -77,9 +77,12 @@ class AirrUtils extends Model
                         $value = json_encode($content['value']);
                     } else {
                         if (is_bool($content['value'])) {
-                            if (($content['value'])) {
+                            if (($content['value']))
+                            {
                                 $value = 'true';
-                            } else {
+                            }
+                            else
+                            {
                                 $value = 'false';
                             }
                         } else {
@@ -97,8 +100,8 @@ class AirrUtils extends Model
                             $value = json_encode($content['value']);
                         }
                     } else {
-                        if ($field == 'repertoire_id') {
-                            $value = '"' . (int) $content['value'] . '"';
+                        if ($content['field'] == 'repertoire_id') {
+                            $value = (int) $content['value'] ;
                         } else {
                             $value = '"' . $content['value'] . '"';
                         }
