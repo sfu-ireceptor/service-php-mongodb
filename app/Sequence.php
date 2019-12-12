@@ -918,6 +918,11 @@ class Sequence extends Model
                         }
                     }
 
+                    if ($service_name == 'ir_project_sample_id')
+                    {
+                        $return_element = (string)$return_element;
+                    }
+
                     //in TSV we want our boolean values to be 'T' and 'F'
                     if ($airr_type[$repository_to_airr[$return_key]] == 'boolean' && $response_type == 'tsv') {
                         if (strtolower($return_element) == 'true' || $return_element == true) {
@@ -1172,6 +1177,10 @@ class Sequence extends Model
                                         } elseif ($airr_list[$functional_arr_name] == 0) {
                                             $airr_list[$functional_arr_name] = false;
                                         }
+                                    }
+                                    if ($service_name == 'ir_project_sample_id')
+                                    {
+                                        $airr_list[$airr_name] = (string)$airr_list[$air_name];
                                     }
                                 }
                             } else {
