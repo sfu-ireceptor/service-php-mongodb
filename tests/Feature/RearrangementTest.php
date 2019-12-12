@@ -370,7 +370,6 @@ EOT;
         $this->assertIsInt($first_facet->count);
     }
 
-    // TODO: "facets" parameter not picked up?!?
     /** @test */
     // IR-1552 - Productive filter on gateway not working
     public function productive_filter_true_with_facet()
