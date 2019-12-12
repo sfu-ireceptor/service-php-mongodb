@@ -7,6 +7,8 @@ use Tests\TestCase;
 
 class RearrangementWithIdTest extends TestCase
 {
+    protected $uri = '/airr/v1/rearrangement';
+
     public function setUp()
     {
         parent::setUp();
@@ -16,7 +18,7 @@ class RearrangementWithIdTest extends TestCase
     /** @test */
     public function check_valid_JSON_response()
     {
-        $response = $this->getJson('/airr/v1/rearrangement/5d2cd9eb9a6c030b30832c00');
+        $response = $this->getJson($this->uri . '/5d2cd9eb9a6c030b30832c00');
         $response->assertStatus(200);
 
         $response->assertHeader('content-type', 'application/json');
@@ -27,7 +29,7 @@ class RearrangementWithIdTest extends TestCase
     /** @test */
     public function check_correct_JSON_response()
     {
-        $response = $this->getJson('/airr/v1/rearrangement/5d2cd9eb9a6c030b30832c00');
+        $response = $this->getJson($this->uri . '/5d2cd9eb9a6c030b30832c00');
 
         // has info and rearrangement objects
         $response->assertJson(['Info' => []]);

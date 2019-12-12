@@ -7,6 +7,8 @@ use Tests\TestCase;
 
 class RearrangementTest extends TestCase
 {
+    protected $uri = '/airr/v1/rearrangement';
+
     public function postJsonString($uri, $content)
     {
         $headers = [
@@ -29,7 +31,7 @@ class RearrangementTest extends TestCase
     /** @test */
     public function check_valid_JSON_response()
     {
-        $response = $this->postJson('/airr/v1/rearrangement');
+        $response = $this->postJson($this->uri);
         $response->assertStatus(200);
 
         $response->assertHeader('content-type', 'application/json');
@@ -45,7 +47,7 @@ class RearrangementTest extends TestCase
     /** @test */
     public function check_correct_JSON_response()
     {
-        $response = $this->postJson('/airr/v1/rearrangement');
+        $response = $this->postJson($this->uri);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -77,7 +79,7 @@ class RearrangementTest extends TestCase
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -107,7 +109,7 @@ EOT;
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -141,7 +143,7 @@ EOT;
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -186,7 +188,7 @@ EOT;
     }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -228,7 +230,7 @@ EOT;
     }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -266,7 +268,7 @@ EOT;
     "size": 5
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -296,7 +298,7 @@ EOT;
   "facets": "repertoire_id"
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/json');
@@ -341,7 +343,7 @@ EOT;
   "facets": "repertoire_id"
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/json');
@@ -400,7 +402,7 @@ EOT;
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -431,7 +433,7 @@ EOT;
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -470,7 +472,7 @@ EOT;
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->content();
         $t = json_decode($json);
 
@@ -499,7 +501,7 @@ EOT;
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -529,7 +531,7 @@ EOT;
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -559,7 +561,7 @@ EOT;
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->streamedContent();
         $t = json_decode($json);
 
@@ -586,7 +588,7 @@ EOT;
 }
 EOT;
 
-        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $response->assertStatus(200);
 
         $json = $response->streamedContent();

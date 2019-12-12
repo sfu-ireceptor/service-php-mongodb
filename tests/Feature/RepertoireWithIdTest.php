@@ -7,6 +7,8 @@ use Tests\TestCase;
 
 class RepertoireWithIdTest extends TestCase
 {
+    protected $uri = '/airr/v1/repertoire';
+
     public function setUp()
     {
         parent::setUp();
@@ -16,7 +18,7 @@ class RepertoireWithIdTest extends TestCase
     /** @test */
     public function check_valid_JSON_response()
     {
-        $response = $this->getJson('/airr/v1/repertoire/9');
+        $response = $this->getJson($this->uri . '/9');
         $response->assertStatus(200);
 
         $response->assertHeader('content-type', 'application/json');
@@ -27,7 +29,7 @@ class RepertoireWithIdTest extends TestCase
     /** @test */
     public function check_correct_JSON_response()
     {
-        $response = $this->getJson('/airr/v1/repertoire/9');
+        $response = $this->getJson($this->uri . '/9');
 
         // has info and repertoire objects
         $response->assertJson(['Info' => []]);
