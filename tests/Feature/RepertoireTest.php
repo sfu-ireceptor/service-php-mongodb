@@ -1226,9 +1226,7 @@ EOT;
         $this->assertEquals($cell_subset_value, 'Peripheral blood mononuclear cells');
     }
 
-    // TODO - why this doesn't work?
-
-    /** @testx */
+    /** @test */
     public function repertoire_id()
     {
         $s = <<<'EOT'
@@ -1246,7 +1244,7 @@ EOT;
         $json = $response->content();
         $t = json_decode($json);
 
-        dd($t);
+        // dd($t);
 
         $this->assertCount(1, $t->Repertoire);
         $repertoire_id = data_get($t, 'Repertoire.0.repertoire_id');
