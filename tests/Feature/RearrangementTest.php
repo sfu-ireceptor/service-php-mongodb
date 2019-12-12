@@ -509,7 +509,6 @@ EOT;
         $this->assertContains('IGHD4-11*01', $first_rearrangement->d_call);
         $this->assertContains($first_rearrangement->repertoire_id, ['8', '9']);
 
-
         // $first_facet = data_get($t, 'Facet.0');
         // $this->assertEquals($first_facet->repertoire_id, '8');
         // $this->assertEquals($first_facet->count, 10);
