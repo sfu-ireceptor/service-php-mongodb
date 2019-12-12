@@ -84,6 +84,7 @@ EOT;
         $this->assertCount(10, $t->Rearrangement);
 
         $first_repertoire_id = data_get($t, 'Rearrangement.0.repertoire_id');
+        $this->assertIsString($first_repertoire_id);
         $this->assertEquals($first_repertoire_id, '8');
     }
 
@@ -477,5 +478,40 @@ EOT;
         $first_facet = data_get($t, 'Facet.0');
         $this->assertEquals($first_facet->repertoire_id, '8');
         $this->assertEquals($first_facet->count, 10);
+    }
+
+    /** @test */
+    public function d_call()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "d_call",
+      "value": "IGHD4-11*01"
+    }
+  },
+  "fields": [
+    "repertoire_id",
+    "d_call"
+  ]
+}
+EOT;
+
+        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $json = $response->streamedContent();
+        $t = json_decode($json);
+
+        $this->assertCount(10, $t->Rearrangement);
+
+        $first_rearrangement = data_get($t, 'Rearrangement.0');
+        $this->assertContains('IGHD4-11*01', $first_rearrangement->d_call);
+        $this->assertContains($first_rearrangement->repertoire_id, ['8', '9']);
+
+
+        // $first_facet = data_get($t, 'Facet.0');
+        // $this->assertEquals($first_facet->repertoire_id, '8');
+        // $this->assertEquals($first_facet->count, 10);
     }
 }
