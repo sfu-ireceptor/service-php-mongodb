@@ -1070,7 +1070,7 @@ class Sequence extends Model
                 foreach ($sample_id_list as $current_sample_id) {
                     $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
                     $total = DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
-                    $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
+                    $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string)$current_sample_id;
                     $return['count'] = $total;
                     $return_list[] = $return;
                 }
@@ -1180,7 +1180,7 @@ class Sequence extends Model
                                     }
                                     if ($service_name == 'ir_project_sample_id')
                                     {
-                                        $airr_list[$airr_name] = (string)$airr_list[$air_name];
+                                        $airr_list[$airr_name] = (string)$airr_list[$airr_name];
                                     }
                                 }
                             } else {
