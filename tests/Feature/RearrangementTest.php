@@ -569,4 +569,33 @@ EOT;
         $this->assertContains('IGHV4-39*05', $first_rearrangement->v_call);
         $this->assertContains($first_rearrangement->repertoire_id, ['8']);
     }
+
+    /** @testx */
+    public function repertoire_download()
+    {
+        $s = <<<'EOT'
+{
+  "filters": {
+    "op": "=",
+    "content": {
+      "field": "repertoire_id",
+      "value": "8"
+    }
+  },
+  "format": "tsv"
+}
+EOT;
+
+        $response = $this->postJsonString('/airr/v1/rearrangement', $s);
+        $response->assertStatus(200);
+
+        $json = $response->streamedContent();
+        $t = json_decode($json);
+
+        // $this->assertCount(1, $t->Rearrangement);
+
+        // $first_rearrangement = data_get($t, 'Rearrangement.0');
+        // $this->assertContains('IGHV4-39*05', $first_rearrangement->v_call);
+        // $this->assertContains($first_rearrangement->repertoire_id, ['8']);
+    }
 }
