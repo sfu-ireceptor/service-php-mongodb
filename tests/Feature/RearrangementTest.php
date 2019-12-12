@@ -198,7 +198,7 @@ EOT;
         $this->assertEquals($first_repertoire_id, '8');
 
         $productive = data_get($t, 'Rearrangement.0.productive');
-        $this->assertEquals($first_repertoire_id, true);
+        $this->assertEquals($productive, true);
     }
 
     /** @test */
@@ -278,7 +278,7 @@ EOT;
         $this->assertEquals($first_repertoire_id, '8');
 
         $productive = data_get($t, 'Rearrangement.0.productive');
-        $this->assertEquals($first_repertoire_id, true);
+        $this->assertEquals($productive, true);
     }
 
     /** @test */
