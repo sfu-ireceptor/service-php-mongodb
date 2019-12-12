@@ -7,6 +7,8 @@ use Tests\TestCase;
 
 class RepertoireTest extends TestCase
 {
+    protected $uri = '/airr/v1/repertoire';
+
     public function postJsonString($uri, $content)
     {
         $headers = [
@@ -29,7 +31,7 @@ class RepertoireTest extends TestCase
     /** @test */
     public function check_valid_JSON_response()
     {
-        $response = $this->postJson('/airr/v1/repertoire');
+        $response = $this->postJson($this->uri);
         $response->assertStatus(200);
 
         $response->assertHeader('content-type', 'application/json');
@@ -40,7 +42,7 @@ class RepertoireTest extends TestCase
     /** @test */
     public function check_correct_JSON_response()
     {
-        $response = $this->postJson('/airr/v1/repertoire');
+        $response = $this->postJson($this->uri);
 
         // has info and repertoire objects
         $response->assertJson(['Info' => []]);
@@ -68,7 +70,7 @@ class RepertoireTest extends TestCase
   }
 }}
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         // HTTP status
         $response->assertStatus(400);
@@ -96,7 +98,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         // HTTP status
         $response->assertStatus(400);
@@ -123,7 +125,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         // HTTP status
         $response->assertStatus(400);
@@ -150,7 +152,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -189,7 +191,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -229,7 +231,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -281,7 +283,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -309,7 +311,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -331,7 +333,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -353,7 +355,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -455,7 +457,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -481,7 +483,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -509,7 +511,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -527,7 +529,7 @@ EOT;
     "facets":"sample.pcr_target.pcr_target_locus"
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -553,7 +555,7 @@ EOT;
   "facets": "subject.subject_id"
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -580,7 +582,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -604,7 +606,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -622,7 +624,7 @@ EOT;
   "from": 10.5
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -637,7 +639,7 @@ EOT;
   "size": 10.5
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -658,7 +660,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -675,7 +677,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -696,7 +698,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -721,7 +723,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -742,7 +744,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -762,7 +764,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -783,7 +785,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -800,7 +802,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -821,7 +823,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -842,7 +844,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -859,7 +861,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -879,7 +881,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -900,7 +902,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -925,7 +927,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -953,7 +955,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -989,7 +991,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -1030,7 +1032,7 @@ EOT;
   ]
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -1073,7 +1075,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -1094,7 +1096,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -1141,7 +1143,7 @@ EOT;
     }
 } 
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -1165,7 +1167,7 @@ EOT;
         $s = <<<'EOT'
 {}
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -1182,7 +1184,7 @@ EOT;
         $s = <<<'EOT'
 {}
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -1199,7 +1201,7 @@ EOT;
         $s = <<<'EOT'
 {}
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -1215,7 +1217,7 @@ EOT;
         $s = <<<'EOT'
 {}
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
 
         $json = $response->content();
         $t = json_decode($json);
@@ -1240,7 +1242,7 @@ EOT;
   }
 }
 EOT;
-        $response = $this->postJsonString('/airr/v1/repertoire', $s);
+        $response = $this->postJsonString($this->uri, $s);
         $json = $response->content();
         $t = json_decode($json);
 
