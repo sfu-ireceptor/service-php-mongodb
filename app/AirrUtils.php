@@ -77,7 +77,11 @@ class AirrUtils extends Model
                         $value = json_encode($content['value']);
                     } else {
                         if (is_bool($content['value'])) {
-                            $value = (int) $content['value'];
+                            if (($content['value'])) {
+                                $value = 'true';
+                            } else {
+                                $value = 'false';
+                            }
                         } else {
                             return;
                         }
@@ -93,8 +97,8 @@ class AirrUtils extends Model
                             $value = json_encode($content['value']);
                         }
                     } else {
-                        if ($field == 'repertoire_id') {
-                            $value = '"' . (int) $content['value'] . '"';
+                        if ($content['field'] == 'repertoire_id') {
+                            $value = (int) $content['value'];
                         } else {
                             $value = '"' . $content['value'] . '"';
                         }
@@ -152,13 +156,13 @@ class AirrUtils extends Model
                 }
             case 'is':
                 if (isset($field) && $field != '') {
-                    return '{"' . $field . '":{"$exists":"false"}}';
+                    return '{"' . $field . '":{"$exists":false}}';
                 } else {
                     return;
                 }
             case 'not':
                 if (isset($field) && $field != '') {
-                    return '{"' . $field . '":{"$exists":"true"}}';
+                    return '{"' . $field . '":{"$exists":true}}';
                 } else {
                     return;
                 }
@@ -419,5 +423,18 @@ class AirrUtils extends Model
                 }
             }
         }
+    }
+
+    public static function airrHeader()
+    {
+        $response = [];
+
+        $response['Info']['Title'] = 'AIRR Data Commons API';
+        $response['Info']['description'] = 'API response for repertoire query';
+        $response['Info']['version'] = 1.3;
+        $response['Info']['contact']['name'] = 'AIRR Community';
+        $response['Info']['contact']['url'] = 'https://github.com/airr-community';
+
+        return $response;
     }
 }

@@ -15,7 +15,7 @@ class AirrApiController extends Controller
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+        return response($response)->header('Content-Type', 'application/json');
     }
 
     public function info()
@@ -25,7 +25,7 @@ class AirrApiController extends Controller
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+        return response($response)->header('Content-Type', 'application/json');
     }
 
     public function swagger()
@@ -44,13 +44,13 @@ class AirrApiController extends Controller
             //something went bad and Laravel cound't parse the parameters as JSON
             $response['message'] = 'Unable to parse JSON parameters:' . json_last_error_msg();
 
-            return response($response, 400)->header('Content-Type', 'application/json; charset=utf-8');
+            return response($response, 400)->header('Content-Type', 'application/json');
         }
         $l = Sample::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
         if ($l == 'error') {
             $response['message'] = 'Unable to parse the filter.';
 
-            return response($response, 400)->header('Content-Type', 'application/json; charset=utf-8');
+            return response($response, 400)->header('Content-Type', 'application/json');
         } else {
             $response['Info']['Title'] = 'AIRR Data Commons API';
             $response['Info']['description'] = 'API response for repertoire query';
@@ -69,7 +69,7 @@ class AirrApiController extends Controller
         }
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+        return response($response)->header('Content-Type', 'application/json');
     }
 
     public function airr_repertoire_single($repertoire_id)
@@ -84,7 +84,7 @@ class AirrApiController extends Controller
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+        return response($response)->header('Content-Type', 'application/json');
     }
 
     public function airr_rearrangement(Request $request)
@@ -98,44 +98,45 @@ class AirrApiController extends Controller
             //something went bad and Laravel cound't parse the parameters as JSON
             $response['message'] = 'Unable to parse JSON parameters:' . json_last_error_msg();
 
-            return response($response, 400)->header('Content-Type', 'application/json; charset=utf-8');
+            return response($response, 400)->header('Content-Type', 'application/json');
         }
 
-        $response = [];
         //check if we can optimize the ADC API query for our repository
         //  if so, go down optimizied query path
         if (AirrUtils::queryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
-            $l = Sequence::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
+            return response()->streamDownload(function () use ($params) {
+                Sequence::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
+            });
         } else {
             $l = Sequence::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
-        }
 
-        if ($l == 'error') {
-            $response['message'] = 'Unable to parse the filter.';
-            $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            if ($l == 'error') {
+                $response = [];
+                $response['message'] = 'Unable to parse the filter.';
+                $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-            return response($response, 400)->header('Content-Type', 'application/json; charset=utf-8');
-        } else {
-            //check what kind of response we have, default to JSON
-            $response_type = 'json';
-            if (isset($params['format']) && $params['format'] != '') {
-                $response_type = strtolower($params['format']);
-            }
-            if (isset($params['facets'])) {
-                //facets have different formatting requirements
-                $response['Info']['Title'] = 'AIRR Data Commons API';
-                $response['Info']['description'] = 'API response for repertoire query';
-                $response['Info']['version'] = 1.3;
-                $response['Info']['contact']['name'] = 'AIRR Community';
-                $response['Info']['contact']['url'] = 'https://github.com/airr-community';
-                $response['Facet'] = Sequence::airrRearrangementFacetsResponse($l);
-
-                return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+                return response($response, 400)->header('Content-Type', 'application/json');
             } else {
-                //regular response, needs to be formatted as per AIRR standard, as
-                //  iReceptor repertoires are flat collections in MongoDB
-                //$response['result'] = Sequence::airrRearrangementResponse($l);
-                Sequence::airrRearrangementResponse($l, $response_type);
+                //check what kind of response we have, default to JSON
+                $response_type = 'json';
+                if (isset($params['format']) && $params['format'] != '') {
+                    $response_type = strtolower($params['format']);
+                }
+                if (isset($params['facets'])) {
+                    $response = AirrUtils::airrHeader();
+
+                    //facets have different formatting requirements
+                    $response['Facet'] = Sequence::airrRearrangementFacetsResponse($l);
+
+                    return response($response)->header('Content-Type', 'application/json');
+                } else {
+                    //regular response, needs to be formatted as per AIRR standard, as
+                    //  iReceptor repertoires are flat collections in MongoDB
+                    //$response['result'] = Sequence::airrRearrangementResponse($l);
+                    return response()->streamDownload(function () use ($l, $response_type) {
+                        Sequence::airrRearrangementResponse($l, $response_type);
+                    });
+                }
             }
         }
     }
@@ -143,14 +144,14 @@ class AirrApiController extends Controller
     public function airr_rearrangement_single($rearrangement_id)
     {
         $rearrangement = Sequence::airrRearrangementSingle($rearrangement_id);
-        $response['Info']['Title'] = 'AIRR Data Commons API';
-        $response['Info']['description'] = 'API response for repertoire query';
-        $response['Info']['version'] = 1.3;
-        $response['Info']['contact']['name'] = 'AIRR Community';
-        $response['Info']['contact']['url'] = 'https://github.com/airr-community';
+        $response = AirrUtils::airrHeader();
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        $response['Rearrangement'] = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
+        if (isset($rearrangement[0])) {
+            $response['Rearrangement'] = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
+        } else {
+            $response['Rearrangement'] = '{}';
+        }
 
-        return response($response)->header('Content-Type', 'application/json; charset=utf-8');
+        return response($response)->header('Content-Type', 'application/json');
     }
 }
