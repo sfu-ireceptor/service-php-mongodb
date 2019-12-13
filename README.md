@@ -71,7 +71,7 @@ To automatically run the tests when pushing modifications, install the Git hook:
 cp util/git-hooks/pre-push .git/hooks
 ```
 
-To force the push in case some tests fail:
+To skip the tests when doing a push:
 ```
 git push --no-verify
 ```
