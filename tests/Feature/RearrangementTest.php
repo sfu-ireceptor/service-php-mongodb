@@ -571,7 +571,7 @@ EOT;
         $this->assertContains($first_rearrangement->repertoire_id, ['8']);
     }
 
-    /** @testx */
+    /** @test */
     public function repertoire_download()
     {
         $s = <<<'EOT'

@@ -1144,8 +1144,6 @@ class Sequence extends Model
                     echo "\n";
                 }
                 if ($response_type == 'tsv') {
-                    header('Content-Type: text/tsv; charset=utf-8');
-                    header('Content-Disposition: attachment;filename="data.tsv"');
                     //output the headers
                     echo implode($fields_to_display, chr(9)) . "\n";
                 }
