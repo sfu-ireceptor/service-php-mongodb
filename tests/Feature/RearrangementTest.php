@@ -590,13 +590,19 @@ EOT;
         $response = $this->postJsonString($this->uri, $s);
         $response->assertStatus(200);
 
-        $json = $response->streamedContent();
-        $t = json_decode($json);
+        $tsv = $response->streamedContent();
 
-        // $this->assertCount(1, $t->Rearrangement);
-
-        // $first_rearrangement = data_get($t, 'Rearrangement.0');
-        // $this->assertContains('IGHV4-39*05', $first_rearrangement->v_call);
-        // $this->assertContains($first_rearrangement->repertoire_id, ['8']);
+        // check number of lines       
+        $nb_lines = substr_count($tsv, "\n");
+        $this->assertEquals($nb_lines, 11, 'Unexpected number of lines: expected 1 lines for headers and 10 lines for data');
+        
+        // check number of columns
+        $separator = "\r\n";
+        $line = strtok($tsv, $separator);
+        while ($line !== false) {
+            $t = explode("\t", $line);
+            $this->assertEquals(count($t), 118, 'Unexpected number of columns');
+            $line = strtok( $separator );
+        }
     }
 }
