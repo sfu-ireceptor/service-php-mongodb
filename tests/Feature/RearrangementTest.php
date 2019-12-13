@@ -592,17 +592,17 @@ EOT;
 
         $tsv = $response->streamedContent();
 
-        // check number of lines       
+        // check number of lines
         $nb_lines = substr_count($tsv, "\n");
         $this->assertEquals($nb_lines, 11, 'Unexpected number of lines: expected 1 lines for headers and 10 lines for data');
-        
+
         // check number of columns
         $separator = "\r\n";
         $line = strtok($tsv, $separator);
         while ($line !== false) {
             $t = explode("\t", $line);
             $this->assertEquals(count($t), 118, 'Unexpected number of columns');
-            $line = strtok( $separator );
+            $line = strtok($separator);
         }
     }
 }
