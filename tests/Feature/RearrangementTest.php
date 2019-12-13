@@ -594,7 +594,7 @@ EOT;
 
         // check number of lines
         $nb_lines = substr_count($tsv, "\n");
-        $this->assertEquals($nb_lines, 11, 'Unexpected number of lines: expected 1 lines for headers and 10 lines for data');
+        $this->assertEquals($nb_lines, 11, 'Unexpected number of lines: expected 1 line for headers and 10 lines for data');
 
         // check number of columns
         $separator = "\r\n";
