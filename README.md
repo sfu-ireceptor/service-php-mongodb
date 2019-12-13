@@ -1,9 +1,10 @@
 # iReceptor Service (PHP/MongoDB)
 
-## Installation (5 min)
-Requires:
-- Linux Ubuntu (tested with Ubuntu Xenial 16.04)
-- a user with sudo rights without password
+## Installation using Docker (5 min)
+Requirements:
+- Linux Ubuntu (tested with Xenial 16.04)
+- user with sudo rights and sudo without password
+
 ### Create a configuration file
 Create a file `env` containing your MongoDB database connection info. Example:
 ```
@@ -28,3 +29,35 @@ sudo docker run -d --rm -p 80:80 --env-file env ireceptorj/service-php-mongodb
 ```
 curl localhost/v2/samples
 ```
+
+
+## Running the tests suite
+Requirements:
+- a running MongoDB database with its credentials in .env
+- php CLI
+- having installed the dependencies (composer install)
+
+```
+# running all tests
+./vendor/bin/phpunit
+PHPUnit 7.5.17 by Sebastian Bergmann and contributors.
+
+................................................................. 65 / 67 ( 97%)
+..                                                                67 / 67 (100%)
+
+Time: 19.72 seconds, Memory: 22.00 MB
+
+OK (67 tests, 167 assertions)
+
+
+# running a specific test
+./vendor/bin/phpunit --filter=repertoire_download
+# Note: --filter matches function names and/or class names
+
+```
+
+To automatically run the tests when pushing modifications, install the Git hook:
+```
+cp util/git-hooks/pre-push .git/hooks
+```
+
