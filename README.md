@@ -37,8 +37,8 @@ Requirements:
 - php CLI
 - having installed the dependencies (composer install)
 
+### Running all tests
 ```
-# running all tests
 ./vendor/bin/phpunit
 PHPUnit 7.5.17 by Sebastian Bergmann and contributors.
 
@@ -48,16 +48,30 @@ PHPUnit 7.5.17 by Sebastian Bergmann and contributors.
 Time: 19.72 seconds, Memory: 22.00 MB
 
 OK (67 tests, 167 assertions)
+```
 
+### Running specific tests
+--filter matches function names and/or class names.
 
-# running a specific test
+```
 ./vendor/bin/phpunit --filter=repertoire_download
-# Note: --filter matches function names and/or class names
+PHPUnit 7.5.17 by Sebastian Bergmann and contributors.
+
+.                                                                   1 / 1 (100%)
+
+Time: 2.95 seconds, Memory: 18.00 MB
+
+OK (1 test, 13 assertions)
 
 ```
 
+### Git hook
 To automatically run the tests when pushing modifications, install the Git hook:
 ```
 cp util/git-hooks/pre-push .git/hooks
 ```
 
+To force the push in case some tests fail:
+```
+git push --no-verify
+```
