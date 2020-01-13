@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\AirrUtils;
-use App\Sample;
-use App\Sequence;
+use App\AirrRearrangement;
+use App\AirrRepertoire;
 use Illuminate\Http\Request;
 
 class AirrApiController extends Controller
@@ -46,7 +46,7 @@ class AirrApiController extends Controller
 
             return response($response, 400)->header('Content-Type', 'application/json');
         }
-        $l = Sample::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
+        $l = AirrRepertoire::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
         if ($l == 'error') {
             $response['message'] = 'Unable to parse the filter.';
 
@@ -60,11 +60,11 @@ class AirrApiController extends Controller
 
             if (isset($params['facets'])) {
                 //facets have different formatting requirements
-                $response['Facet'] = Sample::airrRepertoireFacetsResponse($l);
+                $response['Facet'] = AirrRepertoire::airrRepertoireFacetsResponse($l);
             } else {
                 //regular response, needs to be formatted as per AIRR standard, as
                 //	iReceptor repertoires are flat collections in MongoDB
-                $response['Repertoire'] = Sample::airrRepertoireResponse($l);
+                $response['Repertoire'] = AirrRepertoire::airrRepertoireResponse($l);
             }
         }
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
@@ -74,13 +74,13 @@ class AirrApiController extends Controller
 
     public function airr_repertoire_single($repertoire_id)
     {
-        $repertoire = Sample::airrRepertoireSingle($repertoire_id);
+        $repertoire = AirrRepertoire::airrRepertoireSingle($repertoire_id);
         $response['Info']['Title'] = 'AIRR Data Commons API';
         $response['Info']['description'] = 'API response for repertoire query';
         $response['Info']['version'] = 1.3;
         $response['Info']['contact']['name'] = 'AIRR Community';
         $response['Info']['contact']['url'] = 'https://github.com/airr-community';
-        $response['Repertoire'] = Sample::airrRepertoireResponseSingle($repertoire);
+        $response['Repertoire'] = AirrRepertoire::airrRepertoireResponseSingle($repertoire);
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
@@ -104,11 +104,13 @@ class AirrApiController extends Controller
         //check if we can optimize the ADC API query for our repository
         //  if so, go down optimizied query path
         if (AirrUtils::queryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
+            echo "Optimizing!\n";
             return response()->streamDownload(function () use ($params) {
-                Sequence::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
+                AirrRearrangement::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
             });
         } else {
-            $l = Sequence::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
+            echo "Not Optimizing!";
+            $l = AirrRearrangement::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
 
             if ($l == 'error') {
                 $response = [];
@@ -126,7 +128,7 @@ class AirrApiController extends Controller
                     $response = AirrUtils::airrHeader();
 
                     //facets have different formatting requirements
-                    $response['Facet'] = Sequence::airrRearrangementFacetsResponse($l);
+                    $response['Facet'] = AirrRearrangement::airrRearrangementFacetsResponse($l);
 
                     return response($response)->header('Content-Type', 'application/json');
                 } else {
@@ -134,7 +136,7 @@ class AirrApiController extends Controller
                     //  iReceptor repertoires are flat collections in MongoDB
                     //$response['result'] = Sequence::airrRearrangementResponse($l);
                     return response()->streamDownload(function () use ($l, $response_type) {
-                        Sequence::airrRearrangementResponse($l, $response_type);
+                        AirrRearrangement::airrRearrangementResponse($l, $response_type);
                     });
                 }
             }
@@ -143,11 +145,11 @@ class AirrApiController extends Controller
 
     public function airr_rearrangement_single($rearrangement_id)
     {
-        $rearrangement = Sequence::airrRearrangementSingle($rearrangement_id);
+        $rearrangement = AirrRearrangement::airrRearrangementSingle($rearrangement_id);
         $response = AirrUtils::airrHeader();
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         if (isset($rearrangement[0])) {
-            $response['Rearrangement'] = Sequence::airrRearrangementResponseSingle($rearrangement[0]);
+            $response['Rearrangement'] = AirrRearrangement::airrRearrangementResponseSingle($rearrangement[0]);
         } else {
             $response['Rearrangement'] = '{}';
         }
