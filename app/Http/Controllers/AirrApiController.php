@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\AirrUtils;
 use App\AirrRearrangement;
 use App\AirrRepertoire;
+use App\AirrUtils;
 use Illuminate\Http\Request;
 
 class AirrApiController extends Controller
@@ -105,11 +105,12 @@ class AirrApiController extends Controller
         //  if so, go down optimizied query path
         if (AirrUtils::queryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
             echo "Optimizing!\n";
+
             return response()->streamDownload(function () use ($params) {
                 AirrRearrangement::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
             });
         } else {
-            echo "Not Optimizing!";
+            echo 'Not Optimizing!';
             $l = AirrRearrangement::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
 
             if ($l == 'error') {

@@ -12,48 +12,45 @@ class AirrUtils extends Model
     //method to convert a value to a given type
     public static function typeConvertHelper($value, $type)
     {
-        if (!isset($type) || !isset($value))
-        {
-            return;            
+        if (! isset($type) || ! isset($value)) {
+            return;
         }
 
-        switch ($type)
-        {
+        switch ($type) {
             case 'integer':
                 if (is_array($value)) {
-                        return json_encode(array_map('intval', $value));
-                    } else {
-                            return intval($value);
+                    return json_encode(array_map('intval', $value));
+                } else {
+                    return intval($value);
                 }
                 break;
             case 'number':
                 if (is_array($value)) {
-                        return json_encode(array_map('floatval', $value));
-                    } else {
-                            return floatval($value);
+                    return json_encode(array_map('floatval', $value));
+                } else {
+                    return floatval($value);
                 }
                 break;
             case 'string':
                 if (is_array($value)) {
-                        return json_encode($value);
-                    } else {
-                            return  '"'.strval($value).'"';
+                    return json_encode($value);
+                } else {
+                    return  '"' . strval($value) . '"';
                 }
                 break;
             case 'boolean':
                 if (is_array($value)) {
-                        return json_encode(array_map('boolval', $value));
-                    } else {
-                            return boolval($value);
+                    return json_encode(array_map('boolval', $value));
+                } else {
+                    return boolval($value);
                 }
                 break;
             default:
                 return;
                 break;
         }
-        return;
-
     }
+
     public static function processAirrFilter($f, $airr_to_db_array, $airr_types_array, $db_types_array)
     {
         //method to process an AIRR API filter object
@@ -77,7 +74,7 @@ class AirrUtils extends Model
             //   use the mapping from airr terms to repository terms to create queries
             if (isset($airr_to_db_array[$content['field']]) && $airr_to_db_array[$content['field']] != null
                 && $airr_to_db_array[$content['field']] != '') {
-                $field = $airr_to_db_array[$content['field']]; 
+                $field = $airr_to_db_array[$content['field']];
             } else {
                 return;
             }
@@ -261,9 +258,9 @@ class AirrUtils extends Model
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = ([$airr_names['ir_project_sample_id'], $airr_names['junction_aa_length'],
-            $airr_names['junction_aa'], $airr_names['v_call'], $airr_names['d_call'], 
-            $airr_names['j_call'],
-            $airr_names['functional']]);
+                $airr_names['junction_aa'], $airr_names['v_call'], $airr_names['d_call'],
+                $airr_names['j_call'],
+                $airr_names['functional'], ]);
             $filters = '';
             $facets = '';
 
@@ -371,7 +368,8 @@ class AirrUtils extends Model
             die();
 
             return false;
-        } catch (\Exception $e) {echo "$e";
+        } catch (\Exception $e) {
+            echo "$e";
 
             return false;
         }
