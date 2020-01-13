@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Mongodb\Eloquent\Model;
-use Log;
 
 class AirrRepertoire extends Model
 {
@@ -76,7 +75,7 @@ class AirrRepertoire extends Model
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
         } else {
-        	var_dump($query_string);
+            var_dump($query_string);
             $list = DB::collection($query->getCollection())->raw()->find(json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string), true), $options);
         }
 
@@ -171,6 +170,7 @@ class AirrRepertoire extends Model
 
             $return_list[] = $return_array;
         }
+
         return $return_list;
     }
 
@@ -215,7 +215,6 @@ class AirrRepertoire extends Model
 
             $return_list[] = $return_array;
         }
-
     }
 
     public static function airrRepertoireFacetsResponse($response_list)

@@ -4,9 +4,8 @@ namespace App;
 
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Mongodb\Eloquent\Model;
-use Log;
 
-class airrRearrangement extends Model
+class AirrRearrangement extends Model
 {
     protected $collection;
 
