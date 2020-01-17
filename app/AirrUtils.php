@@ -33,16 +33,16 @@ class AirrUtils extends Model
                 break;
             case 'string':
                 if (is_array($value)) {
-                        return json_encode($value);
-                    } else {
-                            return  json_encode(strval($value));
+                    return json_encode($value);
+                } else {
+                    return  json_encode(strval($value));
                 }
                 break;
             case 'boolean':
                 if (is_array($value)) {
-                        return json_encode(array_map('boolval', $value));
-                    } else {
-                            return json_encode(boolval($value));
+                    return json_encode(array_map('boolval', $value));
+                } else {
+                    return json_encode(boolval($value));
                 }
                 break;
             default:
@@ -130,7 +130,7 @@ class AirrUtils extends Model
         switch ($f['op']) {
             case '=':
                 if (isset($field) && $field != '' && isset($value)) {
-                    return '{"' . $field . '":' . $value . '}'; 
+                    return '{"' . $field . '":' . $value . '}';
                 } else {
                     return;
                 }

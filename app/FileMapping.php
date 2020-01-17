@@ -69,7 +69,7 @@ class FileMapping
             $skip_row = false;
             if ($has_condition) {
                 foreach ($condition_array as $condition_name=>$condition_value) {
-                    if (isset($mapping_row[$condition_name])) { 
+                    if (isset($mapping_row[$condition_name])) {
                         // we have the row with condition_name in it, let's see if passes the filter
                         if (is_array($condition_value)) {
                             if (! in_array($mapping_row[$condition_name], $condition_value)) {
