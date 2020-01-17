@@ -72,11 +72,11 @@ class AirrRearrangement extends Model
     {
         //function that processes AIRR API request and returns an array of fields matching
         //   the filters, with optional start number and max number of results
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_to_repository = FileMapping::createMappingArray('ir_adc_api_query', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_database_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_to_repository = FileMapping::createMappingArray('ir_adc_api_query', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_database_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
         $query_string = '{}';
 
@@ -138,11 +138,11 @@ class AirrRearrangement extends Model
 
         //first, we need some mappings to convert database values to AIRR terms
         //  and bucket them into appropriate AIRR classes
-        $db_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $db_to_service = FileMapping::createMappingArray('ir_mongo_database', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $db_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $repository_to_airr = FileMapping::createMappingArray('ir_mongo_database', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $db_to_service = FileMapping::createMappingArray('ir_mongo_database', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
         //V-, D-, J-call might be stored as an array, which need to be serialized before they can be outputted in TSV format
         $v_call_airr_name = array_search('v_call', $airr_names);
@@ -249,7 +249,7 @@ class AirrRearrangement extends Model
     public static function airrRearrangementFacetsResponse($response_list)
     {
         $return_array = [];
-        $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         foreach ($response_list as $response) {
@@ -270,7 +270,7 @@ class AirrRearrangement extends Model
         //take a single rearrangement from database query and create a response as per
         //  AIRR API standard
         $result = [];
-        $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $response_mapping = FileMapping::createMappingArray('ir_mongo_database', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         foreach ($rearrangement as $key=>$value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 $result[$response_mapping[$key]] = $value;
@@ -286,12 +286,12 @@ class AirrRearrangement extends Model
         //  a single '=' search on an indexed field, a search on indexed field and
         //  repertoire id, or an aggregation on prior two cases on repertoire_id
 
-        $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
-        $db_types = FileMapping::createMappingArray('airr', 'ir_database_type', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $db_types = FileMapping::createMappingArray('airr', 'ir_database_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
         $sample_id_list = [];
         $query_params = [];

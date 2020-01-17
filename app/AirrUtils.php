@@ -33,16 +33,16 @@ class AirrUtils extends Model
                 break;
             case 'string':
                 if (is_array($value)) {
-                    return json_encode($value);
-                } else {
-                    return  '"' . strval($value) . '"';
+                        return json_encode($value);
+                    } else {
+                            return  json_encode(strval($value));
                 }
                 break;
             case 'boolean':
                 if (is_array($value)) {
-                    return json_encode(array_map('boolval', $value));
-                } else {
-                    return boolval($value);
+                        return json_encode(array_map('boolval', $value));
+                    } else {
+                            return json_encode(boolval($value));
                 }
                 break;
             default:
@@ -65,7 +65,6 @@ class AirrUtils extends Model
         $field = '';
         $type = '';
         $db_type = '';
-
         $content = $f['content'];
         $operator = $f['op'];
 
@@ -131,7 +130,7 @@ class AirrUtils extends Model
         switch ($f['op']) {
             case '=':
                 if (isset($field) && $field != '' && isset($value)) {
-                    return '{"' . $field . '":' . $value . '}';
+                    return '{"' . $field . '":' . $value . '}'; 
                 } else {
                     return;
                 }
@@ -253,7 +252,7 @@ class AirrUtils extends Model
         //return false;
 
         try {
-            $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
