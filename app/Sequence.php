@@ -240,7 +240,7 @@ class Sequence extends Model
         //  apply the mapping of service terms into repository terms, as well
         //  as the mapping of API inputs into service terms
 
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository');
         $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input');
 
         $return_match = [];
@@ -444,7 +444,7 @@ class Sequence extends Model
         }
 
         // translate repertoire-level terms to api output terms if they are different
-        $repo_to_output_sample = FileMapping::createMappingArray('ir_mongo_database', 'ir_api_output', ['ir_class'=>'repertoire']);
+        $repo_to_output_sample = FileMapping::createMappingArray('ir_repository', 'ir_api_output', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         // quick check to see if we have a filter that's not ir_project_sample_id_list
         //   if we don't, we can just use pre-computed sequence counts
@@ -519,8 +519,8 @@ class Sequence extends Model
         $query = new self();
 
         // map the repository names to API expected output names through service terms
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
-        $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository');
+        $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
         $num_results = 25;
         $start_at = 0;
@@ -627,9 +627,9 @@ class Sequence extends Model
 
         // Create mappings between service terms, database field names and AIRR TSV headers.
         //   as well as which sequence fields we want to fetch (fewer fields make query faster)
-        $database_fields = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $database_fields = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_fields = FileMapping::createMappingArray('airr_tsv', 'service_name');
-        $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
+        $projection_mapping = FileMapping::createMappingArray('ir_repository', 'projection');
 
         // These are needed for MongoDB query. Here we store max timeout and which fields we want
         //   pulled from databse
