@@ -288,7 +288,7 @@ class AirrRearrangement extends Model
 
         $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
-        $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $db_types = FileMapping::createMappingArray('airr', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
@@ -369,7 +369,7 @@ class AirrRearrangement extends Model
                 //it's a data query, either tsv or JSON, run it by repertoire_id and echo the results as a stream
                 $start_at = 0;
                 $max_values = 0;
-                $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
+                $projection_mapping = FileMapping::createMappingArray('ir_repository', 'projection');
 
                 //check what kind of response we have, default to JSON
                 $response_type = 'json';
