@@ -86,7 +86,7 @@ class AirrRepertoire extends Model
         //return a single repertoire based on the repertoire_id
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $query = new self;
-        $query = $query->where("_id", '=', (int) $repertoire_id);
+        $query = $query->where('_id', '=', (int) $repertoire_id);
         $result = $query->get();
 
         return $result->toArray();
@@ -213,7 +213,8 @@ class AirrRepertoire extends Model
 
             $return_list[] = $return_array;
         }
-        return($return_list);
+
+        return $return_list;
     }
 
     public static function airrRepertoireFacetsResponse($response_list)
