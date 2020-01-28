@@ -601,7 +601,7 @@ EOT;
         $line = strtok($tsv, $separator);
         while ($line !== false) {
             $t = explode("\t", $line);
-            $this->assertEquals(count($t), 118, 'Unexpected number of columns');
+            $this->assertEquals(count($t), 120, 'Unexpected number of columns');
             $line = strtok($separator);
         }
     }

@@ -86,7 +86,7 @@ class AirrRepertoire extends Model
         //return a single repertoire based on the repertoire_id
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $query = new self;
-        $query = $query->where($repository_names['repertoire_id'], '=', (int) $repertoire_id);
+        $query = $query->where("_id", '=', (int) $repertoire_id);
         $result = $query->get();
 
         return $result->toArray();
@@ -196,7 +196,6 @@ class AirrRepertoire extends Model
             foreach ($repertoire as $return_key => $return_element) {
                 if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] != '') {
                     $fully_qualified_path = $airr_classes[$return_key];
-
                     //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
                     //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
                     $fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
@@ -214,6 +213,7 @@ class AirrRepertoire extends Model
 
             $return_list[] = $return_array;
         }
+        return($return_list);
     }
 
     public static function airrRepertoireFacetsResponse($response_list)
