@@ -5,25 +5,22 @@ namespace App;
 class FileMapping
 {
     protected $fileMappings;
-    protected $filename;
     protected $rows;
     protected $separator;
 
     public function __construct()
     {
+        $filename = config('ireceptor.airr_mapping_file');
+        $filepath = config_path($filename);
+        $file = fopen($filepath, 'r');
+
         $this->separator = chr(9);
-        if (isset($_ENV['AIRR_MAPPING_FILE'])) {
-            $this->filename = $_ENV['AIRR_MAPPING_FILE'];
-        } else {
-            $this->filename = '../AIRR-iReceptorMapping.txt';
-        }
-        $this->fileMappings = [];
-        $file = fopen($this->filename, 'r');
 
         //get headers from the first line
         $headers = [];
         $headers = fgetcsv($file, 0, $this->separator);
         $this->rows = 0;
+        $this->fileMappings = [];
         while ($line = fgetcsv($file, 0, $this->separator)) {
             $temp_array = [];
             for ($i = 0; $i < count($line); $i++) {
@@ -91,7 +88,6 @@ class FileMapping
             if ($skip_row) {
                 continue;
             }
-
             if (isset($mapping_row[$key]) && ($mapping_row[$key] != '')) {
                 $return_key = $mapping_row[$key];
                 $return_value = $mapping_row[$value];

@@ -3,6 +3,7 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
+use Log;
 
 class Sample extends Model
 {
@@ -17,6 +18,11 @@ class Sample extends Model
         }
     }
 
+    public function getCollection()
+    {
+        return $this->collection;
+    }
+
     public static function getSamples($f)
     {
         //Log::debug($f);
@@ -24,11 +30,11 @@ class Sample extends Model
         // $repository_names is for any special cases that are interpreted by the service
         // $filter_to_repo is for passthrough of API terms to repository terms because service
         //   doesn't have to interpret them
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
-        $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input');
-        $filter_types = FileMapping::createMappingArray('ir_api_input', 'ir_api_input_type');
-        $filter_to_repo = FileMapping::createMappingArray('ir_api_input', 'ir_mongo_database');
-        $repo_to_output = FileMapping::createMappingArray('ir_mongo_database', 'ir_api_output', ['ir_class'=>['repertoire', 'ir_repertoire']]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $filter_types = FileMapping::createMappingArray('ir_api_input', 'ir_api_input_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $filter_to_repo = FileMapping::createMappingArray('ir_api_input', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repo_to_output = FileMapping::createMappingArray('ir_repository', 'ir_api_output', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         $query = new self();
 

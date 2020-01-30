@@ -60,128 +60,128 @@ class Sequence extends Model
     protected $max_results = 25;
 
     public static $coltype = [
-    'v_call' => 'string',
-    'd_call' => 'string',
-    'j_call' => 'string',
-    'vgene' => 'string',
-    'seq_id' => 'int',
-    'seq_name' => 'string',
-    'ir_project_sample_id' => 'int',
-    'id' => 'int',
-    'sequence_id' => 'int',
-    'vgene_string' => 'string',
-    'vgene_family' => 'string',
-    'vgene_gene' => 'string',
-    'vgene_allele' => 'string',
-    'jgene_string' => 'string',
-    'jgene_family' => 'string',
-    'jgene_gene' => 'string',
-    'jgene_allele' => 'string',
-    'dgene_string' => 'string',
-    'dgene_family' => 'string',
-    'dgene_gene' => 'string',
-    'dgene_allele' => 'string',
-    'functionality' => 'string',
-    'functionality_comment' => 'string',
-    'orientation' => 'string',
-    'vgene_score' => 'int',
-    'vgene_probability' => 'int',
-    'dregion_reading_frame' => 'string',
-    'cdr1_length' => 'int',
-    'cdr2_length' => 'int',
-    'cdr3_length' => 'int',
-    'vdjregion_sequence_nt' => 'string',
-    'vjregion_sequence_nt' => 'string',
-    'djregion_sequence_nt' => 'string',
-    'vregion_sequence_nt' => 'string',
-    'jregion_sequence_nt' => 'string',
-    'dregion_sequence_nt' => 'string',
-    'fr1region_sequence_nt' => 'string',
-    'fr2region_sequence_nt' => 'string',
-    'fr3region_sequence_nt' => 'string',
-    'fr4region_sequence_nt' => 'string',
-    'cdr1region_sequence_nt' => 'string',
-    'cdr2region_sequence_nt' => 'string',
-    'cdr3region_sequence_nt' => 'string',
-    'junction_nt' => 'string',
-    'vdjregion_sequence_nt_gapped' => 'string',
-    'vjregion_sequence_nt_gapped' => 'string',
-    'vregion_sequence_nt_gapped' => 'string',
-    'jregion_sequence_nt_gapped' => 'string',
-    'dregion_sequence_nt_gapped' => 'string',
-    'fr1region_sequence_nt_gapped' => 'string',
-    'fr2region_sequence_nt_gapped' => 'string',
-    'fr3region_sequence_nt_gapped' => 'string',
-    'fr4region_sequence_nt_gapped' => 'string',
-    'cdr1region_sequence_nt_gapped' => 'string',
-    'cdr2region_sequence_nt_gapped' => 'string',
-    'cdr3region_sequence_nt_gapped' => 'string',
-    'junction_sequence_nt_gapped' => 'string',
-    'vdjregion_sequence_aa' => 'string',
-    'vjregion_sequence_aa' => 'string',
-    'vregion_sequence_aa' => 'string',
-    'jregion_sequence_aa' => 'string',
-    'fr1region_sequence_aa' => 'string',
-    'fr2region_sequence_aa' => 'string',
-    'fr3region_sequence_aa' => 'string',
-    'fr4region_sequence_aa' => 'string',
-    'cdr1region_sequence_aa' => 'string',
-    'cdr2region_sequence_aa' => 'string',
-    'cdr3region_sequence_aa' => 'string',
-    'junction_aa' => 'string',
-    'vdjregion_sequence_aa_gapped' => 'string',
-    'vjregion_sequence_aa_gapped' => 'string',
-    'vregion_sequence_aa_gapped' => 'string',
-    'jregion_sequence_aa_gapped' => 'string',
-    'fr1region_sequence_aa_gapped' => 'string',
-    'fr2region_sequence_aa_gapped' => 'string',
-    'fr3region_sequence_aa_gapped' => 'string',
-    'fr4region_sequence_aa_gapped' => 'string',
-    'cdr1region_sequence_aa_gapped' => 'string',
-    'cdr2region_sequence_aa_gapped' => 'string',
-    'cdr3region_sequence_aa_gapped' => 'string',
-    'junction_sequence_aa_gapped' => 'string',
-    'vdjregion_start' => 'int',
-    'vdjregion_end' => 'int',
-    'vjregion_start' => 'int',
-    'vjregion_end' => 'int',
-    'djregion_start' => 'int',
-    'djregion_end' => 'int',
-    'vregion_start' => 'int',
-    'vregion_end' => 'int',
-    'jregion_start' => 'int',
-    'jregion_end' => 'int',
-    'dregion_start' => 'int',
-    'dregion_end' => 'int',
-    'fr1region_start' => 'int',
-    'fr1region_end' => 'int',
-    'fr2region_start' => 'int',
-    'fr2region_end' => 'int',
-    'fr3region_start' => 'int',
-    'fr3region_end' => 'int',
-    'fr4region_start' => 'int',
-    'fr4region_end' => 'int',
-    'cdr1region_start' => 'int',
-    'cdr1region_end' => 'int',
-    'cdr2region_start' => 'int',
-    'cdr2region_end' => 'int',
-    'cdr3region_start' => 'int',
-    'cdr3region_end' => 'int',
-    'junction_start' => 'int',
-    'junction_end' => 'int',
-    'vregion_mutation_string' => 'string',
-    'fr1region_mutation_string' => 'string',
-    'fr2region_mutation_string' => 'string',
-    'fr3region_mutation_string' => 'string',
-    'cdr1region_mutation_string' => 'string',
-    'cdr2region_mutation_string' => 'string',
-    'cdr3region_mutation_string' => 'string',
-    'annotation_tool' => 'string',
-    'junction_length' => 'int',
-    'junction_aa_length' => 'int',
-    'functional' => 'int',
-    'ir_annotation_tool' => 'string',
-    'sequence'=>'string',
+        'v_call' => 'string',
+        'd_call' => 'string',
+        'j_call' => 'string',
+        'vgene' => 'string',
+        'seq_id' => 'int',
+        'seq_name' => 'string',
+        'ir_project_sample_id' => 'int',
+        'id' => 'int',
+        'sequence_id' => 'int',
+        'vgene_string' => 'string',
+        'vgene_family' => 'string',
+        'vgene_gene' => 'string',
+        'vgene_allele' => 'string',
+        'jgene_string' => 'string',
+        'jgene_family' => 'string',
+        'jgene_gene' => 'string',
+        'jgene_allele' => 'string',
+        'dgene_string' => 'string',
+        'dgene_family' => 'string',
+        'dgene_gene' => 'string',
+        'dgene_allele' => 'string',
+        'functionality' => 'string',
+        'functionality_comment' => 'string',
+        'orientation' => 'string',
+        'vgene_score' => 'int',
+        'vgene_probability' => 'int',
+        'dregion_reading_frame' => 'string',
+        'cdr1_length' => 'int',
+        'cdr2_length' => 'int',
+        'cdr3_length' => 'int',
+        'vdjregion_sequence_nt' => 'string',
+        'vjregion_sequence_nt' => 'string',
+        'djregion_sequence_nt' => 'string',
+        'vregion_sequence_nt' => 'string',
+        'jregion_sequence_nt' => 'string',
+        'dregion_sequence_nt' => 'string',
+        'fr1region_sequence_nt' => 'string',
+        'fr2region_sequence_nt' => 'string',
+        'fr3region_sequence_nt' => 'string',
+        'fr4region_sequence_nt' => 'string',
+        'cdr1region_sequence_nt' => 'string',
+        'cdr2region_sequence_nt' => 'string',
+        'cdr3region_sequence_nt' => 'string',
+        'junction_nt' => 'string',
+        'vdjregion_sequence_nt_gapped' => 'string',
+        'vjregion_sequence_nt_gapped' => 'string',
+        'vregion_sequence_nt_gapped' => 'string',
+        'jregion_sequence_nt_gapped' => 'string',
+        'dregion_sequence_nt_gapped' => 'string',
+        'fr1region_sequence_nt_gapped' => 'string',
+        'fr2region_sequence_nt_gapped' => 'string',
+        'fr3region_sequence_nt_gapped' => 'string',
+        'fr4region_sequence_nt_gapped' => 'string',
+        'cdr1region_sequence_nt_gapped' => 'string',
+        'cdr2region_sequence_nt_gapped' => 'string',
+        'cdr3region_sequence_nt_gapped' => 'string',
+        'junction_sequence_nt_gapped' => 'string',
+        'vdjregion_sequence_aa' => 'string',
+        'vjregion_sequence_aa' => 'string',
+        'vregion_sequence_aa' => 'string',
+        'jregion_sequence_aa' => 'string',
+        'fr1region_sequence_aa' => 'string',
+        'fr2region_sequence_aa' => 'string',
+        'fr3region_sequence_aa' => 'string',
+        'fr4region_sequence_aa' => 'string',
+        'cdr1region_sequence_aa' => 'string',
+        'cdr2region_sequence_aa' => 'string',
+        'cdr3region_sequence_aa' => 'string',
+        'junction_aa' => 'string',
+        'vdjregion_sequence_aa_gapped' => 'string',
+        'vjregion_sequence_aa_gapped' => 'string',
+        'vregion_sequence_aa_gapped' => 'string',
+        'jregion_sequence_aa_gapped' => 'string',
+        'fr1region_sequence_aa_gapped' => 'string',
+        'fr2region_sequence_aa_gapped' => 'string',
+        'fr3region_sequence_aa_gapped' => 'string',
+        'fr4region_sequence_aa_gapped' => 'string',
+        'cdr1region_sequence_aa_gapped' => 'string',
+        'cdr2region_sequence_aa_gapped' => 'string',
+        'cdr3region_sequence_aa_gapped' => 'string',
+        'junction_sequence_aa_gapped' => 'string',
+        'vdjregion_start' => 'int',
+        'vdjregion_end' => 'int',
+        'vjregion_start' => 'int',
+        'vjregion_end' => 'int',
+        'djregion_start' => 'int',
+        'djregion_end' => 'int',
+        'vregion_start' => 'int',
+        'vregion_end' => 'int',
+        'jregion_start' => 'int',
+        'jregion_end' => 'int',
+        'dregion_start' => 'int',
+        'dregion_end' => 'int',
+        'fr1region_start' => 'int',
+        'fr1region_end' => 'int',
+        'fr2region_start' => 'int',
+        'fr2region_end' => 'int',
+        'fr3region_start' => 'int',
+        'fr3region_end' => 'int',
+        'fr4region_start' => 'int',
+        'fr4region_end' => 'int',
+        'cdr1region_start' => 'int',
+        'cdr1region_end' => 'int',
+        'cdr2region_start' => 'int',
+        'cdr2region_end' => 'int',
+        'cdr3region_start' => 'int',
+        'cdr3region_end' => 'int',
+        'junction_start' => 'int',
+        'junction_end' => 'int',
+        'vregion_mutation_string' => 'string',
+        'fr1region_mutation_string' => 'string',
+        'fr2region_mutation_string' => 'string',
+        'fr3region_mutation_string' => 'string',
+        'cdr1region_mutation_string' => 'string',
+        'cdr2region_mutation_string' => 'string',
+        'cdr3region_mutation_string' => 'string',
+        'annotation_tool' => 'string',
+        'junction_length' => 'int',
+        'junction_aa_length' => 'int',
+        'functional' => 'int',
+        'ir_annotation_tool' => 'string',
+        'sequence'=>'string',
     ];
 
     public static function parseFilter(&$query, $f)
@@ -240,7 +240,7 @@ class Sequence extends Model
         //  apply the mapping of service terms into repository terms, as well
         //  as the mapping of API inputs into service terms
 
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository');
         $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input');
 
         $return_match = [];
@@ -440,11 +440,11 @@ class Sequence extends Model
         $match = [];
         $sample_id_query = new Sample();
         if (isset($filter['ir_project_sample_id_list'])) {
-            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
+            $sample_id_query = $sample_id_query->whereIn('_id', $filter['ir_project_sample_id_list']);
         }
 
         // translate repertoire-level terms to api output terms if they are different
-        $repo_to_output_sample = FileMapping::createMappingArray('ir_mongo_database', 'ir_api_output', ['ir_class'=>'repertoire']);
+        $repo_to_output_sample = FileMapping::createMappingArray('ir_repository', 'ir_api_output', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         // quick check to see if we have a filter that's not ir_project_sample_id_list
         //   if we don't, we can just use pre-computed sequence counts
@@ -524,8 +524,8 @@ class Sequence extends Model
         $query = new self();
 
         // map the repository names to API expected output names through service terms
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_mongo_database');
-        $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository');
+        $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
         $num_results = 25;
         $start_at = 0;
@@ -636,9 +636,9 @@ class Sequence extends Model
 
         // Create mappings between service terms, database field names and AIRR TSV headers.
         //   as well as which sequence fields we want to fetch (fewer fields make query faster)
-        $database_fields = FileMapping::createMappingArray('service_name', 'ir_mongo_database', ['ir_class'=>['rearrangement', 'ir_rearrangement']]);
+        $database_fields = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_fields = FileMapping::createMappingArray('airr_tsv', 'service_name');
-        $projection_mapping = FileMapping::createMappingArray('ir_mongo_database', 'projection');
+        $projection_mapping = FileMapping::createMappingArray('ir_repository', 'projection');
 
         // These are needed for MongoDB query. Here we store max timeout and which fields we want
         //   pulled from databse
@@ -727,10 +727,10 @@ class Sequence extends Model
                                 $airr_list[$airr_name] = $sequence_list[$database_fields[$service_name]];
                                 if ($service_name == 'rev_comp') {
                                     if ($airr_list[$rev_comp_airr_name] == '+') {
-                                        $airr_list[$rev_comp_airr_name] = 'true';
+                                        $airr_list[$rev_comp_airr_name] = 'false';
                                     }
                                     if ($airr_list[$rev_comp_airr_name] == '-') {
-                                        $airr_list[$rev_comp_airr_name] = 'false';
+                                        $airr_list[$rev_comp_airr_name] = 'true';
                                     }
                                 }
                                 if ($service_name == 'functional') {

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class SampleController extends Controller
 {
+    // /samples entry point that resolves an iReceptor API request and returns
+    //   iReceptor API response
     public function index(Request $request)
     {
         $params = $request->all();
