@@ -1,8 +1,7 @@
 # iReceptor Service (PHP/MongoDB)
 
 ## Installation (5 min)
-Requires:
-- Linux Ubuntu (tested with Ubuntu Xenial 16.04)
+Requires Linux Ubuntu (tested with Ubuntu Xenial 16.04).
 
 ### Create a configuration file
 
@@ -15,12 +14,12 @@ DB_USERNAME=
 DB_PASSWORD=
 ```
 
-### Install Docker (1 min)
+### Install Docker
 ```
 curl -s https://get.docker.com | sudo sh
 ```
 
-### Download and launch the Docker image (2 min)
+### Download the Docker image and start a Docker container
 ```
 sudo docker run -d --rm -p 80:80 --env-file env ireceptor/service-php-mongodb
 ```
