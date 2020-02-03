@@ -1,5 +1,7 @@
 # iReceptor Service (PHP/MongoDB)
 
+Important note: this is only the iReceptor **web service**. It requires an existing MongoDB database. For a complete solution including a MongoDB database and scripts to import data, use the [iReceptor Turnkey](https://github.com/sfu-ireceptor/turnkey-service-php/tree/production).
+
 ## Installation (5 min)
 Requires Linux Ubuntu (tested with Ubuntu Xenial 16.04).
 
