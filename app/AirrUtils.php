@@ -104,21 +104,6 @@ class AirrUtils extends Model
                         $value = self::typeConvertHelper($content['value'], $db_type);
                     break;
                 case 'string':
-                    // special case: repertoire_id is string in API but int
-                    //  in iReceptor database
-                    /*if (is_array($content['value'])) {
-                        if ($content['field'] == 'repertoire_id') {
-                            $value = json_encode(array_map('intval', $content['value']));
-                        } else {
-                            $value = json_encode($content['value']);
-                        }
-                    } else {
-                        if ($content['field'] == 'repertoire_id') {
-                            $value = (int) $content['value'];
-                        } else {
-                            $value = '"' . $content['value'] . '"';
-                        }
-                    }*/
                         $value = self::typeConvertHelper($content['value'], $db_type);
                     break;
                 default:
@@ -376,7 +361,7 @@ class AirrUtils extends Model
 
     //if given a filter, map it to appropriate database field, create a MongoDB query,
     //  separate repertoire ids (if any) into a list and return it for further processing
-    public static function optimizeRearrangementFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters)
+    public static function optimizeRearrangementFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters, $db_types_array)
     {
         // if our top-level op is 'and', that means we have a list of repertoire_ids and another query parameter
         //   (otherwise, the query would not be optimizable)
@@ -385,64 +370,46 @@ class AirrUtils extends Model
                 // repertoire query goes into sample_id_list
                 if ($filter_piece['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
                     if (is_array($filter_piece['content']['value'])) {
-                        $sample_id_list = array_map('intval', $filter_piece['content']['value']);
+                        foreach ($filter_piece['content']['value'] as $filter_id)
+                        {
+                            $sample_id_list[] = AirrUtils::typeConvertHelper($filter_id, $db_types_array[$filter_piece['content']['field']]);
+                        }
                     } else {
-                        $sample_id_list[] = intval($filter_piece['content']['value']);
+                        $sample_id_list[] = AirrUtils::typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
                 } else {
                     // if we have junction_aa, we do a query on substring field instead
                     if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                         $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
                     } else {
-                        switch ($airr_types[$filter_piece['content']['field']]) {
-                            case 'integer':
-                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
-                                break;
-                            case 'string':
-                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (string) $filter_piece['content']['value'];
-                                break;
-                            case 'boolean':
-                                //we store booleans as ints
-                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = (int) $filter_piece['content']['value'];
-                                break;
-                            default:
-                                $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = $filter_piece['content']['value'];
-                                break;
+                        $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = AirrUtils::typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);                
                         }
                     }
                 }
             }
-        } else {
+        else {
             //we have a single query parameter, either repertoire id or filter
             if ($filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
-                if (is_array($filter['content']['value'])) {
-                    $sample_id_list = array_map('intval', $filter['content']['value']);
+                if (is_array($filter_piece['content']['value'])) {
+                    foreach ($filter_piece['content']['value'] as $filter_id)
+                    {
+                            $sample_id_list[] = AirrUtils::typeConvertHelper($filter_id, $db_types_array[$filter_piece['content']['field']]);
+                    }
                 } else {
-                    $sample_id_list[] = intval($filter['content']['value']);
+                    $sample_id_list[] = AirrUtils::typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                 }
+
             } else {
-                // if we have junction_aa, we do a query on substring field instead
-                if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
-                    $db_filters[$service_to_db_mapping['substring']] = (string) $filter['content']['value'];
+                 // if we have junction_aa, we do a query on substring field instead
+                if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
+                    $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
                 } else {
-                    switch ($airr_types[$filter['content']['field']]) {
-                            case 'integer':
-                                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (int) $filter['content']['value'];
-                                break;
-                            case 'string':
-                                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (string) $filter['content']['value'];
-                                break;
-                            case 'boolean':
-                                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = (bool) $filter['content']['value'];
-                                break;
-                            default:
-                                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = $filter['content']['value'];
-                                break;
-                        }
-                }
-            }
+                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);                
+                    }
+            }               
         }
     }
+    
 
     public static function airrHeader()
     {

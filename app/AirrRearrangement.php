@@ -288,19 +288,20 @@ class AirrRearrangement extends Model
 
         $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $repertoire_service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Repertoire', 'IR_Repertoire']]);
         $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $repertoire_airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Repertoire', 'IR_Repertoire']]);
         $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $db_types = FileMapping::createMappingArray('airr', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Repertoire', 'IR_Repertoire']]);
 
         $sample_id_list = [];
         $query_params = [];
         $db_filters = [];
 
         $query = new self();
-        if (isset($filter['ir_project_sample_id_list'])) {
-            $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['ir_project_sample_id_list']));
-        }
+
         $filter = '';
         $facets = '';
         if (isset($request['filters']) && count($request['filters']) > 0) {
@@ -312,21 +313,26 @@ class AirrRearrangement extends Model
 
         //if we have no filter except repertoire_id, and facets are on repertoire_id, we don't need to go to rearrangement at all
         // we can just pull the cached value from our repertoire collection
-        if ($facets == 'repertoire_id' && ($filter == '' ||
+        if ($facets == $service_to_airr_mapping['ir_project_sample_id'] && ($filter == '' ||
             ($filter['op'] != 'and' && $filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']))) {
             $sample_id_query = new Sample();
             if ($filter != '') {
                 if (is_array($filter['content']['value'])) {
-                    $sample_id_query = $sample_id_query->whereIn('_id', array_map('intval', $filter['content']['value']));
+                    $repertoire_id_list = array();
+                    foreach ($filter['content']['value'] as $filter_id)
+                    {
+                        $repertoire_id_list[] = AirrUtils::typeConvertHelper($filter_id, $repertoire_db_types[$repertoire_service_to_db_mapping["ir_project_sample_id"]]);
+                    }
+                    $sample_id_query = $sample_id_query->whereIn($repertoire_service_to_db_mapping['ir_project_sample_id'], $repertoire_id_list);
                 } else {
-                    $sample_id_query = $sample_id_query->where('_id', '=', (int) $filter['content']['value']);
+                    $sample_id_query = $sample_id_query->where($repertoire_service_to_db_mapping['ir_project_sample_id'], '=', AirrUtils::typeConvertHelper($filter['content']['value'], $repertoire_db_types[$repertoire_service_to_db_mapping["ir_project_sample_id"]]));
                 }
             }
             $result = $sample_id_query->get();
 
-            foreach ($result as $repertoire) {
-                $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = $repertoire['_id'];
-                $return['count'] = $repertoire['ir_sequence_count'];
+            foreach ($result as $repertoire) {echo "in result";
+                $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string)$repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
+                $return['count'] = $repertoire[$repertoire_service_to_db_mapping['ir_sequence_count']];
                 $sample_id_list[] = $return;
             }
 
@@ -343,11 +349,11 @@ class AirrRearrangement extends Model
                 $sample_id_query = new Sample();
                 $result = $sample_id_query->get();
                 foreach ($result as $repertoire) {
-                    $sample_id_list[] = $repertoire['_id'];
+                    $sample_id_list[] = $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
                 }
             }
             // if it's a facets query, we will have to do a count on repertoire_ids
-            if ($facets == 'repertoire_id') {
+            if ($facets == $service_to_airr_mapping['ir_project_sample_id']) {
                 $return_list = [];
 
                 $count_timeout = $query->getCountTimeout();
