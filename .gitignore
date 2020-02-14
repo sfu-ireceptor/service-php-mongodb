@@ -11,3 +11,13 @@ npm-debug.log
 yarn-error.log
 .env
 config/AIRR-iReceptorMapping.txt
+*.bak
+*.bak-merge
+*.bak2
+*.out
+app/Sequence.php.bak4
+app/Sequence.php.bak5
+config/AIRR-iReceptorMapping-v1.3-2019-12-18.csv
+config/AIRR-iReceptorMapping-v1.3-2020-01-16.txt
+nano.save
+public/info.php
