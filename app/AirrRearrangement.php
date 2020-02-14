@@ -318,20 +318,20 @@ class AirrRearrangement extends Model
             $sample_id_query = new Sample();
             if ($filter != '') {
                 if (is_array($filter['content']['value'])) {
-                    $repertoire_id_list = array();
-                    foreach ($filter['content']['value'] as $filter_id)
-                    {
-                        $repertoire_id_list[] = AirrUtils::typeConvertHelper($filter_id, $repertoire_db_types[$repertoire_service_to_db_mapping["ir_project_sample_id"]]);
+                    $repertoire_id_list = [];
+                    foreach ($filter['content']['value'] as $filter_id) {
+                        $repertoire_id_list[] = AirrUtils::typeConvertHelper($filter_id, $repertoire_db_types[$repertoire_service_to_db_mapping['ir_project_sample_id']]);
                     }
                     $sample_id_query = $sample_id_query->whereIn($repertoire_service_to_db_mapping['ir_project_sample_id'], $repertoire_id_list);
                 } else {
-                    $sample_id_query = $sample_id_query->where($repertoire_service_to_db_mapping['ir_project_sample_id'], '=', AirrUtils::typeConvertHelper($filter['content']['value'], $repertoire_db_types[$repertoire_service_to_db_mapping["ir_project_sample_id"]]));
+                    $sample_id_query = $sample_id_query->where($repertoire_service_to_db_mapping['ir_project_sample_id'], '=', AirrUtils::typeConvertHelper($filter['content']['value'], $repertoire_db_types[$repertoire_service_to_db_mapping['ir_project_sample_id']]));
                 }
             }
             $result = $sample_id_query->get();
 
-            foreach ($result as $repertoire) {echo "in result";
-                $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string)$repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
+            foreach ($result as $repertoire) {
+                echo 'in result';
+                $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string) $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
                 $return['count'] = $repertoire[$repertoire_service_to_db_mapping['ir_sequence_count']];
                 $sample_id_list[] = $return;
             }
