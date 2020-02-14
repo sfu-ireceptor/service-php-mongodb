@@ -9,7 +9,7 @@ use Log;
 
 class AirrUtils extends Model
 {
-    //method to convert a value to a given type and encode in a way 
+    //method to convert a value to a given type and encode in a way
     //  suitable for JSON query
     public static function typeConvertHelper($value, $type)
     {
@@ -52,7 +52,7 @@ class AirrUtils extends Model
         }
     }
 
-    //method to convert a value to a given type and encode in a way 
+    //method to convert a value to a given type and encode in a way
     //  suitable for raw query
     public static function typeConvertHelperRaw($value, $type)
     {
@@ -413,8 +413,7 @@ class AirrUtils extends Model
                 // repertoire query goes into sample_id_list
                 if ($filter_piece['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
                     if (is_array($filter_piece['content']['value'])) {
-                        foreach ($filter_piece['content']['value'] as $filter_id)
-                        {
+                        foreach ($filter_piece['content']['value'] as $filter_id) {
                             $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter_piece['content']['field']]);
                         }
                     } else {
@@ -425,34 +424,30 @@ class AirrUtils extends Model
                     if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                         $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
                     } else {
-                        $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);                
-                        }
+                        $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
                 }
             }
-        else {
+        } else {
             //we have a single query parameter, either repertoire id or filter
             if ($filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
                 if (is_array($filter['content']['value'])) {
-                    foreach ($filter['content']['value'] as $filter_id)
-                    {
-                            $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
+                    foreach ($filter['content']['value'] as $filter_id) {
+                        $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
                     }
                 } else {
                     $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
                 }
-
             } else {
-                 // if we have junction_aa, we do a query on substring field instead
+                // if we have junction_aa, we do a query on substring field instead
                 if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                     $db_filters[$service_to_db_mapping['substring']] = (string) $filter['content']['value'];
                 } else {
-                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);                
-                    }
-            }               
+                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
+                }
+            }
         }
     }
-    
 
     public static function airrHeader()
     {
