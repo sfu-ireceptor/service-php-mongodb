@@ -320,11 +320,11 @@ class AirrRearrangement extends Model
                 if (is_array($filter['content']['value'])) {
                     $repertoire_id_list = [];
                     foreach ($filter['content']['value'] as $filter_id) {
-                        $repertoire_id_list[] = AirrUtils::typeConvertHelper($filter_id, $repertoire_db_types[$repertoire_service_to_db_mapping['ir_project_sample_id']]);
+                        $repertoire_id_list[] = AirrUtils::typeConvertHelperRaw($filter_id, $repertoire_db_types[$repertoire_service_to_db_mapping['ir_project_sample_id']]);
                     }
                     $sample_id_query = $sample_id_query->whereIn($repertoire_service_to_db_mapping['ir_project_sample_id'], $repertoire_id_list);
                 } else {
-                    $sample_id_query = $sample_id_query->where($repertoire_service_to_db_mapping['ir_project_sample_id'], '=', AirrUtils::typeConvertHelper($filter['content']['value'], $repertoire_db_types[$repertoire_service_to_db_mapping['ir_project_sample_id']]));
+                    $sample_id_query = $sample_id_query->where($repertoire_service_to_db_mapping['ir_project_sample_id'], '=', AirrUtils::typeConvertHelperRaw($filter['content']['value'], $repertoire_db_types[$repertoire_service_to_db_mapping['ir_project_sample_id']]));
                 }
             }
             $result = $sample_id_query->get();
