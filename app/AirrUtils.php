@@ -370,46 +370,41 @@ class AirrUtils extends Model
                 // repertoire query goes into sample_id_list
                 if ($filter_piece['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
                     if (is_array($filter_piece['content']['value'])) {
-                        foreach ($filter_piece['content']['value'] as $filter_id)
-                        {
-                            $sample_id_list[] = AirrUtils::typeConvertHelper($filter_id, $db_types_array[$filter_piece['content']['field']]);
+                        foreach ($filter_piece['content']['value'] as $filter_id) {
+                            $sample_id_list[] = self::typeConvertHelper($filter_id, $db_types_array[$filter_piece['content']['field']]);
                         }
                     } else {
-                        $sample_id_list[] = AirrUtils::typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
+                        $sample_id_list[] = self::typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
                 } else {
                     // if we have junction_aa, we do a query on substring field instead
                     if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                         $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
                     } else {
-                        $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = AirrUtils::typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);                
-                        }
+                        $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
                 }
             }
-        else {
+        } else {
             //we have a single query parameter, either repertoire id or filter
             if ($filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
                 if (is_array($filter_piece['content']['value'])) {
-                    foreach ($filter_piece['content']['value'] as $filter_id)
-                    {
-                            $sample_id_list[] = AirrUtils::typeConvertHelper($filter_id, $db_types_array[$filter_piece['content']['field']]);
+                    foreach ($filter_piece['content']['value'] as $filter_id) {
+                        $sample_id_list[] = self::typeConvertHelper($filter_id, $db_types_array[$filter_piece['content']['field']]);
                     }
                 } else {
-                    $sample_id_list[] = AirrUtils::typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
+                    $sample_id_list[] = self::typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                 }
-
             } else {
-                 // if we have junction_aa, we do a query on substring field instead
+                // if we have junction_aa, we do a query on substring field instead
                 if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
                     $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
                 } else {
-                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);                
-                    }
-            }               
+                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = typeConvertHelper($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
+                }
+            }
         }
     }
-    
 
     public static function airrHeader()
     {
