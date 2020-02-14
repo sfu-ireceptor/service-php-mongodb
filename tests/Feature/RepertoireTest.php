@@ -586,8 +586,8 @@ EOT;
 
         $json = $response->content();
         $t = json_decode($json);
-        $this->assertCount(2, $t->Repertoire);
 
+        $this->assertCount(2, $t->Repertoire);
         $organism_value = data_get($t, 'Repertoire.0.subject.organism.value');
         $this->assertEquals('Homo sapiens', $organism_value);
     }

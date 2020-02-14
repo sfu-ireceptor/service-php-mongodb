@@ -330,7 +330,6 @@ class AirrRearrangement extends Model
             $result = $sample_id_query->get();
 
             foreach ($result as $repertoire) {
-                echo 'in result';
                 $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string) $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
                 $return['count'] = $repertoire[$repertoire_service_to_db_mapping['ir_sequence_count']];
                 $sample_id_list[] = $return;
