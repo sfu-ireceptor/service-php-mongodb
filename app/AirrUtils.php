@@ -342,7 +342,7 @@ class AirrUtils extends Model
                 return true;
             }
             //most complicated case is an 'and' filter with two parameters, an indexed field with '=' query and repertoire_id '=' or 'contains'
-            if ($filters['op'] == 'and' && is_array($filters['content']) && count($filters['content'] == 2)) {
+            if ($filters['op'] == 'and' && is_array($filters['content']) && count($filters['content']) == 2) {
                 $has_indexed = false;
                 foreach ($filters['content'] as $filter) {
                     //first, check if op is '=', 'in' or 'contains'. Anything else we can't do
