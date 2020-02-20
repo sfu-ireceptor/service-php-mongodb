@@ -128,11 +128,10 @@ class AirrRepertoire extends Model
                     // typecast the return values
                     $return_value = $return_element;
                     if (isset($db_names_to_airr_types[$return_key])) {
-                    	// only do a type conversion if return value is set
-                    	//	otherwise, null will get converted to 0 or "" and we want null to stay
-                    	if (isset($return_value))
-                        { 
-                        switch ($db_names_to_airr_types[$return_key]) {
+                        // only do a type conversion if return value is set
+                        //	otherwise, null will get converted to 0 or "" and we want null to stay
+                        if (isset($return_value)) {
+                            switch ($db_names_to_airr_types[$return_key]) {
 
                             // make sure that type actually matches value or fail
                             case 'integer':
@@ -167,7 +166,7 @@ class AirrRepertoire extends Model
                                 //bad data type
                                 break;
                                 }
-                            }
+                        }
                     }
                     array_set($return_array, $fully_qualified_path, $return_value);
                 }
