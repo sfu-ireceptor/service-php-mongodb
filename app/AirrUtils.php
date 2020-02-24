@@ -200,12 +200,14 @@ class AirrUtils extends Model
                     return;
                 }
             case 'is':
+            case 'is missing':
                 if (isset($field) && $field != '') {
                     return '{"' . $field . '":{"$exists":false}}';
                 } else {
                     return;
                 }
             case 'not':
+            case 'is not missing':
                 if (isset($field) && $field != '') {
                     return '{"' . $field . '":{"$exists":true}}';
                 } else {
