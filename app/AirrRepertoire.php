@@ -133,6 +133,11 @@ class AirrRepertoire extends Model
                         if (isset($return_value)) {
                             switch ($db_names_to_airr_types[$return_key]) {
 
+                        //we only want to typecast values that are set, because
+                        //   a 'null' is considered 0/unset in PHP so it converts it to
+                        //	 appopriate value based on type
+                        if (isset($return_value)) {
+                            switch ($db_names_to_airr_types[$return_key]) {
                             // make sure that type actually matches value or fail
                             case 'integer':
                                 if (is_array($return_element)) {
