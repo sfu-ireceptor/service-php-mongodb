@@ -43,7 +43,7 @@ class AirrRepertoire extends Model
             if ($query_string == null) {
                 return 'error';
             }
-        }
+        }        
         // if fields parameter is set, we only want to return the fields specified
         if (isset($params['fields']) && $params['fields'] != '') {
             foreach ($params['fields'] as $airr_field_name) {
@@ -53,11 +53,23 @@ class AirrRepertoire extends Model
             }
             $options['projection'] = $fields_to_retrieve;
         }
+        //if required parameters is true, add them to the projection
+        if (isset($params['include_required']) && $params['include_required'] == true)
+        {
+        	$required_from_database = [];
+        	$required_fields = FileMapping::createMappingArray('ir_repository', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        	foreach ($required_fields as $name => $value){
+        		if ($value)
+        		{
+        			$required_from_database[$name] = 1;
+        		}
+        	}
+        	$options['projection'] = array_merge($options['projection'], $required_from_database);
+        }
         // if we have from parameter, start the query at that value
         if (isset($params['from']) && is_int($params['from'])) {
             $options['skip'] = abs($params['from']);
         }
-
         // if we have size parameter, don't take more than that number of results
         if (isset($params['size']) && is_int($params['size'])) {
             $options['limit'] = abs($params['size']);
@@ -128,11 +140,7 @@ class AirrRepertoire extends Model
                     // typecast the return values
                     $return_value = $return_element;
                     if (isset($db_names_to_airr_types[$return_key])) {
-                        // only do a type conversion if return value is set
-                        //	otherwise, null will get converted to 0 or "" and we want null to stay
-                        if (isset($return_value)) {
-                            switch ($db_names_to_airr_types[$return_key]) {
-
+ 
                         //we only want to typecast values that are set, because
                         //   a 'null' is considered 0/unset in PHP so it converts it to
                         //	 appopriate value based on type
