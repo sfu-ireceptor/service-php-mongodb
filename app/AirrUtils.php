@@ -148,6 +148,7 @@ class AirrUtils extends Model
                         $value = self::typeConvertHelper($content['value'], $db_type);
                     break;
                 case 'string':
+                case 'array':
                         $value = self::typeConvertHelper($content['value'], $db_type);
                     break;
                 default:
