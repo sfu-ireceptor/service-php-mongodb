@@ -214,13 +214,13 @@ class AirrUtils extends Model
                     return;
                 }
             case 'in':
-                if (isset($field) && $field != '' && isset($value) &&is_array(json_decode($value))) {
+                if (isset($field) && $field != '' && isset($value) && is_array(json_decode($value))) {
                     return '{"' . $field . '":{"$in":' . $value . '}}';
                 } else {
                     return;
                 }
             case 'exclude':
-                if (isset($field) && $field != '' && isset($value) && is_array(json_decode($value)))  {
+                if (isset($field) && $field != '' && isset($value) && is_array(json_decode($value))) {
                     return '{"' . $field . '":{"$nin":' . $value . '}}';
                 } else {
                     return;
