@@ -290,10 +290,10 @@ class AirrUtils extends Model
             $indexed_fields = ([$airr_names['ir_project_sample_id'], $airr_names['junction_aa_length'],
                 $airr_names['junction_aa'], $airr_names['v_call'], $airr_names['d_call'],
                 $airr_names['j_call'],
-                $airr_names['functional'], 
+                $airr_names['functional'],
                 $airr_names['vgene_gene'], $airr_names['vgene_family'],
                 $airr_names['dgene_gene'], $airr_names['dgene_family'],
-                $airr_names['jgene_gene'], $airr_names['jgene_family']]
+                $airr_names['jgene_gene'], $airr_names['jgene_family'], ]
             );
             $filters = '';
             $facets = '';
