@@ -112,19 +112,16 @@ class AirrRepertoire extends Model
         $airr_classes = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-		$airr_class_to_name = FileMapping::createMappingArray('ir_adc_api_query', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]) ;
+        $airr_class_to_name = FileMapping::createMappingArray('ir_adc_api_query', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $db_names_to_airr_types = FileMapping::createMappingArray('ir_repository', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $fields_to_display=[];
-
-
+        $fields_to_display = [];
 
         // if fields parameter is set, we only want to return the fields specified
         if (isset($params['fields']) && $params['fields'] != '') {
             foreach ($params['fields'] as $airr_field_name) {
-            	if (isset($airr_class_to_name[$airr_field_name]) && $airr_class_to_name[$airr_field_name] !='')
-            	{
-            	    $fully_qualified_path = $airr_class_to_name[$airr_field_name];
+                if (isset($airr_class_to_name[$airr_field_name]) && $airr_class_to_name[$airr_field_name] != '') {
+                    $fully_qualified_path = $airr_class_to_name[$airr_field_name];
 
                     //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
                     //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
@@ -139,27 +136,27 @@ class AirrRepertoire extends Model
 
                     $fields_to_display[$fully_qualified_path] = 1;
                 }
-               }
+            }
         }
         //if required parameters is true, add them to the return
         if (isset($params['include_required']) && $params['include_required'] == true) {
-           // $required_fields = FileMapping::createMappingArray('ir_adc_api_query', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        	$required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+            // $required_fields = FileMapping::createMappingArray('ir_adc_api_query', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
-                	$fully_qualified_path = $name;
-/*
-                    //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
-                    //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
-                    $fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
-                    $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
-
-                    //likewise for data_processing
-                    $fully_qualified_path = preg_replace("/^data_processing\./", 'data_processing.0.', $fully_qualified_path);
-
-                    //likewise diagnosis
-                    $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);
-*/
+                    $fully_qualified_path = $name;
+                    /*
+                                        //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
+                                        //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
+                                        $fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
+                                        $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
+                    
+                                        //likewise for data_processing
+                                        $fully_qualified_path = preg_replace("/^data_processing\./", 'data_processing.0.', $fully_qualified_path);
+                    
+                                        //likewise diagnosis
+                                        $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);
+                    */
                     $fields_to_display[$fully_qualified_path] = 1;
                 }
             }
@@ -172,15 +169,14 @@ class AirrRepertoire extends Model
             $return_array = [];
 
             //make all the requested fields null before populating if there are results
-            foreach($fields_to_display as $display_field=>$value)
-            {
-            	array_set($return_array, $display_field, null);
+            foreach ($fields_to_display as $display_field=>$value) {
+                array_set($return_array, $display_field, null);
             }
 
             foreach ($repertoire as $return_key => $return_element) {
                 if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] != '') {
                     $fully_qualified_path = $airr_classes[$return_key];
- 
+
                     // typecast the return values
                     $return_value = $return_element;
                     if (isset($db_names_to_airr_types[$return_key])) {
