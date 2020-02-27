@@ -46,7 +46,7 @@ class AirrApiController extends Controller
 
             return response($response, 400)->header('Content-Type', 'application/json');
         }
-        $l = AirrRepertoire::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
+        $l = AirrRepertoire::airrRepertoireRequest($params);
         if ($l == 'error') {
             $response['message'] = 'Unable to parse the filter.';
 
@@ -64,7 +64,7 @@ class AirrApiController extends Controller
             } else {
                 //regular response, needs to be formatted as per AIRR standard, as
                 //	iReceptor repertoires are flat collections in MongoDB
-                $response['Repertoire'] = AirrRepertoire::airrRepertoireResponse($l);
+                $response['Repertoire'] = AirrRepertoire::airrRepertoireResponse($l, $params);
             }
         }
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
