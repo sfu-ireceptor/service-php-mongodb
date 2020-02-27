@@ -335,7 +335,7 @@ class AirrUtils extends Model
                 return false;
             }
             //single '=' query on indexed fields, definitely optimizable (if facets exist they should be on repertoire_id at this point
-            //  so no reason to check). 
+            //  so no reason to check).
             //But, junction_aa is special. Right now it's not really indexed, so we want to skip it on '=' but allow on 'contains'
             if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields) && $filters['content']['field'] != $airr_names['junction_aa']) {
                 return true;
@@ -385,8 +385,7 @@ class AirrUtils extends Model
                     //  indexed field and repertoir_id
                     if ($filter['op'] == '=') {
                         //special case right now is junction_aa where we optimized on substring search, not exact match
-                        if ($filter['content']['field'] == $airr_names['junction_aa'])
-                        {
+                        if ($filter['content']['field'] == $airr_names['junction_aa']) {
                             return false;
                         }
                         if ($has_indexed) {
