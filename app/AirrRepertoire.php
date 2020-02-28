@@ -35,6 +35,7 @@ class AirrRepertoire extends Model
 
         $query_string = '{}';
         $options = [];
+        $options['projection'] = Array();
         $fields_to_retrieve = [];
         $query = new self();
         // if we have filters, process them
@@ -54,7 +55,9 @@ class AirrRepertoire extends Model
             $options['projection'] = $fields_to_retrieve;
         }
         //if required parameters is true, add them to the projection
-        if (isset($params['include_required']) && $params['include_required'] == true) {
+        // also, if neither include_required nor fields is set, send everything
+        if ((isset($params['include_required']) && $params['include_required'] == true) ||
+    			(!isset($params['include_required']) && !isset($params['fields']))) {
             $required_from_database = [];
             $required_fields = FileMapping::createMappingArray('ir_repository', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
             foreach ($required_fields as $name => $value) {
@@ -125,38 +128,27 @@ class AirrRepertoire extends Model
 
                     //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
                     //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
-                    $fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
+                    /*$fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
                     $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
 
                     //likewise for data_processing
                     $fully_qualified_path = preg_replace("/^data_processing\./", 'data_processing.0.', $fully_qualified_path);
 
                     //likewise diagnosis
-                    $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);
+                    $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);*/
 
                     $fields_to_display[$fully_qualified_path] = 1;
                 }
             }
         }
         //if required parameters is true, add them to the return
-        if (isset($params['include_required']) && $params['include_required'] == true) {
-            // $required_fields = FileMapping::createMappingArray('ir_adc_api_query', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        // if neither required nor fields is set, we still want to return required
+        if ((isset($params['include_required']) && $params['include_required'] == true) ||
+    		(!isset($params['include_required']) && !isset($params['fields']))) {
             $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
                     $fully_qualified_path = $name;
-                    /*
-                                        //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
-                                        //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
-                                        $fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
-                                        $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
-                    
-                                        //likewise for data_processing
-                                        $fully_qualified_path = preg_replace("/^data_processing\./", 'data_processing.0.', $fully_qualified_path);
-                    
-                                        //likewise diagnosis
-                                        $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);
-                    */
                     $fields_to_display[$fully_qualified_path] = 1;
                 }
             }
