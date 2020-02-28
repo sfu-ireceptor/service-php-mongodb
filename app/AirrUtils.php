@@ -33,6 +33,7 @@ class AirrUtils extends Model
                 }
                 break;
             case 'string':
+            case 'array':
                 if (is_array($value)) {
                     return json_encode(array_map('strval', $value));
                 } else {
@@ -76,6 +77,7 @@ class AirrUtils extends Model
                 }
                 break;
             case 'string':
+            case 'array':
                 if (is_array($value)) {
                     return array_map('strval', $value);
                 } else {
