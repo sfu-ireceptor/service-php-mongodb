@@ -35,7 +35,7 @@ class AirrRepertoire extends Model
 
         $query_string = '{}';
         $options = [];
-        $options['projection'] = Array();
+        $options['projection'] = [];
         $fields_to_retrieve = [];
         $query = new self();
         // if we have filters, process them
@@ -57,7 +57,7 @@ class AirrRepertoire extends Model
         //if required parameters is true, add them to the projection
         // also, if neither include_required nor fields is set, send everything
         if ((isset($params['include_required']) && $params['include_required'] == true) ||
-    			(!isset($params['include_required']) && !isset($params['fields']))) {
+                (! isset($params['include_required']) && ! isset($params['fields']))) {
             $required_from_database = [];
             $required_fields = FileMapping::createMappingArray('ir_repository', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
             foreach ($required_fields as $name => $value) {
@@ -144,7 +144,7 @@ class AirrRepertoire extends Model
         //if required parameters is true, add them to the return
         // if neither required nor fields is set, we still want to return required
         if ((isset($params['include_required']) && $params['include_required'] == true) ||
-    		(!isset($params['include_required']) && !isset($params['fields']))) {
+            (! isset($params['include_required']) && ! isset($params['fields']))) {
             $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
