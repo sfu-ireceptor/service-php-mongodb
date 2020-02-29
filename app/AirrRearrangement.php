@@ -142,7 +142,6 @@ class AirrRearrangement extends Model
             $options['maxTimeMS'] = $query->getCountTimeout();
             $options['noCursorTimeout'] = true;
 
-
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions, $options);
         } else {
             $options['maxTimeMS'] = $query->getFetchTimeout();
@@ -182,12 +181,12 @@ class AirrRearrangement extends Model
         //  rearrangement with repertoire
         $rev_comp_airr_name = $airr_names['rev_comp'];
         $functional_arr_name = $airr_names['functional'];
-        $fields_to_display=[];
+        $fields_to_display = [];
         //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
         //  associated with it, so we will take the array of samples and place each element into an appropriate section
         //  of AIRR reperotoire response
 
-         if ((isset($params['include_required']) && $params['include_required'] == true) ||
+        if ((isset($params['include_required']) && $params['include_required'] == true) ||
             (! isset($params['include_required']) && ! isset($params['fields']))) {
             $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             foreach ($required_fields as $name => $value) {
@@ -223,8 +222,8 @@ class AirrRearrangement extends Model
 
             //null out the required fields, then populate from database.
             foreach ($fields_to_display as $display_field=>$value) {
-                   array_set($return_array, $display_field, null);
-                }
+                array_set($return_array, $display_field, null);
+            }
 
             foreach ($rearrangement as $return_key => $return_element) {
 
