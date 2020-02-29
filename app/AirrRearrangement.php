@@ -440,9 +440,16 @@ class AirrRearrangement extends Model
                 //few other variables we use in other arrays, simply to avoid triple-nested array references
                 // e.g. $psa_list[$sequence_list[$database_fields['ir_project_sample_id']]];
                 $ir_project_sample_id_repository_name = $service_to_db_mapping['ir_project_sample_id'];
-                $v_call_airr_name = array_search('v_call', $service_to_airr_mapping);
-                $j_call_airr_name = array_search('j_call', $service_to_airr_mapping);
-                $d_call_airr_name = array_search('d_call', $service_to_airr_mapping);
+                $v_call_airr_name = array_search('v_call', $airr_to_service_mapping);
+                $j_call_airr_name = array_search('j_call', $airr_to_service_mapping);
+                $d_call_airr_name = array_search('d_call', $airr_to_service_mapping);
+                $v_family_airr_name = array_search('vgene_family', $airr_to_service_mapping);
+                $d_family_airr_name = array_search('dgene_family', $airr_to_service_mapping);
+                $j_family_airr_name = array_search('jgene_family', $airr_to_service_mapping);
+                $v_gene_airr_name = array_search('vgene_gene', $airr_to_service_mapping);
+                $d_gene_airr_name = array_search('dgene_gene', $airr_to_service_mapping);
+                $j_gene_airr_name = array_search('jgene_gene', $airr_to_service_mapping);
+
 
                 // check if we have a start value or max value. with max, we stop sending data after that many results
                 //  start is a bit iffier - we'll run our query and not output till we have seen that many results, but...
@@ -533,7 +540,9 @@ class AirrRearrangement extends Model
                             if (isset($airr_list[$current_header])) {
                                 if (is_array($airr_list[$current_header])) {
                                     $new_line[$current_header] = implode($airr_list[$current_header], ', or');
-                                } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
+                                } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name,
+                                    $v_family_airr_name, $d_family_airr_name, $j_family_airr_name,
+                                    $v_gene_airr_name, $d_gene_airr_name, $j_gene_airr_name]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
                                     $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
                                 } else {
                                     $new_line[$current_header] = $airr_list[$current_header];
