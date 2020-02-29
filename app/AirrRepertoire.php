@@ -54,10 +54,9 @@ class AirrRepertoire extends Model
             }
             $options['projection'] = $fields_to_retrieve;
         }
-        //if required parameters is true, add them to the projection
-        // also, if neither include_required nor fields is set, send everything
-        if ((isset($params['include_required']) && $params['include_required'] == true) ||
-                (! isset($params['include_required']) && ! isset($params['fields']))) {
+        //if required parameters is true, add them to the projection but only if fields is set
+        //  otherwise, we just get everything then can null-pad required fields.
+        if (isset($params['include_required']) && $params['include_required'] == true && isset($params['fields'])) {
             $required_from_database = [];
             $required_fields = FileMapping::createMappingArray('ir_repository', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
             foreach ($required_fields as $name => $value) {

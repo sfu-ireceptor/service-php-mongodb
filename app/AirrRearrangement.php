@@ -77,13 +77,17 @@ class AirrRearrangement extends Model
         $airr_to_repository = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        ini_set('memory_limit', '2G');
+        set_time_limit(60 * 60 * 24);
 
         $query_string = '{}';
 
         $query_string = '{}';
         $options = [];
+
         $fields_to_retrieve = [];
         $query = new self();
+        $options['projection'] = [];
         // if we have filters, process them
         if (isset($params['filters']) && $params['filters'] != '' && ! empty($params['filters'])) {
             $query_string = AirrUtils::processAirrFilter($params['filters'], $airr_names, $airr_types, $db_types);
@@ -100,6 +104,20 @@ class AirrRearrangement extends Model
                 }
             }
             $options['projection'] = $fields_to_retrieve;
+        }
+
+        //if required parameters is true, add them to the projection
+        // in query, it is only relevant when fields are set, otherwise we get everything
+        //  then null-pad it
+        if (isset($params['include_required']) && $params['include_required'] == true && isset($params['fields'])) {
+            $required_from_database = [];
+            $required_fields = FileMapping::createMappingArray('ir_repository', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            foreach ($required_fields as $name => $value) {
+                if ($value) {
+                    $required_from_database[$name] = 1;
+                }
+            }
+            $options['projection'] = array_merge($options['projection'], $required_from_database);
         }
         // if we have from parameter, start the query at that value
         if (isset($params['from']) && is_int($params['from'])) {
@@ -121,9 +139,15 @@ class AirrRearrangement extends Model
             //$aggOptions[1]['$unwind'] = '$' . $airr_names[$params['facets']];
             $aggOptions[1]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
             $aggOptions[1]['$group']['count'] = ['$sum' => 1];
+            $options['maxTimeMS'] = $query->getCountTimeout();
+            $options['noCursorTimeout'] = true;
 
-            $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
+
+            $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions, $options);
         } else {
+            $options['maxTimeMS'] = $query->getFetchTimeout();
+            $options['noCursorTimeout'] = true;
+
             $list = DB::collection($query->getCollection())->raw()->find(json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string), true), $options);
         }
 
@@ -131,10 +155,12 @@ class AirrRearrangement extends Model
         return $list;
     }
 
-    public static function airrRearrangementResponse($response_list, $response_type)
+    public static function airrRearrangementResponse($response_list, $response_type, $params)
     {
         //method that takes an array of AIRR terms and returns a JSON string
         //  that represents a repertoire response as defined in AIRR API
+        ini_set('memory_limit', '2G');
+        set_time_limit(60 * 60 * 24);
 
         //first, we need some mappings to convert database values to AIRR terms
         //  and bucket them into appropriate AIRR classes
@@ -156,10 +182,21 @@ class AirrRearrangement extends Model
         //  rearrangement with repertoire
         $rev_comp_airr_name = $airr_names['rev_comp'];
         $functional_arr_name = $airr_names['functional'];
-
+        $fields_to_display=[];
         //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
         //  associated with it, so we will take the array of samples and place each element into an appropriate section
         //  of AIRR reperotoire response
+
+         if ((isset($params['include_required']) && $params['include_required'] == true) ||
+            (! isset($params['include_required']) && ! isset($params['fields']))) {
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            foreach ($required_fields as $name => $value) {
+                if ($value) {
+                    $fully_qualified_path = $name;
+                    $fields_to_display[$fully_qualified_path] = 1;
+                }
+            }
+        }
 
         $headers = true;
         if ($response_type == 'json') {
@@ -184,7 +221,15 @@ class AirrRearrangement extends Model
         foreach ($response_list as $rearrangement) {
             $return_array = [];
 
+            //null out the required fields, then populate from database.
+            foreach ($fields_to_display as $display_field=>$value) {
+                   array_set($return_array, $display_field, null);
+                }
+
             foreach ($rearrangement as $return_key => $return_element) {
+
+                //make all the requested fields null before populating if there are results
+
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     $service_name = $db_to_service[$return_key];
                     if ($service_name == 'rev_comp') {
@@ -267,6 +312,7 @@ class AirrRearrangement extends Model
 
     public static function airrRearrangementResponseSingle($rearrangement)
     {
+
         //take a single rearrangement from database query and create a response as per
         //  AIRR API standard
         $result = [];
@@ -285,6 +331,8 @@ class AirrRearrangement extends Model
         //method to run an optimized MongoDB query on the filters that can support it
         //  a single '=' search on an indexed field, a search on indexed field and
         //  repertoire id, or an aggregation on prior two cases on repertoire_id
+        ini_set('memory_limit', '2G');
+        set_time_limit(60 * 60 * 24);
 
         $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
@@ -375,7 +423,6 @@ class AirrRearrangement extends Model
                 $start_at = 0;
                 $max_values = 0;
                 $projection_mapping = FileMapping::createMappingArray('ir_repository', 'projection');
-
                 //check what kind of response we have, default to JSON
                 $response_type = 'json';
                 if (isset($request['format']) && $request['format'] != '') {
@@ -408,6 +455,10 @@ class AirrRearrangement extends Model
                 }
                 $fields_to_retrieve = [];
                 $fields_to_display = [];
+                $fetch_timeout = $query->getFetchTimeout();
+                $query_params['maxTimeMS'] = $fetch_timeout;
+                $query_params['noCursorTimeout'] = true;
+
                 // if fields value is set, we will be using them in projection
                 if (isset($request['fields']) && $request['fields'] != '') {
                     foreach ($request['fields'] as $airr_field_name) {
