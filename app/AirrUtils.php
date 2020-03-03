@@ -301,14 +301,12 @@ class AirrUtils extends Model
             $facets = '';
 
             //size must be an integer
-            if (isset($query['size']) && !is_int($query['size']))
-            {
+            if (isset($query['size']) && ! is_int($query['size'])) {
                 return false;
             }
 
-            // similar to size, from must be integer 
-            if (isset($query['from']) && !is_int($query['from']))
-            {
+            // similar to size, from must be integer
+            if (isset($query['from']) && ! is_int($query['from'])) {
                 return false;
             }
 

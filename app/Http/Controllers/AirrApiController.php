@@ -47,36 +47,36 @@ class AirrApiController extends Controller
             return response($response, 400)->header('Content-Type', 'application/json');
         }
         $l = AirrRepertoire::airrRepertoireRequest($params);
-            switch ($l) {
+        switch ($l) {
                 case 'error':
                     $response = [];
                     $response['message'] = 'Unable to parse the filter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');                     
+                    return response($response, 400)->header('Content-Type', 'application/json');
                     break;
                 case 'size_error':
                     $response = [];
                     $response['message'] = 'Invalid size parameter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');                     
+                    return response($response, 400)->header('Content-Type', 'application/json');
                     break;
- 
+
                 case 'from_error':
                     $response = [];
                     $response['message'] = 'Invalid from parameter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');                     
+                    return response($response, 400)->header('Content-Type', 'application/json');
                     break;
-                      
+
                 default:
                     //check what kind of response we have, default to JSON
                     $response_type = 'json';
                     if (isset($params['format']) && $params['format'] != '') {
                         $response_type = strtolower($params['format']);
-                    }           
+                    }
                     $response['Info']['Title'] = 'AIRR Data Commons API';
                     $response['Info']['description'] = 'API response for repertoire query';
                     $response['Info']['version'] = 1.3;
@@ -140,24 +140,24 @@ class AirrApiController extends Controller
                     $response['message'] = 'Unable to parse the filter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');                     
+                    return response($response, 400)->header('Content-Type', 'application/json');
                     break;
                  case 'size_error':
                     $response = [];
                     $response['message'] = 'Invalid size parameter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');                     
+                    return response($response, 400)->header('Content-Type', 'application/json');
                     break;
- 
+
                  case 'from_error':
                     $response = [];
                     $response['message'] = 'Invalid from parameter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');                     
+                    return response($response, 400)->header('Content-Type', 'application/json');
                     break;
-                      
+
                  default:
                     //check what kind of response we have, default to JSON
                     $response_type = 'json';
