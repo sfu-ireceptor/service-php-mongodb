@@ -68,27 +68,19 @@ class AirrRepertoire extends Model
         }
         // if we have from parameter, start the query at that value
         //  if it's not an int, fail
-        if (isset($params['from']))
-        {
-            if (is_int($params['from'])) 
-            {
+        if (isset($params['from'])) {
+            if (is_int($params['from'])) {
                 $options['skip'] = abs($params['from']);
-            }
-            else
-            {
+            } else {
                 return 'from_error';
-            };
+            }
         }
 
         // if we have size parameter, don't take more than that number of results
-        if (isset($params['size']))
-        {
-            if (is_int($params['size'])) 
-            {
+        if (isset($params['size'])) {
+            if (is_int($params['size'])) {
                 $options['limit'] = abs($params['size']);
-            }
-            else
-            {
+            } else {
                 return 'size_error';
             }
         }

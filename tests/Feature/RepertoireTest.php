@@ -616,8 +616,6 @@ EOT;
         $this->assertEquals('CDR3', $pcr_target_locus);
     }
 
-
-
     /** @test */
     public function greater_than_equals_operator()
     {
