@@ -120,13 +120,30 @@ class AirrRearrangement extends Model
             $options['projection'] = array_merge($options['projection'], $required_from_database);
         }
         // if we have from parameter, start the query at that value
-        if (isset($params['from']) && is_int($params['from'])) {
-            $options['skip'] = abs($params['from']);
+        //  if it's not an int, fail
+        if (isset($params['from']))
+        {
+            if (is_int($params['from'])) 
+            {
+                $options['skip'] = abs($params['from']);
+            }
+            else
+            {
+                return 'error';
+            };
         }
 
         // if we have size parameter, don't take more than that number of results
-        if (isset($params['size']) && is_int($params['size'])) {
-            $options['limit'] = abs($params['size']);
+        if (isset($params['size']))
+        {
+            if (is_int($params['size'])) 
+            {
+                $options['limit'] = abs($params['size']);
+            }
+            else
+            {
+                return 'error';
+            }
         }
 
         //echo "<br/>\n Returning $query_string";
@@ -168,11 +185,18 @@ class AirrRearrangement extends Model
         $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $db_to_service = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
         //V-, D-, J-call might be stored as an array, which need to be serialized before they can be outputted in TSV format
-        $v_call_airr_name = array_search('v_call', $airr_names);
-        $j_call_airr_name = array_search('j_call', $airr_names);
-        $d_call_airr_name = array_search('d_call', $airr_names);
+        $v_call_airr_name = array_search('v_call', $airr_to_service_mapping);
+        $j_call_airr_name = array_search('j_call', $airr_to_service_mapping);
+        $d_call_airr_name = array_search('d_call', $airr_to_service_mapping);
+        $v_family_airr_name = array_search('vgene_family', $airr_to_service_mapping);
+        $d_family_airr_name = array_search('dgene_family', $airr_to_service_mapping);
+        $j_family_airr_name = array_search('jgene_family', $airr_to_service_mapping);
+        $v_gene_airr_name = array_search('vgene_gene', $airr_to_service_mapping);
+        $d_gene_airr_name = array_search('dgene_gene', $airr_to_service_mapping);
+        $j_gene_airr_name = array_search('jgene_gene', $airr_to_service_mapping);
 
         // rev_comp and functional field are sometimes stored with annotation values
         //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
@@ -263,7 +287,9 @@ class AirrRearrangement extends Model
 
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
                     //  we also want to return a string, not an array, in JSON response
-                    if (in_array($return_key, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name])
+                    if (in_array($return_key, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name,
+                                                $v_family_airr_name, $d_family_airr_name, $j_family_airr_name,
+                                                $v_gene_airr_name, $d_gene_airr_name, $j_gene_airr_name])
                          && $return_element != null && ! is_string($return_element)) {
                         $return_array[$repository_to_airr[$return_key]] = implode($return_element->jsonSerialize(), ', or ');
                     }
@@ -314,11 +340,32 @@ class AirrRearrangement extends Model
 
         //take a single rearrangement from database query and create a response as per
         //  AIRR API standard
+        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_response', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+
+        foreach ($required_fields as $name => $value) {
+            if ($value) {
+                $fully_qualified_path = $name;
+                $fields_to_display[$fully_qualified_path] = 1;
+            }
+        }
+
         $result = [];
-        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        //make all the requested fields null before populating if there are results
+        foreach ($fields_to_display as $display_field=>$value) {
+            array_set($result, $display_field, null);
+        }
+
+        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         foreach ($rearrangement as $key=>$value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
-                $result[$response_mapping[$key]] = $value;
+                if (is_array($value)) {
+                        $result[$response_mapping[$key]] = implode($value, ', or ');
+                    }
+                else{
+                    $result[$response_mapping[$key]] = $value;
+                }
             }
         }
 
@@ -408,9 +455,11 @@ class AirrRearrangement extends Model
                 foreach ($sample_id_list as $current_sample_id) {
                     $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
                     $total = DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
+                                        
                     $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string) $current_sample_id;
                     $return['count'] = $total;
                     $return_list[] = $return;
+                    
                 }
 
                 $response = AirrUtils::airrHeader();

@@ -616,35 +616,7 @@ EOT;
         $this->assertEquals('CDR3', $pcr_target_locus);
     }
 
-    /** @test */
-    public function float_from()
-    {
-        $s = <<<'EOT'
-{
-  "from": 10.5
-}
-EOT;
-        $response = $this->postJsonString($this->uri, $s);
 
-        $json = $response->content();
-        $t = json_decode($json);
-        $this->assertCount(2, $t->Repertoire);
-    }
-
-    /** @test */
-    public function float_size()
-    {
-        $s = <<<'EOT'
-{
-  "size": 10.5
-}
-EOT;
-        $response = $this->postJsonString($this->uri, $s);
-
-        $json = $response->content();
-        $t = json_decode($json);
-        $this->assertCount(2, $t->Repertoire);
-    }
 
     /** @test */
     public function greater_than_equals_operator()

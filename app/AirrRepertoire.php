@@ -67,14 +67,31 @@ class AirrRepertoire extends Model
             $options['projection'] = array_merge($options['projection'], $required_from_database);
         }
         // if we have from parameter, start the query at that value
-        if (isset($params['from']) && is_int($params['from'])) {
-            $options['skip'] = abs($params['from']);
-        }
-        // if we have size parameter, don't take more than that number of results
-        if (isset($params['size']) && is_int($params['size'])) {
-            $options['limit'] = abs($params['size']);
+        //  if it's not an int, fail
+        if (isset($params['from']))
+        {
+            if (is_int($params['from'])) 
+            {
+                $options['skip'] = abs($params['from']);
+            }
+            else
+            {
+                return 'from_error';
+            };
         }
 
+        // if we have size parameter, don't take more than that number of results
+        if (isset($params['size']))
+        {
+            if (is_int($params['size'])) 
+            {
+                $options['limit'] = abs($params['size']);
+            }
+            else
+            {
+                return 'size_error';
+            }
+        }
         //echo "<br/>\n Returning $query_string";die();
         //return ($query_string);
 
@@ -239,8 +256,23 @@ class AirrRepertoire extends Model
         //  of AIRR reperotoire response
 
         $return_list = [];
+        $fields_to_display = [];
+
+        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        foreach ($required_fields as $name => $value) {
+            if ($value) {
+                $fully_qualified_path = $name;
+                $fields_to_display[$fully_qualified_path] = 1;
+            }
+        }
+
         foreach ($response_list as $repertoire) {
             $return_array = [];
+
+            //make all the requested fields null before populating if there are results
+            foreach ($fields_to_display as $display_field=>$value) {
+                array_set($return_array, $display_field, null);
+            }
 
             foreach ($repertoire as $return_key => $return_element) {
                 if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] != '') {
