@@ -279,13 +279,12 @@ class AirrRearrangement extends Model
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
                     //  we also want to return a string, not an array, in JSON response
                     if (in_array($repository_to_airr[$return_key], [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name,
-                                                $v_family_airr_name, $d_family_airr_name, $j_family_airr_name,
-                                                $v_gene_airr_name, $d_gene_airr_name, $j_gene_airr_name])
+                        $v_family_airr_name, $d_family_airr_name, $j_family_airr_name,
+                        $v_gene_airr_name, $d_gene_airr_name, $j_gene_airr_name, ])
                          && $return_element != null && ! is_string($return_element)) {
                         $return_element = implode($return_element->jsonSerialize(), ', or ');
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
-
                 }
             }
             // first time through, if we have tsv, dump the return array's keys as headers
