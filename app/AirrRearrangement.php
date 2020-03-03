@@ -121,27 +121,19 @@ class AirrRearrangement extends Model
         }
         // if we have from parameter, start the query at that value
         //  if it's not an int, fail
-        if (isset($params['from']))
-        {
-            if (is_int($params['from'])) 
-            {
+        if (isset($params['from'])) {
+            if (is_int($params['from'])) {
                 $options['skip'] = abs($params['from']);
-            }
-            else
-            {
+            } else {
                 return 'error';
-            };
+            }
         }
 
         // if we have size parameter, don't take more than that number of results
-        if (isset($params['size']))
-        {
-            if (is_int($params['size'])) 
-            {
+        if (isset($params['size'])) {
+            if (is_int($params['size'])) {
                 $options['limit'] = abs($params['size']);
-            }
-            else
-            {
+            } else {
                 return 'error';
             }
         }
@@ -362,9 +354,8 @@ class AirrRearrangement extends Model
         foreach ($rearrangement as $key=>$value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                        $result[$response_mapping[$key]] = implode($value, ', or ');
-                    }
-                else{
+                    $result[$response_mapping[$key]] = implode($value, ', or ');
+                } else {
                     $result[$response_mapping[$key]] = $value;
                 }
             }
@@ -456,11 +447,10 @@ class AirrRearrangement extends Model
                 foreach ($sample_id_list as $current_sample_id) {
                     $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
                     $total = DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
-                                        
+
                     $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string) $current_sample_id;
                     $return['count'] = $total;
                     $return_list[] = $return;
-                    
                 }
 
                 $response = AirrUtils::airrHeader();
