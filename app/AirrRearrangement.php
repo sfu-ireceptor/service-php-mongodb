@@ -579,7 +579,7 @@ class AirrRearrangement extends Model
                                     $new_line[$current_header] = implode($airr_list[$current_header], ', or');
                                 } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name,
                                     $v_family_airr_name, $d_family_airr_name, $j_family_airr_name,
-                                    $v_gene_airr_name, $d_gene_airr_name, $j_gene_airr_name ]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
+                                    $v_gene_airr_name, $d_gene_airr_name, $j_gene_airr_name, ]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
                                     $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
                                 } else {
                                     $new_line[$current_header] = $airr_list[$current_header];
