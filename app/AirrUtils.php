@@ -211,23 +211,21 @@ class AirrUtils extends Model
                     break;
                 }
 
-                //check also that 'in' and 'exlcude' ops have array parameter, and all
-                //  others do not
-                // 'and' and 'or' can go either ways so ignore them
-                switch ($f['op']){
+            //check also that 'in' and 'exlcude' ops have array parameter, and all
+            //  others do not
+            // 'and' and 'or' can go either ways so ignore them
+            switch ($f['op']) {
                     case 'and':
                     case 'in':
                         break;
                     case 'in':
                     case 'exclude':
-                        if (!(is_array($content['value'])))
-                        {
+                        if (! (is_array($content['value']))) {
                             return;
                         }
                         break;
                     default:
-                        if (is_array($content['value']))
-                        {
+                        if (is_array($content['value'])) {
                             return;
                         }
                         break;
@@ -247,7 +245,7 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
-                break;               
+                break;
             case '<':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$lt":' . $value . '}}';
