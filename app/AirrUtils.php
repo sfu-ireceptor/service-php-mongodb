@@ -209,7 +209,29 @@ class AirrUtils extends Model
                     //bad data type
                     return;
                     break;
-            }
+                }
+
+                //check also that 'in' and 'exlcude' ops have array parameter, and all
+                //  others do not
+                // 'and' and 'or' can go either ways so ignore them
+                switch ($f['op']){
+                    case 'and':
+                    case 'in':
+                        break;
+                    case 'in':
+                    case 'exclude':
+                        if (!(is_array($content['value'])))
+                        {
+                            return;
+                        }
+                        break;
+                    default:
+                        if (is_array($content['value']))
+                        {
+                            return;
+                        }
+                        break;
+                }
         }
         switch ($f['op']) {
             case '=':
@@ -218,24 +240,28 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case '!=':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$ne":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;               
             case '<':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$lt":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;
             case '>':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$gt":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;
             case '<=':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$lte":' . $value . '}}';
@@ -248,12 +274,14 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case 'contains':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$regex":' . preg_quote($value) . ',"$options":"i"}}';
                 } else {
                     return;
                 }
+                break;
             case 'is':
             case 'is missing':
                 if (isset($field) && $field != '') {
@@ -261,6 +289,7 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case 'not':
             case 'is not missing':
                 if (isset($field) && $field != '') {
@@ -268,18 +297,21 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case 'in':
                 if (isset($field) && $field != '' && isset($value) && is_array(json_decode($value))) {
                     return '{"' . $field . '":{"$in":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;
             case 'exclude':
                 if (isset($field) && $field != '' && isset($value) && is_array(json_decode($value))) {
                     return '{"' . $field . '":{"$nin":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;
             case 'and':
                 if (is_array($content) && count($content) > 1) {
                     $exp_list = [];
@@ -296,6 +328,7 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case 'or':
                 if (is_array($content) && count($content) > 1) {
                     $exp_list = [];
@@ -312,10 +345,12 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             default:
                 Log::error('Unknown op');
 
                 return;
+                break;
         } //end switch ($op)
 
         // should not get here
