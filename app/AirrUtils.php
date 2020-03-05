@@ -141,90 +141,67 @@ class AirrUtils extends Model
             switch ($type) {
                 // make sure that type actually matches value or fail
                 case 'integer':
-                    if (is_array($content['value'])){
-                        foreach($content['value'] as $array_member)
-                        {
-                            if (!is_int($array_member)){
-                                return ;
+                    if (is_array($content['value'])) {
+                        foreach ($content['value'] as $array_member) {
+                            if (! is_int($array_member)) {
+                                return;
                             }
                         }
                         $value = self::typeConvertHelper($content['value'], $db_type);
-                    }
-                    else
-                    {                       
-                        if (is_int($content['value'])){
+                    } else {
+                        if (is_int($content['value'])) {
                             $value = self::typeConvertHelper($content['value'], $db_type);
-                        }
-                        else
-                        {
-                            return null;
+                        } else {
+                            return;
                         }
                     }
                     break;
                 case 'number':
-                    if (is_array($content['value']))
-                    {
-                        foreach($content['value'] as $array_member)
-                        {
-                            if (!(is_int($array_member) || is_double($array_member))){
-                                return ;
+                    if (is_array($content['value'])) {
+                        foreach ($content['value'] as $array_member) {
+                            if (! (is_int($array_member) || is_float($array_member))) {
+                                return;
                             }
                         }
                         $value = self::typeConvertHelper($content['value'], $db_type);
-                    }
-                    else
-                    {                 
-                        if (is_double($content['value']) || is_int($content['value'])){
+                    } else {
+                        if (is_float($content['value']) || is_int($content['value'])) {
                             $value = self::typeConvertHelper($content['value'], $db_type);
-                        }
-                        else
-                        {
-                            return null;
+                        } else {
+                            return;
                         }
                     }
                     break;
                 case 'boolean':
-                    if (is_array($content['value']))
-                    {
-                        foreach($content['value'] as $array_member)
-                        {
-                            if (!is_bool($array_member)){
-                                return ;
+                    if (is_array($content['value'])) {
+                        foreach ($content['value'] as $array_member) {
+                            if (! is_bool($array_member)) {
+                                return;
                             }
                         }
                         $value = self::typeConvertHelper($content['value'], $db_type);
-                    }
-                    else
-                    {                       
-                        if (is_bool($content['value'])){
+                    } else {
+                        if (is_bool($content['value'])) {
                             $value = self::typeConvertHelper($content['value'], $db_type);
-                        }
-                        else
-                        {
-                            return null;
+                        } else {
+                            return;
                         }
                     }
                     break;
                 case 'string':
                 case 'array':
-                    if (is_array($content['value']))
-                    {
-                        foreach($content['value'] as $array_member)
-                        {
-                            if (!is_string($array_member)){
-                                return ;
+                    if (is_array($content['value'])) {
+                        foreach ($content['value'] as $array_member) {
+                            if (! is_string($array_member)) {
+                                return;
                             }
                         }
                         $value = self::typeConvertHelper($content['value'], $db_type);
-                    }
-                    else
-                    {                                       
-                        if (is_string($content['value'])){
+                    } else {
+                        if (is_string($content['value'])) {
                             $value = self::typeConvertHelper($content['value'], $db_type);
-                        }
-                        else
-                        {
-                            return null;
+                        } else {
+                            return;
                         }
                     }
                     break;
