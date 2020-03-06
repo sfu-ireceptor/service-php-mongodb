@@ -203,14 +203,14 @@ class AirrRepertoire extends Model
                                 break;
                             case 'boolean':
                                 if (is_array($return_element)) {
-                                    $return_value = array_map('boolval', $content['value']);
+                                    $return_value = array_map('boolval',return_element);
                                 } else {
                                     $return_value = (bool) $return_element;
                                 }
                                 break;
                             case 'string':
                                 if (is_array($return_element)) {
-                                    $return_value = array_map('strval', $content['value']);
+                                    $return_value = array_map('strval', return_element);
                                 } else {
                                     $return_value = (string) $return_element;
                                 }
