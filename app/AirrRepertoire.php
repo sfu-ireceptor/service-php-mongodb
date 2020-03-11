@@ -207,9 +207,9 @@ class AirrRepertoire extends Model
                                     //  serialized before PHP can handle them
                                     $return_value = array_map('intval', $return_element->jsonSerialize());
                                 } elseif (is_array($return_value)) {
-                                    $return_value = array_map('intval', $return_element);
+                                    $return_value = array_map('intval', array_map(AirrUtils::stringToNumber, $return_element));
                                 } else {
-                                    $return_value = (int) $return_element;
+                                    $return_value = intval(AirrUtils::stringToNumber($return_element));
                                 }
                                 break;
                             case 'number':
@@ -218,9 +218,9 @@ class AirrRepertoire extends Model
                                     //  serialized before PHP can handle them
                                     $return_value = array_map('doubleval', $return_element->jsonSerialize());
                                 } elseif (is_array($return_value)) {
-                                    $return_value = array_map('doubleval', $return_element);
+                                    $return_value = array_map('doubleval', array_map(AirrUtils::stringToNumber, $return_element));
                                 } else {
-                                    $return_value = (float) $return_element;
+                                    $return_value =  intval(AirrUtils::stringToNumber($return_element));
                                 }
                                 break;
                             case 'boolean':

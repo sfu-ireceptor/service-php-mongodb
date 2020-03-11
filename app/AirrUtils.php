@@ -53,6 +53,24 @@ class AirrUtils extends Model
         }
     }
 
+    // php has some issues converting numbers that are actually formatted strings
+    //  e.g. 153,242 or 4*10^06
+    //  we can try making it so it's more suitable for type casts, but the correct way
+    //  is to ensure it's done right in the database
+    public static function stringToNumber($value)
+    {
+        //if we can't treat it as a string, return
+        if (! is_string($value))
+        {
+            return ($value);
+        }
+
+        //strip out the commas - hopefully the database doesn't follow european conventions
+        //anything of the form 14.2*10^14 should be replaced with E14 which intval and floatval can handle
+        $return_value = preg_replace("/\,/", "", $value);
+        $return_value = preg_replace ("/\*10\^/", "E", $return_value);
+        return $return_value;
+    }   
     //method to convert a value to a given type and encode in a way
     //  suitable for raw query
     public static function typeConvertHelperRaw($value, $type)
