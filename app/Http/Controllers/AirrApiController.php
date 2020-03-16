@@ -46,27 +46,52 @@ class AirrApiController extends Controller
 
             return response($response, 400)->header('Content-Type', 'application/json');
         }
-        $l = AirrRepertoire::airrRepertoireRequest($params, JSON_OBJECT_AS_ARRAY);
-        if ($l == 'error') {
-            $response['message'] = 'Unable to parse the filter.';
+        $l = AirrRepertoire::airrRepertoireRequest($params);
+        switch ($l) {
+                case 'error':
+                    $response = [];
+                    $response['message'] = 'Unable to parse the filter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-            return response($response, 400)->header('Content-Type', 'application/json');
-        } else {
-            $response['Info']['Title'] = 'AIRR Data Commons API';
-            $response['Info']['description'] = 'API response for repertoire query';
-            $response['Info']['version'] = 1.3;
-            $response['Info']['contact']['name'] = 'AIRR Community';
-            $response['Info']['contact']['url'] = 'https://github.com/airr-community';
+                    return response($response, 400)->header('Content-Type', 'application/json');
+                    break;
+                case 'size_error':
+                    $response = [];
+                    $response['message'] = 'Invalid size parameter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-            if (isset($params['facets'])) {
-                //facets have different formatting requirements
-                $response['Facet'] = AirrRepertoire::airrRepertoireFacetsResponse($l);
-            } else {
-                //regular response, needs to be formatted as per AIRR standard, as
-                //	iReceptor repertoires are flat collections in MongoDB
-                $response['Repertoire'] = AirrRepertoire::airrRepertoireResponse($l);
-            }
-        }
+                    return response($response, 400)->header('Content-Type', 'application/json');
+                    break;
+
+                case 'from_error':
+                    $response = [];
+                    $response['message'] = 'Invalid from parameter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+                    return response($response, 400)->header('Content-Type', 'application/json');
+                    break;
+
+                default:
+                    //check what kind of response we have, default to JSON
+                    $response_type = 'json';
+                    if (isset($params['format']) && $params['format'] != '') {
+                        $response_type = strtolower($params['format']);
+                    }
+                    $response['Info']['Title'] = 'AIRR Data Commons API';
+                    $response['Info']['description'] = 'API response for repertoire query';
+                    $response['Info']['version'] = 1.3;
+                    $response['Info']['contact']['name'] = 'AIRR Community';
+                    $response['Info']['contact']['url'] = 'https://github.com/airr-community';
+
+                    if (isset($params['facets'])) {
+                        //facets have different formatting requirements
+                        $response['Facet'] = AirrRepertoire::airrRepertoireFacetsResponse($l);
+                    } else {
+                        //regular response, needs to be formatted as per AIRR standard, as
+                        //	iReceptor repertoires are flat collections in MongoDB
+                        $response['Repertoire'] = AirrRepertoire::airrRepertoireResponse($l, $params);
+                    }
+                }
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
         return response($response)->header('Content-Type', 'application/json');
@@ -109,34 +134,52 @@ class AirrApiController extends Controller
             });
         } else {
             $l = AirrRearrangement::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
+            switch ($l) {
+                 case 'error':
+                    $response = [];
+                    $response['message'] = 'Unable to parse the filter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-            if ($l == 'error') {
-                $response = [];
-                $response['message'] = 'Unable to parse the filter.';
-                $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                    return response($response, 400)->header('Content-Type', 'application/json');
+                    break;
+                 case 'size_error':
+                    $response = [];
+                    $response['message'] = 'Invalid size parameter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                return response($response, 400)->header('Content-Type', 'application/json');
-            } else {
-                //check what kind of response we have, default to JSON
-                $response_type = 'json';
-                if (isset($params['format']) && $params['format'] != '') {
-                    $response_type = strtolower($params['format']);
-                }
-                if (isset($params['facets'])) {
-                    $response = AirrUtils::airrHeader();
+                    return response($response, 400)->header('Content-Type', 'application/json');
+                    break;
 
-                    //facets have different formatting requirements
-                    $response['Facet'] = AirrRearrangement::airrRearrangementFacetsResponse($l);
+                 case 'from_error':
+                    $response = [];
+                    $response['message'] = 'Invalid from parameter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response)->header('Content-Type', 'application/json');
-                } else {
-                    //regular response, needs to be formatted as per AIRR standard, as
-                    //  iReceptor repertoires are flat collections in MongoDB
-                    //$response['result'] = Sequence::airrRearrangementResponse($l);
-                    return response()->streamDownload(function () use ($l, $response_type) {
-                        AirrRearrangement::airrRearrangementResponse($l, $response_type);
-                    });
-                }
+                    return response($response, 400)->header('Content-Type', 'application/json');
+                    break;
+
+                 default:
+                    //check what kind of response we have, default to JSON
+                    $response_type = 'json';
+                    if (isset($params['format']) && $params['format'] != '') {
+                        $response_type = strtolower($params['format']);
+                    }
+                    if (isset($params['facets'])) {
+                        $response = AirrUtils::airrHeader();
+
+                        //facets have different formatting requirements
+                        $response['Facet'] = AirrRearrangement::airrRearrangementFacetsResponse($l);
+
+                        return response($response)->header('Content-Type', 'application/json');
+                    } else {
+                        //regular response, needs to be formatted as per AIRR standard, as
+                        //  iReceptor repertoires are flat collections in MongoDB
+                        //$response['result'] = Sequence::airrRearrangementResponse($l);
+                        return response()->streamDownload(function () use ($l, $response_type, $params) {
+                            AirrRearrangement::airrRearrangementResponse($l, $response_type, $params);
+                        });
+                    }
+                    break;
             }
         }
     }

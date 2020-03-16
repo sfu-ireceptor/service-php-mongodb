@@ -35,6 +35,7 @@ class AirrRepertoire extends Model
 
         $query_string = '{}';
         $options = [];
+        $options['projection'] = [];
         $fields_to_retrieve = [];
         $query = new self();
         // if we have filters, process them
@@ -53,16 +54,36 @@ class AirrRepertoire extends Model
             }
             $options['projection'] = $fields_to_retrieve;
         }
+        //if required parameters is true, add them to the projection but only if fields is set
+        //  otherwise, we just get everything then can null-pad required fields.
+        if (isset($params['include_required']) && $params['include_required'] == true && isset($params['fields'])) {
+            $required_from_database = [];
+            $required_fields = FileMapping::createMappingArray('ir_repository', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+            foreach ($required_fields as $name => $value) {
+                if ($value) {
+                    $required_from_database[$name] = 1;
+                }
+            }
+            $options['projection'] = array_merge($options['projection'], $required_from_database);
+        }
         // if we have from parameter, start the query at that value
-        if (isset($params['from']) && is_int($params['from'])) {
-            $options['skip'] = abs($params['from']);
+        //  if it's not an int, fail
+        if (isset($params['from'])) {
+            if (is_int($params['from'])) {
+                $options['skip'] = abs($params['from']);
+            } else {
+                return 'from_error';
+            }
         }
 
         // if we have size parameter, don't take more than that number of results
-        if (isset($params['size']) && is_int($params['size'])) {
-            $options['limit'] = abs($params['size']);
+        if (isset($params['size'])) {
+            if (is_int($params['size'])) {
+                $options['limit'] = abs($params['size']);
+            } else {
+                return 'size_error';
+            }
         }
-
         //echo "<br/>\n Returning $query_string";die();
         //return ($query_string);
 
@@ -84,26 +105,76 @@ class AirrRepertoire extends Model
     public static function airrRepertoireSingle($repertoire_id)
     {
         //return a single repertoire based on the repertoire_id
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repository_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repository_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+
         $query = new self;
-        $query = $query->where('_id', '=', (int) $repertoire_id);
+        // we have to adjust query based on type of field, because it will default to string
+        switch ($repository_types['repertoire_id']) {
+            case 'integer':
+                $repertoire_id = (int) $repertoire_id;
+                break;
+            case 'number':
+                $repertoire_id = (float) $repertoire_id;
+                break;
+            case 'string':
+                $repertoire_id = (string) $repertoire_id;
+                break;
+        }
+        $query = $query->where($repository_names['repertoire_id'], '=', $repertoire_id);
         $result = $query->get();
 
         return $result->toArray();
     }
 
-    public static function airrRepertoireResponse($response_list)
+    public static function airrRepertoireResponse($response_list, $params)
     {
         //method that takes an array of AIRR terms and returns a JSON string
         //  that represents a repertoire response as defined in AIRR API
 
         //first, we need some mappings to convert database values to AIRR terms
         //  and bucket them into appropriate AIRR classes
-        $airr_classes = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_classes = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_class_to_name = FileMapping::createMappingArray('ir_adc_api_query', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $db_names_to_airr_types = FileMapping::createMappingArray('ir_repository', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $fields_to_display = [];
+
+        // if fields parameter is set, we only want to return the fields specified
+        if (isset($params['fields']) && $params['fields'] != '') {
+            foreach ($params['fields'] as $airr_field_name) {
+                if (isset($airr_class_to_name[$airr_field_name]) && $airr_class_to_name[$airr_field_name] != '') {
+                    $fully_qualified_path = $airr_class_to_name[$airr_field_name];
+
+                    //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
+                    //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
+                    /*$fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
+                    $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
+
+                    //likewise for data_processing
+                    $fully_qualified_path = preg_replace("/^data_processing\./", 'data_processing.0.', $fully_qualified_path);
+
+                    //likewise diagnosis
+                    $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);*/
+
+                    $fields_to_display[$fully_qualified_path] = 1;
+                }
+            }
+        }
+        //if required parameters is true, add them to the return
+        // if neither required nor fields is set, we still want to return required
+        if ((isset($params['include_required']) && $params['include_required'] == true) ||
+            (! isset($params['include_required']) && ! isset($params['fields']))) {
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+            foreach ($required_fields as $name => $value) {
+                if ($value) {
+                    $fully_qualified_path = $name;
+                    $fields_to_display[$fully_qualified_path] = 1;
+                }
+            }
+        }
         //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
         //  associated with it, so we will take the array of samples and place each element into an appropriate section
         //  of AIRR reperotoire response
@@ -111,53 +182,65 @@ class AirrRepertoire extends Model
         foreach ($response_list as $repertoire) {
             $return_array = [];
 
+            //make all the requested fields null before populating if there are results
+            foreach ($fields_to_display as $display_field=>$value) {
+                array_set($return_array, $display_field, null);
+            }
+
             foreach ($repertoire as $return_key => $return_element) {
                 if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] != '') {
                     $fully_qualified_path = $airr_classes[$return_key];
-                    //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
-                    //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
-                    $fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
-                    $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
-
-                    //likewise for data_processing
-                    $fully_qualified_path = preg_replace("/^data_processing\./", 'data_processing.0.', $fully_qualified_path);
-
-                    //likewise diagnosis
-                    $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);
 
                     // typecast the return values
                     $return_value = $return_element;
                     if (isset($db_names_to_airr_types[$return_key])) {
-                        //we only want to typecast values that are sent, because
+
+                        //we only want to typecast values that are set, because
                         //   a 'null' is considered 0/unset in PHP so it converts it to
                         //	 appopriate value based on type
                         if (isset($return_value)) {
                             switch ($db_names_to_airr_types[$return_key]) {
                             // make sure that type actually matches value or fail
                             case 'integer':
-                                if (is_array($return_element)) {
-                                    $return_value = array_map('intval', $return_element);
+                                if (is_object($return_value)) {
+                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                    //  serialized before PHP can handle them
+                                    $return_value = array_map('intval', $return_element->jsonSerialize());
+                                } elseif (is_array($return_value)) {
+                                    $return_value = array_map('intval', array_map(AirrUtils::stringToNumber, $return_element));
                                 } else {
-                                    $return_value = (int) $return_element;
+                                    $return_value = intval(AirrUtils::stringToNumber($return_element));
                                 }
                                 break;
                             case 'number':
-                                if (is_array($return_element)) {
-                                    $return_value = array_map('floatval', $return_element);
+                                if (is_object($return_value)) {
+                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                    //  serialized before PHP can handle them
+                                    $return_value = array_map('doubleval', $return_element->jsonSerialize());
+                                } elseif (is_array($return_value)) {
+                                    $return_value = array_map('doubleval', array_map(AirrUtils::stringToNumber, $return_element));
                                 } else {
-                                    $return_value = (float) $return_element;
+                                    $return_value = intval(AirrUtils::stringToNumber($return_element));
                                 }
                                 break;
                             case 'boolean':
-                                if (is_array($return_element)) {
-                                    $return_value = array_map('boolval', $content['value']);
+                                if (is_object($return_value)) {
+                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                    //  serialized before PHP can handle them
+                                    $return_value = array_map('boolval', $return_element->jsonSerialize());
+                                } elseif (is_array($return_value)) {
+                                    $return_value = array_map('boolval', $return_element);
                                 } else {
                                     $return_value = (bool) $return_element;
                                 }
                                 break;
                             case 'string':
-                                if (is_array($return_element)) {
-                                    $return_value = array_map('strval', $content['value']);
+                                if (is_object($return_value)) {
+                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                    //  serialized before PHP can handle them
+                                    $return_value = array_map('strval', $return_element->jsonSerialize());
+                                } elseif (is_array($return_value)) {
+                                    $return_value = array_map('strval', $return_element);
                                 } else {
                                     $return_value = (string) $return_element;
                                 }
@@ -195,8 +278,23 @@ class AirrRepertoire extends Model
         //  of AIRR reperotoire response
 
         $return_list = [];
+        $fields_to_display = [];
+
+        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        foreach ($required_fields as $name => $value) {
+            if ($value) {
+                $fully_qualified_path = $name;
+                $fields_to_display[$fully_qualified_path] = 1;
+            }
+        }
+
         foreach ($response_list as $repertoire) {
             $return_array = [];
+
+            //make all the requested fields null before populating if there are results
+            foreach ($fields_to_display as $display_field=>$value) {
+                array_set($return_array, $display_field, null);
+            }
 
             foreach ($repertoire as $return_key => $return_element) {
                 if (isset($airr_classes[$return_key]) && $airr_classes[$return_key] != '') {

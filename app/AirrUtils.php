@@ -33,6 +33,7 @@ class AirrUtils extends Model
                 }
                 break;
             case 'string':
+            case 'array':
                 if (is_array($value)) {
                     return json_encode(array_map('strval', $value));
                 } else {
@@ -50,6 +51,25 @@ class AirrUtils extends Model
                 return;
                 break;
         }
+    }
+
+    // php has some issues converting numbers that are actually formatted strings
+    //  e.g. 153,242 or 4*10^06
+    //  we can try making it so it's more suitable for type casts, but the correct way
+    //  is to ensure it's done right in the database
+    public static function stringToNumber($value)
+    {
+        //if we can't treat it as a string, return
+        if (! is_string($value)) {
+            return $value;
+        }
+
+        //strip out the commas - hopefully the database doesn't follow european conventions
+        //anything of the form 14.2*10^14 should be replaced with E14 which intval and floatval can handle
+        $return_value = preg_replace("/\,/", '', $value);
+        $return_value = preg_replace("/\*10\^/", 'E', $return_value);
+
+        return $return_value;
     }
 
     //method to convert a value to a given type and encode in a way
@@ -76,6 +96,7 @@ class AirrUtils extends Model
                 }
                 break;
             case 'string':
+            case 'array':
                 if (is_array($value)) {
                     return array_map('strval', $value);
                 } else {
@@ -139,22 +160,95 @@ class AirrUtils extends Model
             switch ($type) {
                 // make sure that type actually matches value or fail
                 case 'integer':
+                    if (is_array($content['value'])) {
+                        foreach ($content['value'] as $array_member) {
+                            if (! is_int($array_member)) {
+                                return;
+                            }
+                        }
                         $value = self::typeConvertHelper($content['value'], $db_type);
+                    } else {
+                        if (is_int($content['value'])) {
+                            $value = self::typeConvertHelper($content['value'], $db_type);
+                        } else {
+                            return;
+                        }
+                    }
                     break;
                 case 'number':
+                    if (is_array($content['value'])) {
+                        foreach ($content['value'] as $array_member) {
+                            if (! (is_int($array_member) || is_float($array_member))) {
+                                return;
+                            }
+                        }
                         $value = self::typeConvertHelper($content['value'], $db_type);
+                    } else {
+                        if (is_float($content['value']) || is_int($content['value'])) {
+                            $value = self::typeConvertHelper($content['value'], $db_type);
+                        } else {
+                            return;
+                        }
+                    }
                     break;
                 case 'boolean':
+                    if (is_array($content['value'])) {
+                        foreach ($content['value'] as $array_member) {
+                            if (! is_bool($array_member)) {
+                                return;
+                            }
+                        }
                         $value = self::typeConvertHelper($content['value'], $db_type);
+                    } else {
+                        if (is_bool($content['value'])) {
+                            $value = self::typeConvertHelper($content['value'], $db_type);
+                        } else {
+                            return;
+                        }
+                    }
                     break;
                 case 'string':
+                case 'array':
+                    if (is_array($content['value'])) {
+                        foreach ($content['value'] as $array_member) {
+                            if (! is_string($array_member)) {
+                                return;
+                            }
+                        }
                         $value = self::typeConvertHelper($content['value'], $db_type);
+                    } else {
+                        if (is_string($content['value'])) {
+                            $value = self::typeConvertHelper($content['value'], $db_type);
+                        } else {
+                            return;
+                        }
+                    }
                     break;
                 default:
                     //bad data type
                     return;
                     break;
-            }
+                }
+
+            //check also that 'in' and 'exlcude' ops have array parameter, and all
+            //  others do not
+            // 'and' and 'or' can go either ways so ignore them
+            switch ($f['op']) {
+                    case 'and':
+                    case 'in':
+                        break;
+                    case 'in':
+                    case 'exclude':
+                        if (! (is_array($content['value']))) {
+                            return;
+                        }
+                        break;
+                    default:
+                        if (is_array($content['value'])) {
+                            return;
+                        }
+                        break;
+                }
         }
         switch ($f['op']) {
             case '=':
@@ -163,24 +257,28 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case '!=':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$ne":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;
             case '<':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$lt":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;
             case '>':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$gt":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;
             case '<=':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$lte":' . $value . '}}';
@@ -193,12 +291,14 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case 'contains':
                 if (isset($field) && $field != '' && isset($value)) {
                     return '{"' . $field . '":{"$regex":' . preg_quote($value) . ',"$options":"i"}}';
                 } else {
                     return;
                 }
+                break;
             case 'is':
             case 'is missing':
                 if (isset($field) && $field != '') {
@@ -206,6 +306,7 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case 'not':
             case 'is not missing':
                 if (isset($field) && $field != '') {
@@ -213,18 +314,21 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case 'in':
-                if (isset($field) && $field != '' && isset($value)) {
+                if (isset($field) && $field != '' && isset($value) && is_array(json_decode($value))) {
                     return '{"' . $field . '":{"$in":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;
             case 'exclude':
-                if (isset($field) && $field != '' && isset($value)) {
+                if (isset($field) && $field != '' && isset($value) && is_array(json_decode($value))) {
                     return '{"' . $field . '":{"$nin":' . $value . '}}';
                 } else {
                     return;
                 }
+                break;
             case 'and':
                 if (is_array($content) && count($content) > 1) {
                     $exp_list = [];
@@ -241,6 +345,7 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             case 'or':
                 if (is_array($content) && count($content) > 1) {
                     $exp_list = [];
@@ -257,10 +362,12 @@ class AirrUtils extends Model
                 } else {
                     return;
                 }
+                break;
             default:
                 Log::error('Unknown op');
 
                 return;
+                break;
         } //end switch ($op)
 
         // should not get here
@@ -289,9 +396,23 @@ class AirrUtils extends Model
             $indexed_fields = ([$airr_names['ir_project_sample_id'], $airr_names['junction_aa_length'],
                 $airr_names['junction_aa'], $airr_names['v_call'], $airr_names['d_call'],
                 $airr_names['j_call'],
-                $airr_names['functional'], ]);
+                $airr_names['functional'],
+                $airr_names['vgene_gene'], $airr_names['vgene_family'],
+                $airr_names['dgene_gene'], $airr_names['dgene_family'],
+                $airr_names['jgene_gene'], $airr_names['jgene_family'], ]
+            );
             $filters = '';
             $facets = '';
+
+            //size must be an integer
+            if (isset($query['size']) && ! is_int($query['size'])) {
+                return false;
+            }
+
+            // similar to size, from must be integer
+            if (isset($query['from']) && ! is_int($query['from'])) {
+                return false;
+            }
 
             if (isset($query['filters'])) {
                 $filters = $query['filters'];
@@ -330,8 +451,9 @@ class AirrUtils extends Model
                 return false;
             }
             //single '=' query on indexed fields, definitely optimizable (if facets exist they should be on repertoire_id at this point
-            //  so no reason to check)
-            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields)) {
+            //  so no reason to check).
+            //But, junction_aa is special. Right now it's not really indexed, so we want to skip it on '=' but allow on 'contains'
+            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields) && $filters['content']['field'] != $airr_names['junction_aa']) {
                 return true;
             }
             //Special case - contains query on junction_aa field translates into a 'substring' query and is thus optimizable
@@ -378,6 +500,10 @@ class AirrUtils extends Model
                     //'=' works on any indexed field - BUT - we have to make sure query only uses one
                     //  indexed field and repertoir_id
                     if ($filter['op'] == '=') {
+                        //special case right now is junction_aa where we optimized on substring search, not exact match
+                        if ($filter['content']['field'] == $airr_names['junction_aa']) {
+                            return false;
+                        }
                         if ($has_indexed) {
                             //echo 'Attempt to AND multiple fields ' . var_dump($filters);
 
