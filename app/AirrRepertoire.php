@@ -254,16 +254,12 @@ class AirrRepertoire extends Model
                             // there's a chance a field that should be an array in response wasn't processed as one
                             //  in that case we want to convert it to array. Heuristic is that a string of data processing files
                             //  or a string of keywords might be a comma-separated list, otherwise just convert to array as-is
-                            if (boolval($airr_is_array[$fully_qualified_path]) && isset($return_value) && !is_array($return_value))
-                            {
-                                if ( in_array($fully_qualified_path, [$service_to_airr_response['data_processing_files'], $service_to_airr_response['keywords_study']]) 
-                                    && is_string ($return_value) )
-                                {
-                                    $return_value = array_map('trim', explode(",", $return_value));
-                                }
-                                else
-                                {
-                                    $return_value = array($return_value);
+                            if (boolval($airr_is_array[$fully_qualified_path]) && isset($return_value) && ! is_array($return_value)) {
+                                if (in_array($fully_qualified_path, [$service_to_airr_response['data_processing_files'], $service_to_airr_response['keywords_study']])
+                                    && is_string($return_value)) {
+                                    $return_value = array_map('trim', explode(',', $return_value));
+                                } else {
+                                    $return_value = [$return_value];
                                 }
                             }
                         }
