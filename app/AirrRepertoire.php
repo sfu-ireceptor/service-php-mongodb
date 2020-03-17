@@ -141,6 +141,8 @@ class AirrRepertoire extends Model
         $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $db_names_to_airr_types = FileMapping::createMappingArray('ir_repository', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $fields_to_display = [];
+        $airr_is_array = FileMapping::createMappingArray('ir_adc_api_response', 'airr_is_array', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $service_to_airr_response = FileMapping::createMappingArray('service_name', 'ir_adc_api_response', 'airr_is_array', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         // if fields parameter is set, we only want to return the fields specified
         if (isset($params['fields']) && $params['fields'] != '') {
@@ -249,8 +251,24 @@ class AirrRepertoire extends Model
                                 //bad data type
                                 break;
                                 }
+                            // there's a chance a field that should be an array in response wasn't processed as one
+                            //  in that case we want to convert it to array. Heuristic is that a string of data processing files
+                            //  or a string of keywords might be a comma-separated list, otherwise just convert to array as-is
+                            if (boolval($airr_is_array[$fully_qualified_path]) && isset($return_value) && !is_array($return_value))
+                            {
+                                if ( in_array($fully_qualified_path, [$service_to_airr_response['data_processing_files'], $service_to_airr_response['keywords_study']]) 
+                                    && is_string ($return_value) )
+                                {
+                                    $return_value = array_map('trim', explode(",", $return_value));
+                                }
+                                else
+                                {
+                                    $return_value = array($return_value);
+                                }
+                            }
                         }
                     }
+
                     array_set($return_array, $fully_qualified_path, $return_value);
                 }
             }
