@@ -29,7 +29,6 @@ class AirrRepertoire extends Model
         //  currently the response is iReceptor API response
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $airr_to_repository = FileMapping::createMappingArray('airr', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
@@ -48,8 +47,8 @@ class AirrRepertoire extends Model
         // if fields parameter is set, we only want to return the fields specified
         if (isset($params['fields']) && $params['fields'] != '') {
             foreach ($params['fields'] as $airr_field_name) {
-                if (isset($airr_to_repository[$airr_field_name]) && $airr_to_repository[$airr_field_name] != '') {
-                    $fields_to_retrieve[$airr_to_repository[$airr_field_name]] = 1;
+                if (isset($airr_names[$airr_field_name]) && $airr_names[$airr_field_name] != '') {
+                    $fields_to_retrieve[$airr_names[$airr_field_name]] = 1;
                 }
             }
             $options['projection'] = $fields_to_retrieve;
