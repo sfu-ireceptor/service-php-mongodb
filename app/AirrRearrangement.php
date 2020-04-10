@@ -415,9 +415,11 @@ class AirrRearrangement extends Model
             $result = $sample_id_query->get();
 
             foreach ($result as $repertoire) {
-                $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string) $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
-                $return['count'] = $repertoire[$repertoire_service_to_db_mapping['ir_sequence_count']];
-                $sample_id_list[] = $return;
+                if ($repertoire[$repertoire_service_to_db_mapping['ir_sequence_count']] > 0) {
+                    $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string) $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
+                    $return['count'] = $repertoire[$repertoire_service_to_db_mapping['ir_sequence_count']];
+                    $sample_id_list[] = $return;
+                }
             }
 
             $response = AirrUtils::airrHeader();
@@ -446,10 +448,11 @@ class AirrRearrangement extends Model
                 foreach ($sample_id_list as $current_sample_id) {
                     $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
                     $total = DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
-
-                    $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string) $current_sample_id;
-                    $return['count'] = $total;
-                    $return_list[] = $return;
+                    if ($total > 0) {
+                        $return['_id'][$service_to_db_mapping['ir_project_sample_id']] = (string) $current_sample_id;
+                        $return['count'] = $total;
+                        $return_list[] = $return;
+                    }
                 }
 
                 $response = AirrUtils::airrHeader();
