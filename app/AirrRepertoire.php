@@ -221,7 +221,7 @@ class AirrRepertoire extends Model
                                 } elseif (is_array($return_value)) {
                                     $return_value = array_map('doubleval', array_map(AirrUtils::stringToNumber, $return_element));
                                 } else {
-                                    $return_value = doubleval(AirrUtils::stringToNumber($return_element));
+                                    $return_value = floatval(AirrUtils::stringToNumber($return_element));
                                 }
                                 break;
                             case 'boolean':
