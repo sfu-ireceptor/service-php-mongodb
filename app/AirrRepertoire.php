@@ -221,7 +221,7 @@ class AirrRepertoire extends Model
                                 } elseif (is_array($return_value)) {
                                     $return_value = array_map('doubleval', array_map(AirrUtils::stringToNumber, $return_element));
                                 } else {
-                                    $return_value = intval(AirrUtils::stringToNumber($return_element));
+                                    $return_value = doubleval(AirrUtils::stringToNumber($return_element));
                                 }
                                 break;
                             case 'boolean':
@@ -232,7 +232,7 @@ class AirrRepertoire extends Model
                                 } elseif (is_array($return_value)) {
                                     $return_value = array_map('boolval', $return_element);
                                 } else {
-                                    $return_value = (bool) $return_element;
+                                    $return_value = boolval($return_element);
                                 }
                                 break;
                             case 'string':
@@ -243,7 +243,7 @@ class AirrRepertoire extends Model
                                 } elseif (is_array($return_value)) {
                                     $return_value = array_map('strval', $return_element);
                                 } else {
-                                    $return_value = (string) $return_element;
+                                    $return_value = strval($return_element);
                                 }
                                 break;
                             default:
