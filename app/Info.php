@@ -23,7 +23,7 @@ class Info extends Model
         return $this->collection;
     }
 
-    public function getLastUpdate()
+    public static function getLastUpdate()
     {
         $query = new self;
         $result = $query->get()->max("last_update");
