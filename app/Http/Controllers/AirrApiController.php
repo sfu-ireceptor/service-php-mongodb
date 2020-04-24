@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AirrRearrangement;
 use App\AirrRepertoire;
 use App\AirrUtils;
+use App\Info;
 use Illuminate\Http\Request;
 
 class AirrApiController extends Controller
@@ -22,6 +23,7 @@ class AirrApiController extends Controller
     {
         $response['name'] = 'airr-api-ireceptor';
         $response['version'] = '0.1.0';
+        $response['last_update'] = Info::getLastUpdate();
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
