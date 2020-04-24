@@ -3,7 +3,6 @@
 namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model;
-use Log;
 
 class Info extends Model
 {
@@ -26,9 +25,8 @@ class Info extends Model
     public function getLastUpdate()
     {
         $query = new self;
-        $result = $query->get()->max("last_update");
+        $result = $query->get()->max('last_update');
+
         return $result;
     }
-
 }
-?>
