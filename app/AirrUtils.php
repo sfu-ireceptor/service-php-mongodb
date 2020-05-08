@@ -507,8 +507,7 @@ class AirrUtils extends Model
                 return true;
             }
             //any filter with more than two parameters can't be optimized
-            if (is_array($filters['content']) && count($filters['content'])>2)
-            {
+            if (is_array($filters['content']) && count($filters['content']) > 2) {
                 return false;
             }
             //most complicated case is an 'and' filter with two parameters, an indexed field with '=' query and repertoire_id '=' or 'contains'
