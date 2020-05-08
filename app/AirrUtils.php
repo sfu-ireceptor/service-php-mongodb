@@ -463,6 +463,15 @@ class AirrUtils extends Model
                 return false;
             }
 
+            //check that the filter is correct - easiest way is to run it through unoptimized
+            //  filter creation and see if it's returning null
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $query_string = self::processAirrFilter($filters, $airr_names, $airr_types, $db_types);
+            if ($query_string == null) {
+                return false;
+            }
+
             //first pass is easiest, any facets query not on repertoire_id will not be optimized
             if ($facets != '' && $facets != 'repertoire_id') {
                 //echo 'bad facet ' . $facets;
@@ -474,6 +483,7 @@ class AirrUtils extends Model
             if ($filters == '' || count($filters) == 0) {
                 return true;
             }
+
 
             //if filter is not 'and', '=', 'contains' or 'in', we can't do it
             if (! in_array($filters['op'], ['and', '=', 'contains', 'in'])) {
