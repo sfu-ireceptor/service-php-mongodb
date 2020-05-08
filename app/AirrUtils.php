@@ -53,6 +53,45 @@ class AirrUtils extends Model
         }
     }
 
+    //check that parameters other than filter are set using proper format
+    public static function verifyParameters($request)
+    {
+        $file_types = ["tsv", "json"];
+        $include_fields = ["airr-core", "miairr", "airr-schema"];
+
+        //from has to be a positive integer
+        if (isset ($request['from']))
+        {
+            if (!is_int($request['from']) || $request['from']<0)
+            {
+                return "From parameter needs to be a positive integer.";
+            }
+        }
+
+        //size has to be a positive integer
+        if (isset ($request['size']))
+        {
+            if (!is_int($request['size']) || $request['size']<0)
+            {
+                return "Size parameter needs to be a positive integer.";
+            }
+        }
+        
+        //include_fields should be one of the enumerated values
+        if (isset ($request['include_fields']) && !in_array($request['include_fields'], $include_fields))
+        {
+            return "Included fields has to be a valid enumeration.";
+        }
+
+        //file type should be one of the enumerated values
+        if (isset($request['format']) && !in_array($request['format'], $file_types))
+        {
+            return "File type has to be tsv or json.";
+        }
+
+        return null;
+    }
+
     // php has some issues converting numbers that are actually formatted strings
     //  e.g. 153,242 or 4*10^06
     //  we can try making it so it's more suitable for type casts, but the correct way
@@ -293,7 +332,7 @@ class AirrUtils extends Model
                 }
                 break;
             case 'contains':
-                if (isset($field) && $field != '' && isset($value)) {
+                if (isset($field) && $field != '' && isset($value) &&$type=='string') {
                     return '{"' . $field . '":{"$regex":' . preg_quote($value) . ',"$options":"i"}}';
                 } else {
                     return;
