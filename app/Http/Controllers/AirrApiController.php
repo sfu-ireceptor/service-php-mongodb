@@ -50,10 +50,10 @@ class AirrApiController extends Controller
         }
 
         //check non-filter parameters and return error if there is one
-        $params_verify = AirrUtils::verifyParameters($params) ;
-        if ($params_verify != null)
-        {
-            $response['message'] = "Error in parameters: ".$params_verify;
+        $params_verify = AirrUtils::verifyParameters($params);
+        if ($params_verify != null) {
+            $response['message'] = 'Error in parameters: ' . $params_verify;
+
             return response($response, 400)->header('Content-Type', 'application/json');
         }
         $l = AirrRepertoire::airrRepertoireRequest($params);
@@ -137,10 +137,10 @@ class AirrApiController extends Controller
         }
 
         //check non-filter parameters and return error if there is one
-        $params_verify = AirrUtils::verifyParameters($params) ;
-        if ($params_verify != null)
-        {
-            $response['message'] = "Error in parameters: ".$params_verify."\n";
+        $params_verify = AirrUtils::verifyParameters($params);
+        if ($params_verify != null) {
+            $response['message'] = 'Error in parameters: ' . $params_verify . "\n";
+
             return response($response, 400)->header('Content-Type', 'application/json');
         }
         $l = AirrRepertoire::airrRepertoireRequest($params);
