@@ -48,6 +48,14 @@ class AirrApiController extends Controller
 
             return response($response, 400)->header('Content-Type', 'application/json');
         }
+
+        //check non-filter parameters and return error if there is one
+        $params_verify = AirrUtils::verifyParameters($params);
+        if ($params_verify != null) {
+            $response['message'] = 'Error in parameters: ' . $params_verify;
+
+            return response($response, 400)->header('Content-Type', 'application/json');
+        }
         $l = AirrRepertoire::airrRepertoireRequest($params);
         switch ($l) {
                 case 'error':
@@ -128,6 +136,14 @@ class AirrApiController extends Controller
             return response($response, 400)->header('Content-Type', 'application/json');
         }
 
+        //check non-filter parameters and return error if there is one
+        $params_verify = AirrUtils::verifyParameters($params);
+        if ($params_verify != null) {
+            $response['message'] = 'Error in parameters: ' . $params_verify . "\n";
+
+            return response($response, 400)->header('Content-Type', 'application/json');
+        }
+        $l = AirrRepertoire::airrRepertoireRequest($params);
         //check if we can optimize the ADC API query for our repository
         //  if so, go down optimizied query path
         if (AirrUtils::queryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
