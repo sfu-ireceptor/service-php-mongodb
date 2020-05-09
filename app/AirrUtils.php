@@ -484,7 +484,6 @@ class AirrUtils extends Model
                 return true;
             }
 
-
             //if filter is not 'and', '=', 'contains' or 'in', we can't do it
             if (! in_array($filters['op'], ['and', '=', 'contains', 'in'])) {
                 //echo 'bad op ' . $filters['op'];
