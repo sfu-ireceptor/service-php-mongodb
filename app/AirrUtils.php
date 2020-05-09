@@ -506,10 +506,7 @@ class AirrUtils extends Model
             if ($filters['op'] == 'in' && $filters['content']['field'] == $airr_names['ir_project_sample_id']) {
                 return true;
             }
-            //any filter with more than two parameters can't be optimized
-            if (is_array($filters['content']) && count($filters['content']) > 2) {
-                return false;
-            }
+
             //most complicated case is an 'and' filter with two parameters, an indexed field with '=' query and repertoire_id '=' or 'contains'
             if ($filters['op'] == 'and' && is_array($filters['content']) && count($filters['content']) == 2) {
                 $has_indexed = false;
@@ -562,6 +559,10 @@ class AirrUtils extends Model
                 }
 
                 return true;
+            }
+            //any filter with more than two parameters can't be optimized
+            if (is_array($filters['content']) && count($filters['content']) > 2) {
+                return false;
             }
             // shouldn't get here
             //echo 'no return';
