@@ -157,7 +157,6 @@ class AirrUtils extends Model
         if (! (isset($f['content'])) || $f['content'] == '') {
             return;
         }
-
         $field = '';
         $type = '';
         $db_type = '';
@@ -266,7 +265,7 @@ class AirrUtils extends Model
             // 'and' and 'or' can go either ways so ignore them
             switch ($f['op']) {
                     case 'and':
-                    case 'in':
+                    case 'or':
                         break;
                     case 'in':
                     case 'exclude':
@@ -348,8 +347,8 @@ class AirrUtils extends Model
                 break;
             case 'in':
                 if (isset($field) && $field != '' && isset($value) && is_array(json_decode($value))) {
-                    return '{"' . $field . '":{"$in":' . $value . '}}';
-                } else {
+                   return '{"' . $field . '":{"$in":' . $value . '}}'; 
+                } else { 
                     return;
                 }
                 break;
@@ -465,11 +464,12 @@ class AirrUtils extends Model
 
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
-            $query_string = self::processAirrFilter($filters, $airr_names, $airr_types, $db_types);
+            $query_string = AirrUtils::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null) {
-                return false;
+                 return false;
             }
 
             //first pass is easiest, any facets query not on repertoire_id will not be optimized
@@ -503,7 +503,7 @@ class AirrUtils extends Model
 
             //a 'in' query on repertoire_id is optimizable, we just will iterate over it
             if ($filters['op'] == 'in' && $filters['content']['field'] == $airr_names['ir_project_sample_id']) {
-                return true;
+              return true;
             }
 
             //most complicated case is an 'and' filter with two parameters, an indexed field with '=' query and repertoire_id '=' or 'contains'

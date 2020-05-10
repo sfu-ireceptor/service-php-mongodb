@@ -143,7 +143,6 @@ class AirrApiController extends Controller
 
             return response($response, 400)->header('Content-Type', 'application/json');
         }
-        $l = AirrRepertoire::airrRepertoireRequest($params);
         //check if we can optimize the ADC API query for our repository
         //  if so, go down optimizied query path
         if (AirrUtils::queryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
