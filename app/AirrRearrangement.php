@@ -108,9 +108,9 @@ class AirrRearrangement extends Model
 
         //if required fields are set, map the appropriate column to the return
         // if neither required nor fields is set, we still want to return required
-        if (isset($params['include_fields']) ) {
-            $map_fields_column = "";
-            switch($params['include_fields']) {
+        if (isset($params['include_fields'])) {
+            $map_fields_column = '';
+            switch ($params['include_fields']) {
                 case 'miairr':
                     $map_fields_column = 'airr_miairr';
                     break;
@@ -124,18 +124,17 @@ class AirrRearrangement extends Model
                     break;
             }
 
-            if ($map_fields_column != "")
-            {
+            if ($map_fields_column != '') {
                 $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
                 foreach ($required_fields as $name => $value) {
-                    if ($value && strtolower($value)!='false') {
+                    if ($value && strtolower($value) != 'false') {
                         $fields_to_retrieve[$name] = 1;
                     }
                 }
-                $options['projection'] = array_merge($options['projection'], $fields_to_retrieve);      
+                $options['projection'] = array_merge($options['projection'], $fields_to_retrieve);
             }
         }
-        
+
         // if we have from parameter, start the query at that value
         //  if it's not an int, fail
         if (isset($params['from'])) {
@@ -218,9 +217,9 @@ class AirrRearrangement extends Model
 
         //if required fields are set, map the appropriate column to the return
         // if neither required nor fields is set, we still want to return required
-        if (isset($params['include_fields']) ) {
-            $map_fields_column = "";
-            switch($params['include_fields']) {
+        if (isset($params['include_fields'])) {
+            $map_fields_column = '';
+            switch ($params['include_fields']) {
                 case 'miairr':
                     $map_fields_column = 'airr_miairr';
                     break;
@@ -234,19 +233,17 @@ class AirrRearrangement extends Model
                     break;
             }
 
-            if ($map_fields_column != "")
-            {
+            if ($map_fields_column != '') {
                 $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
                 foreach ($required_fields as $name => $value) {
-                    if ($value && strtolower($value)!='false') {
+                    if ($value && strtolower($value) != 'false') {
                         $fully_qualified_path = $name;
                         $fields_to_display[$fully_qualified_path] = 1;
                     }
                 }
             }
-           
         }
-        
+
         // if neither required nor fields is set, we still want to return required
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
             $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'ir_rearrangement']]);
@@ -403,6 +400,7 @@ class AirrRearrangement extends Model
             }
             $return_list[] = $result;
         }
+
         return $return_list;
     }
 
@@ -561,9 +559,9 @@ class AirrRearrangement extends Model
                 }
                 //if required fields are set, map the appropriate column to the return
                 // if neither required nor fields is set, we still want to return required
-                if (isset($params['include_fields']) ) {
-                    $map_fields_column = "";
-                    switch($params['include_fields']) {
+                if (isset($params['include_fields'])) {
+                    $map_fields_column = '';
+                    switch ($params['include_fields']) {
                         case 'miairr':
                             $map_fields_column = 'airr_miairr';
                             break;
@@ -577,19 +575,17 @@ class AirrRearrangement extends Model
                             break;
                     }
 
-                    if ($map_fields_column != "")
-                    {
+                    if ($map_fields_column != '') {
                         $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
                         foreach ($required_fields as $name => $value) {
-                            if ($value && strtolower($value)!='false') {
+                            if ($value && strtolower($value) != 'false') {
                                 $fully_qualified_path = $name;
                                 $fields_to_display[$fully_qualified_path] = 1;
                             }
                         }
                     }
-                   
                 }
-                
+
                 // if neither required nor fields is set, we still want to return required
                 if (! isset($params['include_fields']) && ! isset($params['fields'])) {
                     $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'ir_rearrangement']]);
@@ -625,7 +621,7 @@ class AirrRearrangement extends Model
                 $current_result = 0;
                 $first = true;
                 foreach ($sample_id_list as $current_sample_id) {
-                    $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id; 
+                    $db_filters[$service_to_db_mapping['ir_project_sample_id']] = $current_sample_id;
                     $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
                     foreach ($result as $row) {
                         $sequence_list = $row;

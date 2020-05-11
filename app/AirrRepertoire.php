@@ -55,9 +55,9 @@ class AirrRepertoire extends Model
         }
         //if required fields are set, map the appropriate column to the return
         // if neither required nor fields is set, we still want to return required
-        if (isset($params['include_fields']) ) {
-            $map_fields_column = "";
-            switch($params['include_fields']) {
+        if (isset($params['include_fields'])) {
+            $map_fields_column = '';
+            switch ($params['include_fields']) {
                 case 'miairr':
                     $map_fields_column = 'airr_miairr';
                     break;
@@ -71,18 +71,17 @@ class AirrRepertoire extends Model
                     break;
             }
 
-            if ($map_fields_column != "")
-            {
+            if ($map_fields_column != '') {
                 $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
                 foreach ($required_fields as $name => $value) {
-                    if ($value && strtolower($value)!='false') {
+                    if ($value && strtolower($value) != 'false') {
                         $fields_to_retrieve[$name] = 1;
                     }
                 }
-                $options['projection'] = array_merge($options['projection'], $fields_to_retrieve);      
+                $options['projection'] = array_merge($options['projection'], $fields_to_retrieve);
             }
         }
-        
+
         // if we have from parameter, start the query at that value
         //  if it's not an int, fail
         if (isset($params['from'])) {
@@ -173,9 +172,9 @@ class AirrRepertoire extends Model
         }
         //if required fields are set, map the appropriate column to the return
         // if neither required nor fields is set, we still want to return required
-        if (isset($params['include_fields']) ) {
-            $map_fields_column = "";
-            switch($params['include_fields']) {
+        if (isset($params['include_fields'])) {
+            $map_fields_column = '';
+            switch ($params['include_fields']) {
                 case 'miairr':
                     $map_fields_column = 'airr_miairr';
                     break;
@@ -189,19 +188,17 @@ class AirrRepertoire extends Model
                     break;
             }
 
-            if ($map_fields_column != "")
-            {
+            if ($map_fields_column != '') {
                 $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
                 foreach ($required_fields as $name => $value) {
-                    if ($value && strtolower($value)!='false') {
+                    if ($value && strtolower($value) != 'false') {
                         $fully_qualified_path = $name;
                         $fields_to_display[$fully_qualified_path] = 1;
                     }
                 }
             }
-           
         }
-        
+
         // if neither required nor fields is set, we still want to return required
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
             $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
