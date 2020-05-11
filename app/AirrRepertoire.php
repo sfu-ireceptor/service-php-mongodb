@@ -53,18 +53,36 @@ class AirrRepertoire extends Model
             }
             $options['projection'] = $fields_to_retrieve;
         }
-        //if required parameters is true, add them to the projection but only if fields is set
-        //  otherwise, we just get everything then can null-pad required fields.
-        if (isset($params['include_required']) && $params['include_required'] == true && isset($params['fields'])) {
-            $required_from_database = [];
-            $required_fields = FileMapping::createMappingArray('ir_repository', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-            foreach ($required_fields as $name => $value) {
-                if ($value) {
-                    $required_from_database[$name] = 1;
-                }
+        //if required fields are set, map the appropriate column to the return
+        // if neither required nor fields is set, we still want to return required
+        if (isset($params['include_fields']) ) {
+            $map_fields_column = "";
+            switch($params['include_fields']) {
+                case 'miairr':
+                    $map_fields_column = 'airr_miairr';
+                    break;
+                case 'airr-core':
+                    $map_fields_column = 'airr_required';
+                    break;
+                case 'airr-schema':
+                    $map_fields_column = 'airr_spec';
+                    break;
+                default:
+                    break;
             }
-            $options['projection'] = array_merge($options['projection'], $required_from_database);
+
+            if ($map_fields_column != "")
+            {
+                $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+                foreach ($required_fields as $name => $value) {
+                    if ($value && strtolower($value)!='false') {
+                        $fields_to_retrieve[$name] = 1;
+                    }
+                }
+                $options['projection'] = array_merge($options['projection'], $fields_to_retrieve);      
+            }
         }
+        
         // if we have from parameter, start the query at that value
         //  if it's not an int, fail
         if (isset($params['from'])) {
@@ -149,25 +167,43 @@ class AirrRepertoire extends Model
                 if (isset($airr_class_to_name[$airr_field_name]) && $airr_class_to_name[$airr_field_name] != '') {
                     $fully_qualified_path = $airr_class_to_name[$airr_field_name];
 
-                    //AIRR API defines 'sample' as an array. we only have one so we insert a 0 index after
-                    //   the sample. If needed, we could keep a counter of samples and adjust it accordingly
-                    /*$fully_qualified_path = preg_replace("/^sample\.pcr_target\./", 'sample.pcr_target.0.', $fully_qualified_path);
-                    $fully_qualified_path = preg_replace("/^sample\./", 'sample.0.', $fully_qualified_path);
-
-                    //likewise for data_processing
-                    $fully_qualified_path = preg_replace("/^data_processing\./", 'data_processing.0.', $fully_qualified_path);
-
-                    //likewise diagnosis
-                    $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);*/
-
                     $fields_to_display[$fully_qualified_path] = 1;
                 }
             }
         }
-        //if required parameters is true, add them to the return
+        //if required fields are set, map the appropriate column to the return
         // if neither required nor fields is set, we still want to return required
-        if ((isset($params['include_required']) && $params['include_required'] == true) ||
-            (! isset($params['include_required']) && ! isset($params['fields']))) {
+        if (isset($params['include_fields']) ) {
+            $map_fields_column = "";
+            switch($params['include_fields']) {
+                case 'miairr':
+                    $map_fields_column = 'airr_miairr';
+                    break;
+                case 'airr-core':
+                    $map_fields_column = 'airr_required';
+                    break;
+                case 'airr-schema':
+                    $map_fields_column = 'airr_spec';
+                    break;
+                default:
+                    break;
+            }
+
+            if ($map_fields_column != "")
+            {
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+                foreach ($required_fields as $name => $value) {
+                    if ($value && strtolower($value)!='false') {
+                        $fully_qualified_path = $name;
+                        $fields_to_display[$fully_qualified_path] = 1;
+                    }
+                }
+            }
+           
+        }
+        
+        // if neither required nor fields is set, we still want to return required
+        if (! isset($params['include_fields']) && ! isset($params['fields'])) {
             $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
