@@ -157,7 +157,6 @@ class AirrUtils extends Model
         if (! (isset($f['content'])) || $f['content'] == '') {
             return;
         }
-
         $field = '';
         $type = '';
         $db_type = '';
@@ -266,7 +265,7 @@ class AirrUtils extends Model
             // 'and' and 'or' can go either ways so ignore them
             switch ($f['op']) {
                     case 'and':
-                    case 'in':
+                    case 'or':
                         break;
                     case 'in':
                     case 'exclude':
@@ -463,6 +462,16 @@ class AirrUtils extends Model
                 return false;
             }
 
+            //check that the filter is correct - easiest way is to run it through unoptimized
+            //  filter creation and see if it's returning null
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
+            if ($query_string == null) {
+                return false;
+            }
+
             //first pass is easiest, any facets query not on repertoire_id will not be optimized
             if ($facets != '' && $facets != 'repertoire_id') {
                 //echo 'bad facet ' . $facets;
@@ -496,10 +505,7 @@ class AirrUtils extends Model
             if ($filters['op'] == 'in' && $filters['content']['field'] == $airr_names['ir_project_sample_id']) {
                 return true;
             }
-            //any filter with more than two parameters can't be optimized
-            if (is_array($filters['content']) && count($filters['content']) > 2) {
-                return false;
-            }
+
             //most complicated case is an 'and' filter with two parameters, an indexed field with '=' query and repertoire_id '=' or 'contains'
             if ($filters['op'] == 'and' && is_array($filters['content']) && count($filters['content']) == 2) {
                 $has_indexed = false;
@@ -552,6 +558,10 @@ class AirrUtils extends Model
                 }
 
                 return true;
+            }
+            //any filter with more than two parameters can't be optimized
+            if (is_array($filters['content']) && count($filters['content']) > 2) {
+                return false;
             }
             // shouldn't get here
             //echo 'no return';

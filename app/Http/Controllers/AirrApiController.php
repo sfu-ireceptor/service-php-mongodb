@@ -143,7 +143,6 @@ class AirrApiController extends Controller
 
             return response($response, 400)->header('Content-Type', 'application/json');
         }
-        $l = AirrRepertoire::airrRepertoireRequest($params);
         //check if we can optimize the ADC API query for our repository
         //  if so, go down optimizied query path
         if (AirrUtils::queryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
@@ -210,7 +209,7 @@ class AirrApiController extends Controller
         if (isset($rearrangement[0])) {
             $response['Rearrangement'] = AirrRearrangement::airrRearrangementResponseSingle($rearrangement[0]);
         } else {
-            $response['Rearrangement'] = '{}';
+            $response['Rearrangement'] = '{[]}';
         }
 
         return response($response)->header('Content-Type', 'application/json');

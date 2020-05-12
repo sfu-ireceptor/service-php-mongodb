@@ -106,19 +106,35 @@ class AirrRearrangement extends Model
             $options['projection'] = $fields_to_retrieve;
         }
 
-        //if required parameters is true, add them to the projection
-        // in query, it is only relevant when fields are set, otherwise we get everything
-        //  then null-pad it
-        if (isset($params['include_required']) && $params['include_required'] == true && isset($params['fields'])) {
-            $required_from_database = [];
-            $required_fields = FileMapping::createMappingArray('ir_repository', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
-            foreach ($required_fields as $name => $value) {
-                if ($value) {
-                    $required_from_database[$name] = 1;
-                }
+        //if required fields are set, map the appropriate column to the return
+        // if neither required nor fields is set, we still want to return required
+        if (isset($params['include_fields'])) {
+            $map_fields_column = '';
+            switch ($params['include_fields']) {
+                case 'miairr':
+                    $map_fields_column = 'airr_miairr';
+                    break;
+                case 'airr-core':
+                    $map_fields_column = 'airr_required';
+                    break;
+                case 'airr-schema':
+                    $map_fields_column = 'airr_spec';
+                    break;
+                default:
+                    break;
             }
-            $options['projection'] = array_merge($options['projection'], $required_from_database);
+
+            if ($map_fields_column != '') {
+                $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+                foreach ($required_fields as $name => $value) {
+                    if ($value && strtolower($value) != 'false') {
+                        $fields_to_retrieve[$name] = 1;
+                    }
+                }
+                $options['projection'] = array_merge($options['projection'], $fields_to_retrieve);
+            }
         }
+
         // if we have from parameter, start the query at that value
         //  if it's not an int, fail
         if (isset($params['from'])) {
@@ -198,13 +214,39 @@ class AirrRearrangement extends Model
         $rev_comp_airr_name = $airr_names['rev_comp'];
         $functional_arr_name = $airr_names['functional'];
         $fields_to_display = [];
-        //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
-        //  associated with it, so we will take the array of samples and place each element into an appropriate section
-        //  of AIRR reperotoire response
 
-        if ((isset($params['include_required']) && $params['include_required'] == true) ||
-            (! isset($params['include_required']) && ! isset($params['fields']))) {
-            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        //if required fields are set, map the appropriate column to the return
+        // if neither required nor fields is set, we still want to return required
+        if (isset($params['include_fields'])) {
+            $map_fields_column = '';
+            switch ($params['include_fields']) {
+                case 'miairr':
+                    $map_fields_column = 'airr_miairr';
+                    break;
+                case 'airr-core':
+                    $map_fields_column = 'airr_required';
+                    break;
+                case 'airr-schema':
+                    $map_fields_column = 'airr_spec';
+                    break;
+                default:
+                    break;
+            }
+
+            if ($map_fields_column != '') {
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+                foreach ($required_fields as $name => $value) {
+                    if ($value && strtolower($value) != 'false') {
+                        $fully_qualified_path = $name;
+                        $fields_to_display[$fully_qualified_path] = 1;
+                    }
+                }
+            }
+        }
+
+        // if neither required nor fields is set, we still want to return required
+        if (! isset($params['include_fields']) && ! isset($params['fields'])) {
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'ir_rearrangement']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
                     $fully_qualified_path = $name;
@@ -213,7 +255,6 @@ class AirrRearrangement extends Model
             }
         }
 
-        $headers = true;
         if ($response_type == 'json') {
             // header('Content-Type: application/json; charset=utf-8');
             echo '{"Info":';
@@ -232,7 +273,10 @@ class AirrRearrangement extends Model
         }
         //have to put commas between JSON elements, but not on the last one, so figure out if this is the first time through
 
-        $first = true;
+        // if we have tsv, dump the return array's keys as headers
+        if ($response_type == 'tsv') {
+            echo implode(array_keys($fields_to_display), chr(9)) . "\n";
+        }
         foreach ($response_list as $rearrangement) {
             $return_array = [];
 
@@ -287,11 +331,7 @@ class AirrRearrangement extends Model
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 }
             }
-            // first time through, if we have tsv, dump the return array's keys as headers
-            if ($headers && $response_type == 'tsv') {
-                echo implode(array_keys($return_array), chr(9)) . "\n";
-                $headers = false;
-            }
+
             if ($response_type == 'tsv') {
                 echo implode($return_array, chr(9)) . "\n";
             } else {
@@ -342,7 +382,7 @@ class AirrRearrangement extends Model
                 $fields_to_display[$fully_qualified_path] = 1;
             }
         }
-
+        $return_list = [];
         $result = [];
         //make all the requested fields null before populating if there are results
         foreach ($fields_to_display as $display_field=>$value) {
@@ -358,9 +398,10 @@ class AirrRearrangement extends Model
                     $result[$response_mapping[$key]] = $value;
                 }
             }
+            $return_list[] = $result;
         }
 
-        return $result;
+        return $return_list;
     }
 
     public static function airrOptimizedRearrangementRequest($request)
@@ -516,6 +557,46 @@ class AirrRearrangement extends Model
                     }
                     $query_params['projection'] = $fields_to_retrieve;
                 }
+                //if required fields are set, map the appropriate column to the return
+                // if neither required nor fields is set, we still want to return required
+                if (isset($params['include_fields'])) {
+                    $map_fields_column = '';
+                    switch ($params['include_fields']) {
+                        case 'miairr':
+                            $map_fields_column = 'airr_miairr';
+                            break;
+                        case 'airr-core':
+                            $map_fields_column = 'airr_required';
+                            break;
+                        case 'airr-schema':
+                            $map_fields_column = 'airr_spec';
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if ($map_fields_column != '') {
+                        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+                        foreach ($required_fields as $name => $value) {
+                            if ($value && strtolower($value) != 'false') {
+                                $fully_qualified_path = $name;
+                                $fields_to_display[$fully_qualified_path] = 1;
+                            }
+                        }
+                    }
+                }
+
+                // if neither required nor fields is set, we still want to return required
+                if (! isset($params['include_fields']) && ! isset($params['fields'])) {
+                    $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'ir_rearrangement']]);
+                    foreach ($required_fields as $name => $value) {
+                        if ($value) {
+                            $fully_qualified_path = $name;
+                            $fields_to_display[$fully_qualified_path] = 1;
+                        }
+                    }
+                }
+
                 //if we didn't have the fields variable, we want to display all the AIRR fields
                 if (count($fields_to_retrieve) == 0) {
                     $fields_to_display = array_keys($airr_to_repository_mapping);
