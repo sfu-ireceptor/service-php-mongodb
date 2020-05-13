@@ -347,8 +347,8 @@ class AirrUtils extends Model
                 break;
             case 'in':
                 if (isset($field) && $field != '' && isset($value) && is_array(json_decode($value))) {
-                   return '{"' . $field . '":{"$in":' . $value . '}}'; 
-                } else { 
+                    return '{"' . $field . '":{"$in":' . $value . '}}';
+                } else {
                     return;
                 }
                 break;
@@ -468,8 +468,8 @@ class AirrUtils extends Model
             $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
-            if ($query_string == null && $filters !='') {
-                 return false;
+            if ($query_string == null && $filters != '') {
+                return false;
             }
 
             //first pass is easiest, any facets query not on repertoire_id will not be optimized
@@ -503,7 +503,7 @@ class AirrUtils extends Model
 
             //a 'in' query on repertoire_id is optimizable, we just will iterate over it
             if ($filters['op'] == 'in' && $filters['content']['field'] == $airr_names['ir_project_sample_id']) {
-              return true;
+                return true;
             }
 
             //most complicated case is an 'and' filter with two parameters, an indexed field with '=' query and repertoire_id '=' or 'contains'
