@@ -468,7 +468,7 @@ class AirrUtils extends Model
             $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
-            if ($query_string == null) {
+            if ($query_string == null && $filters != '') {
                 return false;
             }
 
