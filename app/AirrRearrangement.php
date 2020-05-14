@@ -641,15 +641,14 @@ class AirrRearrangement extends Model
                         $current_result++;
                         $new_line = [];
                         foreach ($fields_to_display as $current_header) {
-                            if (isset($airr_list[$current_header])) { 
-                                if (is_array($airr_list[$current_header])) { 
+                            if (isset($airr_list[$current_header])) {
+                                if (is_array($airr_list[$current_header])) {
                                     $new_line[$current_header] = implode($airr_list[$current_header], ', or');
                                 } elseif ($airr_list[$current_header] != null && is_a($airr_list[$current_header], "MongoDB\Model\BSONArray")) {
                                     $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
                                 } else {
                                     //the database id should be converted to string using the BSON function
-                                    if (is_a($airr_list[$current_header], "MongoDB\BSON\ObjectId"))
-                                    {
+                                    if (is_a($airr_list[$current_header], "MongoDB\BSON\ObjectId")) {
                                         $airr_list[$current_header] = $airr_list[$current_header]->__toString();
                                     }
                                     $new_line[$current_header] = $airr_list[$current_header];
