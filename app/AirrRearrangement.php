@@ -399,9 +399,8 @@ class AirrRearrangement extends Model
                     $result[$response_mapping[$key]] = $value;
                 }
             }
-            $return_list[] = $result;
         }
-
+        $return_list[]=$result;
         return $return_list;
     }
 
