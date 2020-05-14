@@ -195,17 +195,6 @@ class AirrRearrangement extends Model
         $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
-        //V-, D-, J-call might be stored as an array, which need to be serialized before they can be outputted in TSV format
-        $v_call_airr_name = array_search('v_call', $airr_to_service_mapping);
-        $j_call_airr_name = array_search('j_call', $airr_to_service_mapping);
-        $d_call_airr_name = array_search('d_call', $airr_to_service_mapping);
-        $v_family_airr_name = array_search('vgene_family', $airr_to_service_mapping);
-        $d_family_airr_name = array_search('dgene_family', $airr_to_service_mapping);
-        $j_family_airr_name = array_search('jgene_family', $airr_to_service_mapping);
-        $v_gene_airr_name = array_search('vgene_gene', $airr_to_service_mapping);
-        $d_gene_airr_name = array_search('dgene_gene', $airr_to_service_mapping);
-        $j_gene_airr_name = array_search('jgene_gene', $airr_to_service_mapping);
-
         // rev_comp and functional field are sometimes stored with annotation values
         //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
         //  for those two values here so we don't have to do it on every sequence.
@@ -308,6 +297,11 @@ class AirrRearrangement extends Model
                         }
                     }
 
+                    //flatten any MongoDB ObjectId types
+                    if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
+                        $return_element = $return_element->__toString();
+                    }
+
                     if ($service_name == 'ir_project_sample_id') {
                         $return_element = (string) $return_element;
                     }
@@ -323,10 +317,7 @@ class AirrRearrangement extends Model
 
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
                     //  we also want to return a string, not an array, in JSON response
-                    if (in_array($repository_to_airr[$return_key], [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name,
-                        $v_family_airr_name, $d_family_airr_name, $j_family_airr_name,
-                        $v_gene_airr_name, $d_gene_airr_name, $j_gene_airr_name, ])
-                         && $return_element != null && ! is_string($return_element)) {
+                    if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
                         $return_element = implode($return_element->jsonSerialize(), ', or ');
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
@@ -523,15 +514,6 @@ class AirrRearrangement extends Model
                 //few other variables we use in other arrays, simply to avoid triple-nested array references
                 // e.g. $psa_list[$sequence_list[$database_fields['ir_project_sample_id']]];
                 $ir_project_sample_id_repository_name = $service_to_db_mapping['ir_project_sample_id'];
-                $v_call_airr_name = array_search('v_call', $airr_to_service_mapping);
-                $j_call_airr_name = array_search('j_call', $airr_to_service_mapping);
-                $d_call_airr_name = array_search('d_call', $airr_to_service_mapping);
-                $v_family_airr_name = array_search('vgene_family', $airr_to_service_mapping);
-                $d_family_airr_name = array_search('dgene_family', $airr_to_service_mapping);
-                $j_family_airr_name = array_search('jgene_family', $airr_to_service_mapping);
-                $v_gene_airr_name = array_search('vgene_gene', $airr_to_service_mapping);
-                $d_gene_airr_name = array_search('dgene_gene', $airr_to_service_mapping);
-                $j_gene_airr_name = array_search('jgene_gene', $airr_to_service_mapping);
 
                 // check if we have a start value or max value. with max, we stop sending data after that many results
                 //  start is a bit iffier - we'll run our query and not output till we have seen that many results, but...
@@ -662,11 +644,13 @@ class AirrRearrangement extends Model
                             if (isset($airr_list[$current_header])) {
                                 if (is_array($airr_list[$current_header])) {
                                     $new_line[$current_header] = implode($airr_list[$current_header], ', or');
-                                } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name,
-                                    $v_family_airr_name, $d_family_airr_name, $j_family_airr_name,
-                                    $v_gene_airr_name, $d_gene_airr_name, $j_gene_airr_name, ]) && $airr_list[$current_header] != null && ! is_string($airr_list[$current_header])) {
+                                } elseif ($airr_list[$current_header] != null && is_a($airr_list[$current_header], "MongoDB\Model\BSONArray")) {
                                     $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
                                 } else {
+                                    //the database id should be converted to string using the BSON function
+                                    if (is_a($airr_list[$current_header], "MongoDB\BSON\ObjectId")) {
+                                        $airr_list[$current_header] = $airr_list[$current_header]->__toString();
+                                    }
                                     $new_line[$current_header] = $airr_list[$current_header];
                                 }
                             } else {
