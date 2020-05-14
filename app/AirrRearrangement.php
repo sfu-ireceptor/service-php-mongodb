@@ -400,7 +400,8 @@ class AirrRearrangement extends Model
                 }
             }
         }
-        $return_list[]=$result;
+        $return_list[] = $result;
+
         return $return_list;
     }
 
