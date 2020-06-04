@@ -136,9 +136,9 @@ class AirrUtils extends Model
                 break;
             case 'boolean':
                 if (is_array($value)) {
-                    return json_encode(array_map('boolval', $value));
+                    return array_map('boolval', $value);
                 } else {
-                    return json_encode(boolval($value));
+                    return boolval($value);
                 }
                 break;
             default:
