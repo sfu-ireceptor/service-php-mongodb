@@ -159,8 +159,7 @@ class AirrRearrangement extends Model
 
         //if facets is set we want to aggregate by that fields using the sum operation
         if (isset($params['facets']) && $params['facets'] != '') {
-            if (!isset($airr_names[$params['facets']]))
-            {
+            if (! isset($airr_names[$params['facets']])) {
                 return 'error';
             }
             $aggOptions = [];
