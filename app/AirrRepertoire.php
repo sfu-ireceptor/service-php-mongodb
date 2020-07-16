@@ -105,6 +105,10 @@ class AirrRepertoire extends Model
 
         //if facets is set we want to aggregate by that fields using the sum operation
         if (isset($params['facets']) && $params['facets'] != '') {
+            if (!isset($airr_names[$params['facets']]))
+            {
+                return 'error';
+            }
             $aggOptions = [];
             $aggOptions[0]['$match'] = json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string));
             $aggOptions[1]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
@@ -370,7 +374,7 @@ class AirrRepertoire extends Model
     public static function airrRepertoireFacetsResponse($response_list)
     {
         $return_array = [];
-        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
