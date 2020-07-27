@@ -436,7 +436,7 @@ class AirrRearrangement extends Model
         // we can just pull the cached value from our repertoire collection
         if ($facets == $service_to_airr_mapping['ir_project_sample_id'] && ($filter == '' ||
             ($filter['op'] != 'and' && $filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']))) {
-            $sample_id_query = new Sample();
+            $sample_id_query = new AirrRepertoire();
             if ($filter != '') {
                 if (is_array($filter['content']['value'])) {
                     $repertoire_id_list = [];
@@ -468,7 +468,7 @@ class AirrRearrangement extends Model
 
             //if we don't have a list of repertoire ids, we will be looping over all the database entries
             if (count($sample_id_list) == 0) {
-                $sample_id_query = new Sample();
+                $sample_id_query = new AirrRepertoire();
                 $result = $sample_id_query->get();
                 foreach ($result as $repertoire) {
                     $sample_id_list[] = $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
