@@ -545,9 +545,9 @@ class AirrRearrangement extends Model
                 }
                 //if required fields are set, map the appropriate column to the return
                 // if neither required nor fields is set, we still want to return required
-                if (isset($params['include_fields'])) {
+                if (isset($request['include_fields'])) {
                     $map_fields_column = '';
-                    switch ($params['include_fields']) {
+                    switch ($request['include_fields']) {
                         case 'miairr':
                             $map_fields_column = 'airr_miairr';
                             break;
@@ -573,7 +573,7 @@ class AirrRearrangement extends Model
                 }
 
                 // if neither required nor fields is set, we still want to return required
-                if (! isset($params['include_fields']) && ! isset($params['fields'])) {
+                if (! isset($request['include_fields']) && ! isset($request['fields'])) {
                     $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'ir_rearrangement']]);
                     foreach ($required_fields as $name => $value) {
                         if ($value) {
