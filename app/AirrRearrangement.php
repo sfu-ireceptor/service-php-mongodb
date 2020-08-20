@@ -538,7 +538,7 @@ class AirrRearrangement extends Model
                     foreach ($request['fields'] as $airr_field_name) {
                         if (isset($airr_to_repository_mapping[$airr_field_name]) && $airr_to_repository_mapping[$airr_field_name] != '') {
                             $fields_to_retrieve[$airr_to_repository_mapping[$airr_field_name]] = 1;
-                            array_push($fields_to_display, $airr_field_name);
+                            $fields_to_display[$airr_name] = 1;
                         }
                     }
                     $query_params['projection'] = $fields_to_retrieve;
@@ -583,10 +583,7 @@ class AirrRearrangement extends Model
                     }
                 }
 
-                //if we didn't have the fields variable, we want to display all the AIRR fields
-                if (count($fields_to_retrieve) == 0) {
-                    $fields_to_display = array_keys($airr_to_repository_mapping);
-                }
+                $fields_to_display = array_keys($fields_to_display);
                 $written_results = 0;
                 if ($response_type == 'json') {
                     // header('Content-Type: application/json; charset=utf-8');
