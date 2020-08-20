@@ -538,7 +538,7 @@ class AirrRearrangement extends Model
                     foreach ($request['fields'] as $airr_field_name) {
                         if (isset($airr_to_repository_mapping[$airr_field_name]) && $airr_to_repository_mapping[$airr_field_name] != '') {
                             $fields_to_retrieve[$airr_to_repository_mapping[$airr_field_name]] = 1;
-                            $fields_to_display[$airr_name] = 1;
+                            $fields_to_display[$airr_field_name] = 1;
                         }
                     }
                     $query_params['projection'] = $fields_to_retrieve;
