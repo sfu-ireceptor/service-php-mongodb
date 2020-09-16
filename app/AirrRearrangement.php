@@ -436,7 +436,7 @@ class AirrRearrangement extends Model
         // we can just pull the cached value from our repertoire collection
         if ($facets == $service_to_airr_mapping['ir_project_sample_id'] && ($filter == '' ||
             ($filter['op'] != 'and' && $filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']))) {
-            $sample_id_query = new Sample();
+            $sample_id_query = new AirrRepertoire();
             if ($filter != '') {
                 if (is_array($filter['content']['value'])) {
                     $repertoire_id_list = [];
@@ -468,7 +468,7 @@ class AirrRearrangement extends Model
 
             //if we don't have a list of repertoire ids, we will be looping over all the database entries
             if (count($sample_id_list) == 0) {
-                $sample_id_query = new Sample();
+                $sample_id_query = new AirrRepertoire();
                 $result = $sample_id_query->get();
                 foreach ($result as $repertoire) {
                     $sample_id_list[] = $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
@@ -538,16 +538,16 @@ class AirrRearrangement extends Model
                     foreach ($request['fields'] as $airr_field_name) {
                         if (isset($airr_to_repository_mapping[$airr_field_name]) && $airr_to_repository_mapping[$airr_field_name] != '') {
                             $fields_to_retrieve[$airr_to_repository_mapping[$airr_field_name]] = 1;
-                            array_push($fields_to_display, $airr_field_name);
+                            $fields_to_display[$airr_field_name] = 1;
                         }
                     }
                     $query_params['projection'] = $fields_to_retrieve;
                 }
                 //if required fields are set, map the appropriate column to the return
                 // if neither required nor fields is set, we still want to return required
-                if (isset($params['include_fields'])) {
+                if (isset($request['include_fields'])) {
                     $map_fields_column = '';
-                    switch ($params['include_fields']) {
+                    switch ($request['include_fields']) {
                         case 'miairr':
                             $map_fields_column = 'airr_miairr';
                             break;
@@ -571,9 +571,9 @@ class AirrRearrangement extends Model
                         }
                     }
                 }
-
+                
                 // if neither required nor fields is set, we still want to return required
-                if (! isset($params['include_fields']) && ! isset($params['fields'])) {
+                if (! isset($request['include_fields']) && ! isset($request['fields'])) {
                     $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'ir_rearrangement']]);
                     foreach ($required_fields as $name => $value) {
                         if ($value) {
@@ -583,10 +583,7 @@ class AirrRearrangement extends Model
                     }
                 }
 
-                //if we didn't have the fields variable, we want to display all the AIRR fields
-                if (count($fields_to_retrieve) == 0) {
-                    $fields_to_display = array_keys($airr_to_repository_mapping);
-                }
+                $fields_to_display = array_keys($fields_to_display);
                 $written_results = 0;
                 if ($response_type == 'json') {
                     // header('Content-Type: application/json; charset=utf-8');

@@ -29,4 +29,17 @@ class Info extends Model
 
         return $result;
     }
+
+    public static function getIrPlusInfo_stats()
+    {
+        //return the Info object used by iReceptor+ stats API
+        $response = Array();
+
+        $response["title"] = "iReceptorPlus Statistics API";
+        $response["version"] = "0.3.0";
+        $response["description"] = "Statistics API for the iReceptor Plus platform.";
+        $response["contact"] = null;
+
+        return $response;
+    }
 }
