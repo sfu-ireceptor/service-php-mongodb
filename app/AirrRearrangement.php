@@ -571,7 +571,7 @@ class AirrRearrangement extends Model
                         }
                     }
                 }
-                
+
                 // if neither required nor fields is set, we still want to return required
                 if (! isset($request['include_fields']) && ! isset($request['fields'])) {
                     $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'ir_rearrangement']]);
