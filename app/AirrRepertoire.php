@@ -25,22 +25,19 @@ class AirrRepertoire extends Model
 
     public static function findRepertoire($params)
     {
-        //function that takes in an array of key->value pairs, searches the database with $and operator on them, 
+        //function that takes in an array of key->value pairs, searches the database with $and operator on them,
         //  and returns the result set
 
         $query = new self;
         //var_dump($params); die();
         $repository_names = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        foreach ($params as $key=>$value)
-        {
-            if (isset($repository_names[$key]))
-            {
+        foreach ($params as $key=>$value) {
+            if (isset($repository_names[$key])) {
                 $query = $query->where($key, '=', $value);
             }
         }
 
         return $query->get()->toArray();
-
     }
 
     public static function airrRepertoireRequest($params)
