@@ -34,9 +34,8 @@ class StatsController extends Controller
         }
 
         // try and process the request to get rearrangement count per repertoire
-        $l = Stats::statsRequest($params, "rearrangement_count");
-        if ($l == 'error')
-        {
+        $l = Stats::statsRequest($params, 'rearrangement_count');
+        if ($l == 'error') {
             $response['Message'] = 'Error processing the request';
 
             return response($response, 400)->header('Content-Type', 'application/json');
