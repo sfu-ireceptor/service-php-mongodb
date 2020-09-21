@@ -106,7 +106,7 @@ class Stats extends Model
 
         switch ($entry_point) {
             case 'junction_length':
-                $entry_point_fields = ["junction_aa_length", "junction_length"];
+                $entry_point_fields = ['junction_aa_length', 'junction_length'];
                 break;
             case 'gene_usage':
                 $entry_point_fields = ['v_call', 'v_gene', 'v_family',
@@ -114,10 +114,10 @@ class Stats extends Model
                     'd_call', 'd_gene', 'd_family', ];
                 break;
             case 'rearrangement_count':
-                $entry_point_fields = ["rearrangement_count"];
+                $entry_point_fields = ['rearrangement_count'];
                 break;
             default:
-                return "error";
+                return 'error';
                 break;
         }
 
