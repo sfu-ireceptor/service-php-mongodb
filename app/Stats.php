@@ -145,7 +145,7 @@ class Stats extends Model
         $sample_id_list = [];
         // if 'repertoires' is set, loop through it and create an array of repertoire ids to search
         if (isset($params['repertoires'])) {
-            if (! is_array($params['repertoires']) || sizeof($params['repertoires']) ==0) {
+            if (! is_array($params['repertoires']) || sizeof($params['repertoires']) == 0) {
                 return 'error';
             }
 
@@ -211,7 +211,6 @@ class Stats extends Model
                     $sample_id_list[] = $response_object;
                 }
             }
-            
         }
 
         return $sample_id_list;
