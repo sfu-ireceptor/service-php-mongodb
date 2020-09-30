@@ -145,12 +145,11 @@ class Stats extends Model
         $sample_id_list = [];
         // if 'repertoires' is set, loop through it and create an array of repertoire ids to search
         if (isset($params['repertoires'])) {
-            if (! is_array($params['repertoires'])) {
+            if (! is_array($params['repertoires']) || sizeof($params['repertoires']) ==0) {
                 return 'error';
             }
 
             $repertoire_id_list = [];
-
             foreach ($params['repertoires'] as $repertoire_object) {
                 //each repertoire object has repertoire_id, optional sample_processing_id and
                 //  optional data_processing id, that we can use to find the repertoire in repertoire collection
@@ -209,9 +208,10 @@ class Stats extends Model
                         $stats_object['total'] = $stat_total;
                         $response_object['fields'][] = $stats_object;
                     }
+                    $sample_id_list[] = $response_object;
                 }
             }
-            $sample_id_list[] = $response_object;
+            
         }
 
         return $sample_id_list;
