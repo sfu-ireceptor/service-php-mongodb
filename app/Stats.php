@@ -184,13 +184,13 @@ class Stats extends Model
                     $data_processing_id = $repertoire['data_processing_id'];
                     $connector_id = $repertoire['_id'];
 
-                    $response_object['repertoire']['repertoire_id'] = strval($repertoire_id);
-                    $response_object['repertoire']['sample_processing_id'] = strval($sample_processing_id);
-                    $response_object['repertoire']['data_processing_id'] = strval($data_processing_id);
+                    $response_object['repertoires']['repertoire_id'] = strval($repertoire_id);
+                    $response_object['repertoires']['sample_processing_id'] = strval($sample_processing_id);
+                    $response_object['repertoires']['data_processing_id'] = strval($data_processing_id);
 
                     foreach ($entry_point_fields as $current_field) {
                         $stats_object = [];
-                        $stats_object['field'] = $current_field;
+                        $stats_object['statistic_name'] = $current_field;
                         $stats_object['total'] = 0;
                         $stats_query = new self();
 
@@ -206,7 +206,7 @@ class Stats extends Model
                             $stats_object['data'][] = ['key'=>$value, 'count'=>$count];
                         }
                         $stats_object['total'] = $stat_total;
-                        $response_object['fields'][] = $stats_object;
+                        $response_object['statistics'][] = $stats_object;
                     }
                     $sample_id_list[] = $response_object;
                 }
