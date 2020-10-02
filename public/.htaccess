@@ -3,7 +3,13 @@
         Options -MultiViews
     </IfModule>
 
+  Header always set  Access-Control-Allow-Origin "*"
+  Header always set Access-Control-Allow-Headers "origin, x-requested-with, content-type"
+Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT"
+
     RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS 
+RewriteRule ^(.*)$ $1 [R=204,L]   
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
