@@ -103,19 +103,19 @@ class Stats extends Model
         $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Repertoire', 'IR_Repertoire']]);
 
         $stats_api_outputs = FileMapping::createMappingArray('service_name', 'irplus_stats_api_response', ['ir_cass'=>['IRPlus_stats', 'repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $junction_length_fields = 
+        $junction_length_fields =
         $count_type = 'count';
         $entry_point_fields = [];
 
         switch ($entry_point) {
             case 'junction_length':
-                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_junction_length']]);                     
+                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_junction_length']]);
                 break;
             case 'gene_usage':
-                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_gene_usage']]); 
+                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_gene_usage']]);
                 break;
             case 'rearrangement_count':
-                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_rearrangement_count']]); 
+                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_rearrangement_count']]);
                 break;
             default:
                 return 'error';
