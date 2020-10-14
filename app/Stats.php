@@ -101,24 +101,21 @@ class Stats extends Model
         // given an array of repertoires, find the count of junction lengts for each
         $repertoire_service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Repertoire', 'IR_Repertoire']]);
+
+        $stats_api_outputs = FileMapping::createMappingArray('service_name', 'irplus_stats_api_response', ['ir_cass'=>['IRPlus_stats', 'repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $junction_length_fields = 
         $count_type = 'count';
         $entry_point_fields = [];
 
         switch ($entry_point) {
             case 'junction_length':
-                $entry_point_fields = ['junction_aa_length', 'junction_length',
-                    'junction_aa_length_productive', 'junction_length_productive', ];
+                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_junction_length']]);                     
                 break;
             case 'gene_usage':
-                $entry_point_fields = ['v_call', 'v_gene', 'v_family',
-                    'j_call', 'j_gene', 'j_family',
-                    'd_call', 'd_gene', 'd_family',
-                    'v_call_productive', 'v_gene_productive', 'v_family_productive',
-                    'j_call_productive', 'j_gene_productive', 'j_family_productive',
-                    'd_call_productive', 'd_gene_productive', 'd_family_productive', ];
+                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_gene_usage']]); 
                 break;
             case 'rearrangement_count':
-                $entry_point_fields = ['rearrangement_count', 'rearrangement_count_productive'];
+                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_rearrangement_count']]); 
                 break;
             default:
                 return 'error';
@@ -138,10 +135,6 @@ class Stats extends Model
             $entry_point_fields = $params['fields'];
         }
 
-        //check if we only want the productive count
-        if (isset($params['productive']) && $params['productive'] == true) {
-            $count_type = 'count_productive';
-        }
         $sample_id_list = [];
         // if 'repertoires' is set, loop through it and create an array of repertoire ids to search
         if (isset($params['repertoires'])) {
@@ -200,7 +193,7 @@ class Stats extends Model
                         $stats_results = $stats_query->get();
                         foreach ($stats_results as $stat) {
                             $value = $stat['value'];
-                            $count = $stat[$count_type];
+                            $count = $stat['total'];
                             $stat_total += $count;
 
                             $stats_object['data'][] = ['key'=>$value, 'count'=>$count];
