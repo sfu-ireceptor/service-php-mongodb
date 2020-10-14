@@ -193,7 +193,7 @@ class Stats extends Model
                         $stats_results = $stats_query->get();
                         foreach ($stats_results as $stat) {
                             $value = $stat['value'];
-                            $count = $stat['total'];
+                            $count = $stat['count'];
                             $stat_total += $count;
 
                             $stats_object['data'][] = ['key'=>$value, 'count'=>$count];
