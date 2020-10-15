@@ -99,20 +99,20 @@ class Stats extends Model
     public static function statsRequest($params, $entry_point)
     {
         // given an array of repertoires, find the count of junction lengts for each
-        $repertoire_service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', 
+        $repertoire_service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository',
             ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', 
+        $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type',
             ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Repertoire', 'IR_Repertoire']]);
-        $stats_api_outputs = FileMapping::createMappingArray('irplus_stats_api_query', 'irplus_stats_api_response', 
+        $stats_api_outputs = FileMapping::createMappingArray('irplus_stats_api_query', 'irplus_stats_api_response',
             ['ir_class'=>['IRPlus_stats']]);
-        $stats_api_input_to_db_mapping = FileMapping::createMappingArray('irplus_stats_api_query', 'ir_repository', 
+        $stats_api_input_to_db_mapping = FileMapping::createMappingArray('irplus_stats_api_query', 'ir_repository',
             ['ir_class'=>['IRPlus_stats']]);
-        $service_to_api_output_mapping = FileMapping::createMappingArray('service_name', 'irplus_stats_api_response', 
+        $service_to_api_output_mapping = FileMapping::createMappingArray('service_name', 'irplus_stats_api_response',
             ['ir_class'=>['IRPlus_stats']]);
         $service_to_stats_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository',
             ['ir_class'=>['IRPlus_stats']]);
 
-        $entry_point_fields = Array();
+        $entry_point_fields = [];
 
         switch ($entry_point) {
             case 'junction_length':
@@ -203,8 +203,8 @@ class Stats extends Model
                             $count = $stat['count'];
                             $stat_total += $count;
 
-                            $stats_object[$service_to_api_output_mapping['data']][] = [$service_to_api_output_mapping['key']=>$value, 
-                            $service_to_api_output_mapping['value']=>$count];
+                            $stats_object[$service_to_api_output_mapping['data']][] = [$service_to_api_output_mapping['key']=>$value,
+                                $service_to_api_output_mapping['value']=>$count, ];
                         }
                         $stats_object[$service_to_api_output_mapping['total']] = $stat_total;
                         $response_object[$service_to_api_output_mapping['statistic']][] = $stats_object;
