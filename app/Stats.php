@@ -207,7 +207,7 @@ class Stats extends Model
                                 $service_to_api_output_mapping['value']=>$count, ];
                         }
                         $stats_object[$service_to_api_output_mapping['total']] = $stat_total;
-                        $response_object[$service_to_api_output_mapping['statistic']][] = $stats_object;
+                        $response_object[$service_to_api_output_mapping['statistics']][] = $stats_object;
                     }
                     $sample_id_list[] = $response_object;
                 }
