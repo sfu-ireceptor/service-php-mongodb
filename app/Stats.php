@@ -107,6 +107,8 @@ class Stats extends Model
             ['ir_class'=>['IRPlus_stats']]);
         $stats_api_input_to_db_mapping = FileMapping::createMappingArray('irplus_stats_api_query', 'ir_repository',
             ['ir_class'=>['IRPlus_stats']]);
+        $service_to_api_input_mapping = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query',
+             ['ir_class'=>['IRPlus_stats']]);
         $service_to_api_output_mapping = FileMapping::createMappingArray('service_name', 'irplus_stats_api_response',
             ['ir_class'=>['IRPlus_stats']]);
         $service_to_stats_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository',
@@ -129,28 +131,28 @@ class Stats extends Model
                 break;
         }
 
-        //check if the 'fields' parameter is set ,and fields are appropriate to the entry point
-        if (isset($params['fields'])) {
-            if (! is_array($params['fields'])) {
+        //check if the 'statistics' parameter is set ,and statistics are appropriate to the entry point
+        if (isset($params[$service_to_api_input_mapping['statistics']])) {
+            if (! is_array($params[$service_to_api_input_mapping['statistics']])) {
                 return 'error';
             }
-            foreach ($params['fields'] as $field_parameter) {
+            foreach ($params[$service_to_api_input_mapping['statistics']] as $field_parameter) {
                 if (! in_array($field_parameter, $entry_point_fields)) {
                     return 'error';
                 }
             }
-            $entry_point_fields = $params['fields'];
+            $entry_point_fields = $params[$service_to_api_input_mapping['statistics']];
         }
 
         $sample_id_list = [];
         // if 'repertoires' is set, loop through it and create an array of repertoire ids to search
-        if (isset($params['repertoires'])) {
-            if (! is_array($params['repertoires']) || sizeof($params['repertoires']) == 0) {
+        if (isset($params[$service_to_api_input_mapping['repertoires']])) {
+            if (! is_array($params[$service_to_api_input_mapping['repertoires']]) || sizeof($params[$service_to_api_input_mapping['repertoires']]) == 0) {
                 return 'error';
             }
 
             $repertoire_id_list = [];
-            foreach ($params['repertoires'] as $repertoire_object) {
+            foreach ($params[$service_to_api_input_mapping['repertoires']] as $repertoire_object) {
                 //each repertoire object has repertoire_id, optional sample_processing_id and
                 //  optional data_processing id, that we can use to find the repertoire in repertoire collection
                 if (isset($repertoire_object['repertoire_id']) && ! is_null($repertoire_object['repertoire_id'])) {
