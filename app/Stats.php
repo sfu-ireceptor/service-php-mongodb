@@ -81,12 +81,9 @@ class Stats extends Model
             foreach ($params[$service_to_api_input_mapping['repertoires']] as $repertoire_element) {
                 //each repertoire object has repertoire_id, optional sample_processing_id and
                 //  optional data_processing id, that we can use to find the repertoire in repertoire collection
-                if (isset($repertoire_element[$service_to_api_input_mapping['repertoire']]) )
-                {
+                if (isset($repertoire_element[$service_to_api_input_mapping['repertoire']])) {
                     $repertoire_object = $repertoire_element[$service_to_api_input_mapping['repertoire']];
-                }
-                else
-                {
+                } else {
                     return 'error';
                 }
                 if (isset($repertoire_object['repertoire_id']) && ! is_null($repertoire_object['repertoire_id'])) {
@@ -95,7 +92,7 @@ class Stats extends Model
                 } else {
                     //repertoire id is required, fail if it's not provided
                     return 'error';
-                }                
+                }
                 if (isset($repertoire_object['sample_processing_id'])) {
                     //we have sample_processing id, so return object should have it
                     $return_sample_processing = true;
