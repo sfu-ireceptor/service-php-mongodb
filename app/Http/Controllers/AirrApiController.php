@@ -41,7 +41,9 @@ class AirrApiController extends Controller
         $params = $request->json()->all();
         $response = [];
         //for repertoire, if we got no request file, assume it's identical to the empty file
-        if (! isset($params) || sizeof($params) == 0 ) { $params = json_encode(""); }
+        if (! isset($params) || sizeof($params) == 0) {
+            $params = json_encode('');
+        }
         $error = json_last_error();
         if ($error) {
             //something went bad and Laravel cound't parse the parameters as JSON
