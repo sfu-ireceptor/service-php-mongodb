@@ -40,7 +40,8 @@ class AirrApiController extends Controller
         //    currently returns an iReceptor API response
         $params = $request->json()->all();
         $response = [];
-        //if (! isset($params) ) {
+        //for repertoire, if we got no request file, assume it's identical to the empty file
+        if (! isset($params) || sizeof($params) == 0 ) { $params = json_encode(""); }
         $error = json_last_error();
         if ($error) {
             //something went bad and Laravel cound't parse the parameters as JSON
