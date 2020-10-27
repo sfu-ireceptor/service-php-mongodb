@@ -43,7 +43,6 @@ class AirrApiController extends Controller
         } else {
             $params = $request->json()->all();
         }
-        $params = $request->json()->all();
         $response = [];
         $error = json_last_error();
         if ($error) {
