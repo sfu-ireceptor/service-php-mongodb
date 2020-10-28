@@ -38,9 +38,11 @@ class AirrApiController extends Controller
     {
         // /repertoire entry point that resolves an AIRR API repertoire query request and
         //    currently returns an iReceptor API response
-        $params = $request->json()->all();
-        $response = [];
-        //if (! isset($params) ) {
+        if (sizeof($request->all()) == 0) {
+            $params = json_encode('{}');
+        } else {
+            $params = $request->json()->all();
+        }
         $error = json_last_error();
         if ($error) {
             //something went bad and Laravel cound't parse the parameters as JSON
