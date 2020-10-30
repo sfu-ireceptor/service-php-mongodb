@@ -16,7 +16,7 @@ class AirrApiController extends Controller
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json');
+        return response($return_response)->header('Content-Type', 'application/json');
     }
 
     public function info()
@@ -27,7 +27,7 @@ class AirrApiController extends Controller
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json');
+        return response($return_response)->header('Content-Type', 'application/json');
     }
 
     public function swagger()
@@ -65,14 +65,14 @@ class AirrApiController extends Controller
                     $response['message'] = 'Unable to parse the filter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
                     break;
                 case 'size_error':
                     $response = [];
                     $response['message'] = 'Invalid size parameter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
                     break;
 
                 case 'from_error':
@@ -80,7 +80,7 @@ class AirrApiController extends Controller
                     $response['message'] = 'Invalid from parameter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
                     break;
 
                 default:
@@ -106,7 +106,7 @@ class AirrApiController extends Controller
                 }
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json');
+        return response($return_response)->header('Content-Type', 'application/json');
     }
 
     public function airr_repertoire_single($repertoire_id)
@@ -121,7 +121,7 @@ class AirrApiController extends Controller
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json');
+        return response($return_response)->header('Content-Type', 'application/json');
     }
 
     public function airr_rearrangement(Request $request)
@@ -159,14 +159,14 @@ class AirrApiController extends Controller
                     $response['message'] = 'Unable to parse the filter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
                     break;
                  case 'size_error':
                     $response = [];
                     $response['message'] = 'Invalid size parameter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
                     break;
 
                  case 'from_error':
@@ -174,7 +174,7 @@ class AirrApiController extends Controller
                     $response['message'] = 'Invalid from parameter.';
                     $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-                    return response($response, 400)->header('Content-Type', 'application/json');
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
                     break;
 
                  default:
