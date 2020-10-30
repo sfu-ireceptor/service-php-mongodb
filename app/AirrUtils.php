@@ -42,9 +42,9 @@ class AirrUtils extends Model
                 break;
             case 'boolean':
                 if (is_array($value)) {
-                    return json_encode(array_map('boolval', $value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+                    return json_encode(array_map('boolval', $value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 } else {
-                    return json_encode(boolval($value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+                    return json_encode(boolval($value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 }
                 break;
             default:
