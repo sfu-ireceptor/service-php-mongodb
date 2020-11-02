@@ -35,16 +35,16 @@ class AirrUtils extends Model
             case 'string':
             case 'array':
                 if (is_array($value)) {
-                    return json_encode(array_map('strval', $value));
+                    return json_encode(array_map('strval', $value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 } else {
-                    return  json_encode(strval($value));
+                    return  json_encode(strval($value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 }
                 break;
             case 'boolean':
                 if (is_array($value)) {
-                    return json_encode(array_map('boolval', $value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    return json_encode(array_map('boolval', $value));
                 } else {
-                    return json_encode(boolval($value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    return json_encode(boolval($value));
                 }
                 break;
             default:
