@@ -11,6 +11,7 @@ class StatsController extends Controller
     public function index()
     {
         $response['result'] = 'success';
+        $response['openapi'] = '3.0.0';
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
@@ -23,6 +24,8 @@ class StatsController extends Controller
         //   returns a count of rearrangements per repertoire
         $params = $request->json()->all();
         $response = [];
+        $response['openapi'] = '3.0.0';
+
         $response['Info'] = Info::getIrPlusInfo_stats();
 
         $error = json_last_error();
@@ -52,6 +55,7 @@ class StatsController extends Controller
         //   returns a count of junction lengths per repertoire
         $params = $request->json()->all();
         $response = [];
+        $response['openapi'] = '3.0.0';
         $response['Info'] = Info::getIrPlusInfo_stats();
 
         $error = json_last_error();
@@ -80,6 +84,7 @@ class StatsController extends Controller
         //   returns a count of junction lengths per repertoire
         $params = $request->json()->all();
         $response = [];
+        $response['openapi'] = '3.0.0';
         $response['Info'] = Info::getIrPlusInfo_stats();
 
         $error = json_last_error();
