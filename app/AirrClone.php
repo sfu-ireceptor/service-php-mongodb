@@ -53,9 +53,10 @@ class AirrClone extends Model
     public static function airrCloneSingle($clone_id)
     {
         //function that finds a single clone based on the provided $clone_id
-        $query = new self();        
+        $query = new self();
         $query = $query->where('_id', $clone_id);
         $result = $query->get();
+
         return $result->toArray();
     }
 
@@ -122,7 +123,9 @@ class AirrClone extends Model
                         $fields_to_retrieve[$name] = 1;
                     }
                 }
-                $options['projection'] = array_merge($options['projection'], $fields_to_retrieve);var_dump($options);die;
+                $options['projection'] = array_merge($options['projection'], $fields_to_retrieve);
+                var_dump($options);
+                exit;
             }
         }
 
@@ -176,7 +179,7 @@ class AirrClone extends Model
         $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
-        foreach ($response_list as $response) {        
+        foreach ($response_list as $response) {
             $temp = [];
             $facet = $response['_id'];
             $count = $response['count'];
@@ -188,6 +191,7 @@ class AirrClone extends Model
 
         return $return_array;
     }
+
     public static function airrCloneResponse($response_list, $response_type, $params)
     {
         //method that takes an array of AIRR terms and returns a JSON string
@@ -282,7 +286,7 @@ class AirrClone extends Model
                 //make all the requested fields null before populating if there are results
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     $service_name = $db_to_service[$return_key];
-                     //flatten any MongoDB ObjectId types
+                    //flatten any MongoDB ObjectId types
                     if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
                         $return_element = $return_element->__toString();
                     }
@@ -306,16 +310,13 @@ class AirrClone extends Model
                         $return_element = implode($return_element->jsonSerialize(), ', or ');
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
-                }
-                else
-                {
-                    //if there are fields not in AIRR standard but in database, we want to 
+                } else {
+                    //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, but only if there was no constraint on the fields
-                    if (!isset($fields_to_display))
-                    {
+                    if (! isset($fields_to_display)) {
                         $return_array[$return_key] = $return_element;
                     }
-                } 
+                }
             }
 
             if ($response_type == 'tsv') {
@@ -333,6 +334,7 @@ class AirrClone extends Model
             echo "]}\n";
         }
     }
+
     public static function airrCloneResponseSingle($clone)
     {
 
@@ -363,10 +365,8 @@ class AirrClone extends Model
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }
-            }
-            else
-            {
-                //if there are fields not in AIRR standard but in database, we want to 
+            } else {
+                //if there are fields not in AIRR standard but in database, we want to
                 //  send those along too
                 $result[$key] = $value;
             }
@@ -375,8 +375,4 @@ class AirrClone extends Model
 
         return $return_list;
     }
-
-
 }
-
-?>
