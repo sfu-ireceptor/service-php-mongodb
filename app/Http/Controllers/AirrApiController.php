@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\AirrClone;
 use App\AirrRearrangement;
 use App\AirrRepertoire;
-use App\AirrClone;
 use App\AirrUtils;
 use App\Info;
 use Illuminate\Http\Request;
@@ -218,6 +218,7 @@ class AirrApiController extends Controller
 
         return response($response)->header('Content-Type', 'application/json');
     }
+
     public function airr_clone_single($clone_id)
     {
         $clone = AirrClone::airrCloneSingle($clone_id);
@@ -231,9 +232,10 @@ class AirrApiController extends Controller
 
         return response($return_response)->header('Content-Type', 'application/json');
     }
+
     public function airr_clone(Request $request)
     {
-        // /ADC API entry point that resolves an AIRR API clone query request 
+        // /ADC API entry point that resolves an AIRR API clone query request
         $params = $request->json()->all();
 
         $error = json_last_error();
@@ -258,8 +260,8 @@ class AirrApiController extends Controller
                 AirrClone::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
             });
         } else {*/
-            $l = AirrClone::airrCloneRequest($params, JSON_OBJECT_AS_ARRAY);
-            switch ($l) {
+        $l = AirrClone::airrCloneRequest($params, JSON_OBJECT_AS_ARRAY);
+        switch ($l) {
                  case 'error':
                     $response = [];
                     $response['message'] = 'Unable to parse the filter.';
@@ -295,6 +297,7 @@ class AirrApiController extends Controller
                         //facets have different formatting requirements
                         $response['Facet'] = AirrClone::airrCloneFacetsResponse($l);
                         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
                         return response($return_response)->header('Content-Type', 'application/json');
                     } else {
                         //regular response, needs to be formatted as per AIRR standard, as
@@ -306,6 +309,6 @@ class AirrApiController extends Controller
                     }
                     break;
             }
-        //} 
+        //}
     }
 }
