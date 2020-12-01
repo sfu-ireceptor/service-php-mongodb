@@ -408,8 +408,7 @@ class AirrClone extends Model
         }
 
         //create a list of repertoire ids we'll be looping over, and a filter we can pass to MongoDB
-        if (isset ($filter) && $filter != '')
-        {
+        if (isset($filter) && $filter != '') {
             AirrUtils::optimizeCloneFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters, $db_types);
         }
         //if we don't have a list of repertoire ids, we will be looping over all the database entries
@@ -418,33 +417,29 @@ class AirrClone extends Model
             $result = $sample_id_query->get();
             foreach ($result as $repertoire) {
                 $current_repertoire_id = $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
-                if (!isset($sample_id_list[$current_repertoire_id]))
-                {
-                    $sample_id_list[$current_repertoire_id] = Array();
+                if (! isset($sample_id_list[$current_repertoire_id])) {
+                    $sample_id_list[$current_repertoire_id] = [];
                 }
-                array_push($sample_id_list[$current_repertoire_id],$repertoire[$repertoire_service_to_db_mapping['ir_annotation_set_metadata_id']]);
+                array_push($sample_id_list[$current_repertoire_id], $repertoire[$repertoire_service_to_db_mapping['ir_annotation_set_metadata_id']]);
             }
         }
         // if it's a facets query, we will have to do a count on repertoire_ids
-        if ($facets == $service_to_airr_mapping['repertoire_id']) 
-        {
+        if ($facets == $service_to_airr_mapping['repertoire_id']) {
             $return_list = [];
 
             $count_timeout = $query->getCountTimeout();
             $query_params['maxTimeMS'] = $count_timeout;
 
-            foreach ($sample_id_list as $current_repertoire_id =>$current_sample_id) 
-            {
+            foreach ($sample_id_list as $current_repertoire_id =>$current_sample_id) {
                 $total = 0;
-                foreach ($current_sample_id as $current_ir_annotation_set_metadata_id)
-                {
+                foreach ($current_sample_id as $current_ir_annotation_set_metadata_id) {
                     $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_clone']] = $current_ir_annotation_set_metadata_id;
                     $total += DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
                 }
                 if ($total > 0) {
                     $return['_id'][$service_to_db_mapping['repertoire_id']] = (string) $current_repertoire_id;
                     $return['count'] = $total;
-                    $return_list[] = $return; 
+                    $return_list[] = $return;
                 }
             }
 
@@ -548,8 +543,7 @@ class AirrClone extends Model
             $current_result = 0;
             $first = true;
             foreach ($sample_id_list as $current_sample_id) {
-                foreach ($current_sample_id as $current_ir_annotation_set_metadata_id)
-                {
+                foreach ($current_sample_id as $current_ir_annotation_set_metadata_id) {
                     $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_clone']] = $current_ir_annotation_set_metadata_id;
                     $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
                     foreach ($result as $row) {
@@ -560,7 +554,7 @@ class AirrClone extends Model
                             if (isset($service_name) && isset($service_to_db_mapping[$service_name])) {
                                 if (isset($sequence_list[$service_to_db_mapping[$service_name]])) {
                                     $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
-                                   if ($service_name == 'ir_annotation_set_metadata_id') {
+                                    if ($service_name == 'ir_annotation_set_metadata_id') {
                                         $airr_list[$airr_name] = (string) $airr_list[$airr_name];
                                     }
                                 }
