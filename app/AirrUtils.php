@@ -698,8 +698,8 @@ class AirrUtils extends Model
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
             $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type',['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type',['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null && $filters != '') {
                 return false;
@@ -806,6 +806,7 @@ class AirrUtils extends Model
             return false;
         }
     }
+
     //if given a filter, map it to appropriate database field, create a MongoDB query,
     //  separate repertoire ids (if any) into a list and return it for further processing
     public static function optimizeCloneFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters, $db_types_array)
@@ -852,6 +853,4 @@ class AirrUtils extends Model
             }
         }
     }
-
-
 }
