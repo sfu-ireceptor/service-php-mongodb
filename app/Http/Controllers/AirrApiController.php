@@ -254,12 +254,12 @@ class AirrApiController extends Controller
             return response($response, 400)->header('Content-Type', 'application/json');
         }
         //check if we can optimize the ADC API query for our repository
-        //  if so, go down optimizied query path - TODO
-        /*if (AirrUtils::cloneQueryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
+        //  if so, go down optimizied query path 
+        if (AirrUtils::cloneQueryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
             return response()->streamDownload(function () use ($params) {
-                AirrClone::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
+                AirrClone::airrOptimizedCloneRequest($params, JSON_OBJECT_AS_ARRAY);
             });
-        } else {*/
+        } else {
         $l = AirrClone::airrCloneRequest($params, JSON_OBJECT_AS_ARRAY);
         switch ($l) {
                  case 'error':
@@ -309,6 +309,6 @@ class AirrApiController extends Controller
                     }
                     break;
             }
-        //}
+        }
     }
 }

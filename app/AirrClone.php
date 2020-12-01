@@ -124,8 +124,6 @@ class AirrClone extends Model
                     }
                 }
                 $options['projection'] = array_merge($options['projection'], $fields_to_retrieve);
-                var_dump($options);
-                exit;
             }
         }
 
@@ -229,7 +227,7 @@ class AirrClone extends Model
             }
 
             if ($map_fields_column != '') {
-                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
                 foreach ($required_fields as $name => $value) {
                     if ($value && strtolower($value) != 'false') {
                         $fully_qualified_path = $name;
@@ -374,5 +372,253 @@ class AirrClone extends Model
         $return_list[] = $result;
 
         return $return_list;
+    }
+
+    public static function airrOptimizedCloneRequest($request)
+    {
+        //method to run an optimized MongoDB query on the filters that can support it
+        //  a single '=' search on an indexed field, a search on indexed field and
+        //  repertoire id, or an aggregation on prior two cases on repertoire_id
+        ini_set('memory_limit', '2G');
+        set_time_limit(60 * 60 * 24);
+
+        $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $repertoire_service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $repertoire_airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+
+        $sample_id_list = [];
+        $query_params = [];
+        $db_filters = [];
+
+        $query = new self();
+
+        $filter = '';
+        $facets = '';
+        if (isset($request['filters']) && count($request['filters']) > 0) {
+            $filter = $request['filters'];
+        }
+        if (isset($request['facets'])) {
+            $facets = $request['facets'];
+        }
+
+        //create a list of repertoire ids we'll be looping over, and a filter we can pass to MongoDB
+        if (isset ($filter) && $filter != '')
+        {
+            AirrUtils::optimizeCloneFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters, $db_types);
+        }
+        //if we don't have a list of repertoire ids, we will be looping over all the database entries
+        if (count($sample_id_list) == 0) {
+            $sample_id_query = new AirrRepertoire();
+            $result = $sample_id_query->get();
+            foreach ($result as $repertoire) {
+                $current_repertoire_id = $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
+                if (!isset($sample_id_list[$current_repertoire_id]))
+                {
+                    $sample_id_list[$current_repertoire_id] = Array();
+                }
+                array_push($sample_id_list[$current_repertoire_id],$repertoire[$repertoire_service_to_db_mapping['ir_annotation_set_metadata_id']]);
+            }
+        }
+        // if it's a facets query, we will have to do a count on repertoire_ids
+        if ($facets == $service_to_airr_mapping['repertoire_id']) 
+        {
+            $return_list = [];
+
+            $count_timeout = $query->getCountTimeout();
+            $query_params['maxTimeMS'] = $count_timeout;
+
+            foreach ($sample_id_list as $current_repertoire_id =>$current_sample_id) 
+            {
+                $total = 0;
+                foreach ($current_sample_id as $current_ir_annotation_set_metadata_id)
+                {
+                    $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_clone']] = $current_ir_annotation_set_metadata_id;
+                    $total += DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
+                }
+                if ($total > 0) {
+                    $return['_id'][$service_to_db_mapping['repertoire_id']] = (string) $current_repertoire_id;
+                    $return['count'] = $total;
+                    $return_list[] = $return; 
+                }
+            }
+
+            $response = AirrUtils::airrHeader();
+            $response['Facet'] = self::airrCloneFacetsResponse($return_list);
+            $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            echo $json;
+        } else {
+            //it's a data query, either tsv or JSON, run it by repertoire_id and echo the results as a stream
+            $start_at = 0;
+            $max_values = 0;
+            //check what kind of response we have, default to JSON
+            $response_type = 'json';
+            if (isset($request['format']) && $request['format'] != '') {
+                $response_type = strtolower($request['format']);
+            }
+
+            // check if we have a start value or max value. with max, we stop sending data after that many results
+            //  start is a bit iffier - we'll run our query and not output till we have seen that many results, but...
+            //  this may not be consistent accross requests
+            if (isset($request['size']) && intval($request['size']) > 0) {
+                $max_values = intval($request['size']);
+            }
+            if (isset($request['from']) && intval($request['from']) > 0) {
+                $start_at = intval($request['from']);
+            }
+            $fields_to_retrieve = [];
+            $fields_to_display = [];
+            $fetch_timeout = $query->getFetchTimeout();
+            $query_params['maxTimeMS'] = $fetch_timeout;
+            $query_params['noCursorTimeout'] = true;
+
+            // if fields value is set, we will be using them in projection
+            if (isset($request['fields']) && $request['fields'] != '') {
+                foreach ($request['fields'] as $airr_field_name) {
+                    if (isset($airr_to_repository_mapping[$airr_field_name]) && $airr_to_repository_mapping[$airr_field_name] != '') {
+                        $fields_to_retrieve[$airr_to_repository_mapping[$airr_field_name]] = 1;
+                        $fields_to_display[$airr_field_name] = 1;
+                    }
+                }
+                $query_params['projection'] = $fields_to_retrieve;
+            }
+            //if required fields are set, map the appropriate column to the return
+            // if neither required nor fields is set, we still want to return required
+            if (isset($request['include_fields'])) {
+                $map_fields_column = '';
+                switch ($request['include_fields']) {
+                    case 'miairr':
+                        $map_fields_column = 'airr_miairr';
+                        break;
+                    case 'airr-core':
+                        $map_fields_column = 'airr_required';
+                        break;
+                    case 'airr-schema':
+                        $map_fields_column = 'airr_spec';
+                        break;
+                    default:
+                        break;
+                }
+
+                if ($map_fields_column != '') {
+                    $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+                    foreach ($required_fields as $name => $value) {
+                        if ($value && strtolower($value) != 'false') {
+                            $fully_qualified_path = $name;
+                            $fields_to_display[$fully_qualified_path] = 1;
+                        }
+                    }
+                }
+            }
+
+            // if neither required nor fields is set, we still want to return required
+            if (! isset($request['include_fields']) && ! isset($request['fields'])) {
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+                foreach ($required_fields as $name => $value) {
+                    if ($value) {
+                        $fully_qualified_path = $name;
+                        $fields_to_display[$fully_qualified_path] = 1;
+                    }
+                }
+            }
+
+            $fields_to_display = array_keys($fields_to_display);
+            $written_results = 0;
+            if ($response_type == 'json') {
+                // header('Content-Type: application/json; charset=utf-8');
+                echo '{"Info":';
+                $response['Title'] = 'AIRR Data Commons API';
+                $response['description'] = 'API response for repertoire query - Optimized';
+                $response['version'] = 1.3;
+                $response['contact']['name'] = 'AIRR Community';
+                $response['contact']['url'] = 'https://github.com/airr-community';
+                echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                echo ', "Clone":[';
+                echo "\n";
+            }
+            if ($response_type == 'tsv') {
+                //output the headers
+                echo implode($fields_to_display, chr(9)) . "\n";
+            }
+            $current_result = 0;
+            $first = true;
+            foreach ($sample_id_list as $current_sample_id) {
+                foreach ($current_sample_id as $current_ir_annotation_set_metadata_id)
+                {
+                    $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_clone']] = $current_ir_annotation_set_metadata_id;
+                    $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
+                    foreach ($result as $row) {
+                        $sequence_list = $row;
+                        $airr_list = [];
+
+                        foreach ($airr_to_service_mapping as $airr_name => $service_name) {
+                            if (isset($service_name) && isset($service_to_db_mapping[$service_name])) {
+                                if (isset($sequence_list[$service_to_db_mapping[$service_name]])) {
+                                    $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
+                                   if ($service_name == 'ir_annotation_set_metadata_id') {
+                                        $airr_list[$airr_name] = (string) $airr_list[$airr_name];
+                                    }
+                                }
+                            } else {
+                                $airr_list[$airr_name] = null;
+                            }
+                        }
+
+                        $current_result++;
+                        $new_line = [];
+                        foreach ($fields_to_display as $current_header) {
+                            if (isset($airr_list[$current_header])) {
+                                if (is_array($airr_list[$current_header])) {
+                                    $new_line[$current_header] = implode($airr_list[$current_header], ', or');
+                                } elseif ($airr_list[$current_header] != null && is_a($airr_list[$current_header], "MongoDB\Model\BSONArray")) {
+                                    $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
+                                } else {
+                                    //the database id should be converted to string using the BSON function
+                                    if (is_a($airr_list[$current_header], "MongoDB\BSON\ObjectId")) {
+                                        $airr_list[$current_header] = $airr_list[$current_header]->__toString();
+                                    }
+                                    $new_line[$current_header] = $airr_list[$current_header];
+                                }
+                            } else {
+                                $new_line[$current_header] = null;
+                            }
+
+                            //in TSV we want our boolean values to be 'T' and 'F'
+                            if (isset($new_line[$current_header]) && $airr_types[$current_header] == 'boolean' && $response_type == 'tsv') {
+                                if (strtolower($new_line[$current_header]) == 'true' || $new_line[$current_header] == true) {
+                                    $new_line[$current_header] = 'T';
+                                } else {
+                                    $new_line[$current_header] = 'F';
+                                }
+                            }
+                        }
+                        if ($current_result > $start_at) {
+                            if ($response_type == 'tsv') {
+                                echo implode($new_line, chr(9)) . "\n";
+                            } else {
+                                if ($first) {
+                                    $first = false;
+                                } else {
+                                    echo ',';
+                                }
+                                echo json_encode($new_line, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                            }
+                            $written_results++;
+                        }
+                        if ($max_values > 0 && $written_results >= $max_values) {
+                            break 2;
+                        }
+                    }
+                }
+            }
+            if ($response_type == 'json') {
+                echo "]}\n";
+            }
+        }
     }
 }
