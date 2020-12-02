@@ -323,7 +323,13 @@ class AirrUtils extends Model
                 }
                 break;
             case 'contains':
-                if (isset($field) && $field != '' && isset($value) && $type == 'string') {
+                    if (isset($field) && $field != '' && isset($value) && $type == 'string') {
+                    //sometimes, we might have a non-string in database being used in contains query
+                    //  we should convert it to json string
+                    if (! is_string($value)) {
+                        $value = json_encode(strval($value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    }
+
                     return '{"' . $field . '":{"$regex":' . preg_quote($value, '/') . ',"$options":"i"}}';
                 } else {
                     return;
