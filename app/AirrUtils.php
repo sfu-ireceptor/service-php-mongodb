@@ -329,6 +329,7 @@ class AirrUtils extends Model
                     if (! is_string($value)) {
                         $value = json_encode(strval($value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                     }
+
                     return '{"' . $field . '":{"$regex":' . preg_quote($value, '/') . ',"$options":"i"}}';
                 } else {
                     return;
