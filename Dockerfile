@@ -14,7 +14,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 	sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
 	sed -ri -e 's!daily!monthly!g' /etc/logrotate.d/apache2 && \
 	sed -ri -e 's!rotate 14!rotate 120!g' /etc/logrotate.d/apache2 && \
-	a2enmod rewrite
+	a2enmod rewrite && \
+	a2enmod headers
 
 # add source code and dependencies
 COPY . /var/www/html
@@ -27,5 +28,5 @@ RUN chmod -R 777 /var/www/html/storage && \
 	php artisan key:generate
 
 # download mapping file
-ADD https://raw.githubusercontent.com/sfu-ireceptor/config/turnkey-v1.3-dataload/AIRR-iReceptorMapping.txt /var/www/html/config/
+ADD https://raw.githubusercontent.com/sfu-ireceptor/config/ipa5-v3/AIRR-iReceptorMapping.txt /var/www/html/config/
 RUN chmod 755 /var/www/html/config/AIRR-iReceptorMapping.txt
