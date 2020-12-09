@@ -28,5 +28,5 @@ RUN chmod -R 777 /var/www/html/storage && \
 	php artisan key:generate
 
 # download mapping file
-ADD https://raw.githubusercontent.com/sfu-ireceptor/config/new-api/AIRR-iReceptorMapping.txt /var/www/html/config/
+ADD https://raw.githubusercontent.com/sfu-ireceptor/config/clone-and-stats-mapping/AIRR-iReceptorMapping.txt /var/www/html/config/
 RUN chmod 755 /var/www/html/config/AIRR-iReceptorMapping.txt
