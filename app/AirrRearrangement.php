@@ -281,7 +281,6 @@ class AirrRearrangement extends Model
             foreach ($rearrangement as $return_key => $return_element) {
 
                 //make all the requested fields null before populating if there are results
-
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     $service_name = $db_to_service[$return_key];
                     if ($service_name == 'rev_comp') {
@@ -325,6 +324,12 @@ class AirrRearrangement extends Model
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 }
+                else
+                {
+                    //if there are fields not in AIRR standard but in database, we want to 
+                    //  send those along too
+                    $return_array[$return_key] = $return_element;
+                } 
             }
 
             if ($response_type == 'tsv') {
@@ -392,6 +397,12 @@ class AirrRearrangement extends Model
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }
+            }
+            else
+            {
+                //if there are fields not in AIRR standard but in database, we want to 
+                //  send those along too
+                $result[$key] = $value;
             }
         }
         $return_list[] = $result;

@@ -119,7 +119,6 @@ class AirrRepertoire extends Model
         }
         //echo "<br/>\n Returning $query_string";die();
         //return ($query_string);
-
         //if facets is set we want to aggregate by that fields using the sum operation
         if (isset($params['facets']) && $params['facets'] != '') {
             if (! isset($airr_names[$params['facets']])) {
@@ -320,6 +319,12 @@ class AirrRepertoire extends Model
 
                     array_set($return_array, $fully_qualified_path, $return_value);
                 }
+                else
+                {
+                    //if there are fields not in AIRR standard but in database, we want to 
+                    //  send those along too
+                    $return_array[$return_key] = $return_value;
+                }                
             }
 
             $return_list[] = $return_array;
@@ -379,6 +384,12 @@ class AirrRepertoire extends Model
 
                     array_set($return_array, $fully_qualified_path, $return_element);
                 }
+                else
+                {
+                    //if there are fields not in AIRR standard but in database, we want to 
+                    //  send those along too
+                    $return_array[$return_key] = $return_element;
+                }                    
             }
 
             $return_list[] = $return_array;

@@ -132,8 +132,8 @@ class Stats extends Model
                         $stats_query = $stats_query->where($service_to_stats_db_mapping['statistic_name'], '=', $stats_api_input_to_db_mapping[$current_field]);
                         $stats_results = $stats_query->get();
                         foreach ($stats_results as $stat) {
-                            $value = $stat['value'];
-                            $count = $stat['count'];
+                            $value = strval($stat['value']);
+                            $count = intval($stat['count']);
                             $stat_total += $count;
 
                             $stats_object[$service_to_api_output_mapping['data']][] = [$service_to_api_output_mapping['key']=>$value,
