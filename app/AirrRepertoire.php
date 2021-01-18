@@ -318,13 +318,11 @@ class AirrRepertoire extends Model
                     }
 
                     array_set($return_array, $fully_qualified_path, $return_value);
-                }
-                else
-                {
-                    //if there are fields not in AIRR standard but in database, we want to 
+                } else {
+                    //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too
                     $return_array[$return_key] = $return_value;
-                }                
+                }
             }
 
             $return_list[] = $return_array;
@@ -383,13 +381,11 @@ class AirrRepertoire extends Model
                     $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);
 
                     array_set($return_array, $fully_qualified_path, $return_element);
-                }
-                else
-                {
-                    //if there are fields not in AIRR standard but in database, we want to 
+                } else {
+                    //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too
                     $return_array[$return_key] = $return_element;
-                }                    
+                }
             }
 
             $return_list[] = $return_array;

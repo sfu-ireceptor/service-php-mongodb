@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\AirrRearrangement;
 use App\AirrRepertoire;
 use App\AirrUtils;
-use App\AirrClone;
 use App\Info;
 use Illuminate\Http\Request;
 

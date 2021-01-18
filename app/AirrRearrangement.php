@@ -323,13 +323,11 @@ class AirrRearrangement extends Model
                         $return_element = implode($return_element->jsonSerialize(), ', or ');
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
-                }
-                else
-                {
-                    //if there are fields not in AIRR standard but in database, we want to 
+                } else {
+                    //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too
                     $return_array[$return_key] = $return_element;
-                } 
+                }
             }
 
             if ($response_type == 'tsv') {
@@ -397,10 +395,8 @@ class AirrRearrangement extends Model
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }
-            }
-            else
-            {
-                //if there are fields not in AIRR standard but in database, we want to 
+            } else {
+                //if there are fields not in AIRR standard but in database, we want to
                 //  send those along too
                 $result[$key] = $value;
             }
