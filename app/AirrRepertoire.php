@@ -320,8 +320,11 @@ class AirrRepertoire extends Model
                     array_set($return_array, $fully_qualified_path, $return_value);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
-                    //  send those along too
-                    $return_array[$return_key] = $return_value;
+                    //  send those along too, provided they don't override AIRR elements already mapped
+                    if (!isset($return_array[$return_key]))
+                    {
+                        $return_array[$return_key] = $return_element;
+                    }
                 }
             }
 
@@ -342,6 +345,7 @@ class AirrRepertoire extends Model
         $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $db_names_to_airr_types = FileMapping::createMappingArray('ir_repository', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
         //  associated with it, so we will take the array of samples and place each element into an appropriate section
@@ -379,12 +383,86 @@ class AirrRepertoire extends Model
 
                     //likewise diagnosis
                     $fully_qualified_path = preg_replace("/^subject.diagnosis\./", 'subject.diagnosis.0.', $fully_qualified_path);
+                    // typecast the return values
+                    $return_value = $return_element;
+                    if (isset($db_names_to_airr_types[$return_key])) {
 
-                    array_set($return_array, $fully_qualified_path, $return_element);
+                        //we only want to typecast values that are set, because
+                        //   a 'null' is considered 0/unset in PHP so it converts it to
+                        //   appopriate value based on type
+                        if (isset($return_value)) {
+                            switch ($db_names_to_airr_types[$return_key]) {
+                            // make sure that type actually matches value or fail
+                            case 'integer':
+                                if (is_object($return_value)) {
+                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                    //  serialized before PHP can handle them
+                                    $return_value = array_map('intval', $return_element->jsonSerialize());
+                                } elseif (is_array($return_value)) {
+                                    $return_value = array_map('intval', array_map(AirrUtils::stringToNumber, $return_element));
+                                } else {
+                                    $return_value = intval(AirrUtils::stringToNumber($return_element));
+                                }
+                                break;
+                            case 'number':
+                                if (is_object($return_value)) {
+                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                    //  serialized before PHP can handle them
+                                    $return_value = array_map('doubleval', $return_element->jsonSerialize());
+                                } elseif (is_array($return_value)) {
+                                    $return_value = array_map('doubleval', array_map(AirrUtils::stringToNumber, $return_element));
+                                } else {
+                                    $return_value = floatval(AirrUtils::stringToNumber($return_element));
+                                }
+                                break;
+                            case 'boolean':
+                                if (is_object($return_value)) {
+                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                    //  serialized before PHP can handle them
+                                    $return_value = array_map('boolval', $return_element->jsonSerialize());
+                                } elseif (is_array($return_value)) {
+                                    $return_value = array_map('boolval', $return_element);
+                                } else {
+                                    $return_value = boolval($return_element);
+                                }
+                                break;
+                            case 'string':
+                                if (is_object($return_value)) {
+                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                    //  serialized before PHP can handle them
+                                    $return_value = array_map('strval', $return_element->jsonSerialize());
+                                } elseif (is_array($return_value)) {
+                                    $return_value = array_map('strval', $return_element);
+                                } else {
+                                    $return_value = strval($return_element);
+                                }
+                                break;
+                            default:
+                                //bad data type
+                                break;
+                                }
+                            // there's a chance a field that should be an array in response wasn't processed as one
+                            //  in that case we want to convert it to array. Heuristic is that a string of data processing files
+                            //  or a string of keywords might be a comma-separated list, otherwise just convert to array as-is
+                            if (isset($airr_is_array[$fully_qualified_path]) && strtolower($airr_is_array[$fully_qualified_path]) != 'false'
+                                 && boolval($airr_is_array[$fully_qualified_path]) && isset($return_value) && ! is_array($return_value)) {
+                                if (in_array($fully_qualified_path, [$service_to_airr_response['data_processing_files'], $service_to_airr_response['keywords_study']])
+                                    && is_string($return_value)) {
+                                    $return_value = array_map('trim', explode(',', $return_value));
+                                } else {
+                                    $return_value = [$return_value];
+                                }
+                            }
+                        }
+                    }
+                    array_set($return_array, $fully_qualified_path, $return_value);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
-                    //  send those along too
-                    $return_array[$return_key] = $return_element;
+                    //  send those along too, provided they don't override AIRR elements already mapped
+                    if (!isset($return_array[$return_key]))
+                    {
+                        $return_array[$return_key] = $return_element;
+                    }
                 }
             }
 
