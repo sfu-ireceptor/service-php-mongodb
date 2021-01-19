@@ -326,8 +326,7 @@ class AirrRearrangement extends Model
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, provided they don't override AIRR elements already mapped
-                    if (!isset($return_array[$return_key]))
-                    {
+                    if (! isset($return_array[$return_key])) {
                         $return_array[$return_key] = $return_element;
                     }
                 }
@@ -401,10 +400,9 @@ class AirrRearrangement extends Model
             } else {
                 //if there are fields not in AIRR standard but in database, we want to
                 //  send those along too, provided they don't override AIRR elements already mapped
-                    if (!isset($result[$key]))
-                    {
-                        $result[$key] = $value;
-                    }               
+                if (! isset($result[$key])) {
+                    $result[$key] = $value;
+                }
             }
         }
         $return_list[] = $result;
