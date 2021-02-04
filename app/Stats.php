@@ -113,10 +113,10 @@ class Stats extends Model
                 $repertoire_result = AirrRepertoire::findRepertoire($repertoire_query);
                 foreach ($repertoire_result as $repertoire) {
                     $response_object = [];
-                    $repertoire_id = $repertoire['_id'];
-                    $sample_processing_id = $repertoire['sample_processing_id'];
-                    $data_processing_id = $repertoire['data_processing_id'];
-                    $connector_id = $repertoire['_id'];
+                    $repertoire_id = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
+                    $sample_processing_id = $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']];
+                    $data_processing_id = $repertoire[$service_to_repertoire_db_mapping['data_processing_id']];
+                    $connector_id = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
 
                     $response_object['repertoires']['repertoire_id'] = strval($repertoire_id);
                     $response_object['repertoires']['sample_processing_id'] = strval($sample_processing_id);
