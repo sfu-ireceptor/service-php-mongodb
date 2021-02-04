@@ -39,6 +39,7 @@ class Stats extends Model
             ['ir_class'=>['IRPlus_stats']]);
         $service_to_stats_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository',
             ['ir_class'=>['IRPlus_stats']]);
+        $service_to_repertoire_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         $entry_point_fields = [];
 
