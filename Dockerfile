@@ -9,6 +9,7 @@ RUN apt-get update && \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Apache setup
+RUN a2dismod cgi
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
 	sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
@@ -23,13 +24,13 @@ WORKDIR /var/www/html
 RUN composer install
 
 # Laravel setup
-# Laravel setup
 RUN chown -R www-data:www-data /var/www/html/storage && \
-	chown root:root /var/www/html && \
-	chmod go-w /var/www/html && \
-	chmod u+w /var/www/html && \
-	cp .env.example .env && \
-	php artisan key:generate
+        chown root:root /var/www/html && \
+        chmod go-w /var/www/html && \
+        chmod u+w /var/www/html && \
+        find /var/www -perm 0777 | xargs chmod 0755 && \
+        cp .env.example .env && \
+        php artisan key:generate
 
 # download mapping file
 ADD https://raw.githubusercontent.com/sfu-ireceptor/config/clone-and-stats-mapping/AIRR-iReceptorMapping.txt /var/www/html/config/
