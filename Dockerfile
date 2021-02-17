@@ -23,7 +23,11 @@ WORKDIR /var/www/html
 RUN composer install
 
 # Laravel setup
+# Laravel setup
 RUN chown -R www-data:www-data /var/www/html/storage && \
+	chown root:root /var/www/html && \
+	chmod go-w /var/www/html && \
+	chmod u+w /var/www/html && \
 	cp .env.example .env && \
 	php artisan key:generate
 
