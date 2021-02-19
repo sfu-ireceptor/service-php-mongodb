@@ -29,6 +29,7 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
         chmod go-w /var/www/html && \
         chmod u+w /var/www/html && \
         find /var/www -perm 0777 | xargs chmod 0755 && \
+        find storage -name .gitignore | xargs chmod 0644 && \
         cp .env.example .env && \
         php artisan key:generate
 
