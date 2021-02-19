@@ -35,5 +35,5 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
 # download mapping file
 
 ADD https://raw.githubusercontent.com/sfu-ireceptor/config/ipa5-v3-stats/AIRR-iReceptorMapping.txt /var/www/html/config/
-RUN chmod 755 /var/www/html/config/AIRR-iReceptorMapping.txt
+RUN chmod 644 /var/www/html/config/AIRR-iReceptorMapping.txt
 
