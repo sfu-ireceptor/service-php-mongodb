@@ -39,6 +39,7 @@ class AirrApiController extends Controller
     {
         // /repertoire entry point that resolves an AIRR API repertoire query request and
         //    currently returns an iReceptor API response
+        // treat no parameters as an empty JSON file
         if (sizeof($request->all()) == 0) {
             $params = json_encode('{}');
         } else {
@@ -209,14 +210,14 @@ class AirrApiController extends Controller
     {
         $rearrangement = AirrRearrangement::airrRearrangementSingle($rearrangement_id);
         $response = AirrUtils::airrHeader();
-        $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         if (isset($rearrangement[0])) {
             $response['Rearrangement'] = AirrRearrangement::airrRearrangementResponseSingle($rearrangement[0]);
         } else {
             $response['Rearrangement'] = [];
         }
+        $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json');
+        return response($return_response)->header('Content-Type', 'application/json');
     }
 
     public function airr_clone_single($clone_id)
