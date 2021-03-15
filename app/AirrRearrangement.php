@@ -464,6 +464,7 @@ class AirrRearrangement extends Model
                     $sample_id_list[] = $return;
                 }
             }
+            header('Content-Type: application/json; charset=utf-8');
 
             $response = AirrUtils::airrHeader();
             $response['Facet'] = self::airrRearrangementFacetsResponse($sample_id_list);
@@ -497,6 +498,7 @@ class AirrRearrangement extends Model
                         $return_list[] = $return;
                     }
                 }
+                header('Content-Type: application/json; charset=utf-8');
 
                 $response = AirrUtils::airrHeader();
                 $response['Facet'] = self::airrRearrangementFacetsResponse($return_list);
