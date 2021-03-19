@@ -125,7 +125,7 @@ class Stats extends Model
                         $stats_object = [];
                         $stats_object[$service_to_api_output_mapping['statistic_name']] = $stats_api_outputs[$current_field];
                         $stats_object[$service_to_api_output_mapping['total']] = 0;
-                        $stats_object[$service_to_api_output_mapping['data']] = Array();
+                        $stats_object[$service_to_api_output_mapping['data']] = [];
                         $stats_query = new self();
 
                         $stat_total = 0;
