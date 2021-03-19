@@ -209,13 +209,13 @@ class AirrApiController extends Controller
     {
         $rearrangement = AirrRearrangement::airrRearrangementSingle($rearrangement_id);
         $response = AirrUtils::airrHeader();
-        $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         if (isset($rearrangement[0])) {
             $response['Rearrangement'] = AirrRearrangement::airrRearrangementResponseSingle($rearrangement[0]);
         } else {
             $response['Rearrangement'] = [];
         }
+        $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($response)->header('Content-Type', 'application/json');
+        return response($return_response)->header('Content-Type', 'application/json');
     }
 }

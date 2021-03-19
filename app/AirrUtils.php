@@ -631,7 +631,7 @@ class AirrUtils extends Model
     {
         $response = [];
 
-        $response['Info']['Title'] = 'AIRR Data Commons API';
+        $response['Info']['title'] = 'AIRR Data Commons API';
         $response['Info']['description'] = 'API response for repertoire query';
         $response['Info']['version'] = 1.3;
         $response['Info']['contact']['name'] = 'AIRR Community';

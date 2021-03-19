@@ -39,7 +39,7 @@ class Stats extends Model
             ['ir_class'=>['IRPlus_stats']]);
         $service_to_stats_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository',
             ['ir_class'=>['IRPlus_stats']]);
-
+        $service_to_repertoire_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $entry_point_fields = [];
 
         switch ($entry_point) {
@@ -112,10 +112,11 @@ class Stats extends Model
                 $repertoire_result = AirrRepertoire::findRepertoire($repertoire_query);
                 foreach ($repertoire_result as $repertoire) {
                     $response_object = [];
-                    $repertoire_id = $repertoire['repertoire_id'];
-                    $sample_processing_id = $repertoire['sample_processing_id'];
-                    $data_processing_id = $repertoire['data_processing_id'];
-                    $connector_id = $repertoire[$service_to_stats_db_mapping['ir_project_sample_id']];
+
+                    $repertoire_id = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
+                    $sample_processing_id = $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']];
+                    $data_processing_id = $repertoire[$service_to_repertoire_db_mapping['data_processing_id']];
+                    $connector_id = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
 
                     $response_object['repertoires']['repertoire_id'] = strval($repertoire_id);
                     $response_object['repertoires']['sample_processing_id'] = strval($sample_processing_id);
@@ -125,6 +126,7 @@ class Stats extends Model
                         $stats_object = [];
                         $stats_object[$service_to_api_output_mapping['statistic_name']] = $stats_api_outputs[$current_field];
                         $stats_object[$service_to_api_output_mapping['total']] = 0;
+                        $stats_object[$service_to_api_output_mapping['data']] = [];
                         $stats_query = new self();
 
                         $stat_total = 0;
@@ -132,8 +134,8 @@ class Stats extends Model
                         $stats_query = $stats_query->where($service_to_stats_db_mapping['statistic_name'], '=', $stats_api_input_to_db_mapping[$current_field]);
                         $stats_results = $stats_query->get();
                         foreach ($stats_results as $stat) {
-                            $value = $stat['value'];
-                            $count = $stat['count'];
+                            $value = strval($stat['value']);
+                            $count = intval($stat['count']);
                             $stat_total += $count;
 
                             $stats_object[$service_to_api_output_mapping['data']][] = [$service_to_api_output_mapping['key']=>$value,
