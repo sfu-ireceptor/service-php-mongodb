@@ -412,16 +412,20 @@ class AirrClone extends Model
             AirrUtils::optimizeCloneFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters, $db_types);
         }
         //if we don't have a list of repertoire ids, we will be looping over all the database entries
-        if (count($sample_id_list) == 0) {
-            $sample_id_query = new AirrRepertoire();
-            $result = $sample_id_query->get();
-            foreach ($result as $repertoire) {
-                $current_repertoire_id = $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
-                if (! isset($sample_id_list[$current_repertoire_id])) {
-                    $sample_id_list[$current_repertoire_id] = [];
-                }
-                array_push($sample_id_list[$current_repertoire_id], $repertoire[$repertoire_service_to_db_mapping['ir_annotation_set_metadata_id']]);
+        //if we do have it, loop through to retrieve the connector id
+        $sample_id_query = new AirrRepertoire();
+        $sample_id_query_results_list = Array();
+        if (count($sample_id_list) != 0) 
+        {
+           $sample_id_query = $sample_id_query->whereIn($repertoire_service_to_db_mapping['ir_project_sample_id'], $sample_id_list );
+        }
+        $result = $sample_id_query->get();
+        foreach ($result as $repertoire) {
+            $current_repertoire_id = $repertoire[$repertoire_service_to_db_mapping['ir_project_sample_id']];
+            if (! isset($sample_id_query_results_list[$current_repertoire_id])) {
+                $sample_id_query_results_list[$current_repertoire_id] = [];
             }
+            array_push($sample_id_query_results_list[$current_repertoire_id], $repertoire[$repertoire_service_to_db_mapping['ir_annotation_set_metadata_id']]);
         }
         // if it's a facets query, we will have to do a count on repertoire_ids
         if ($facets == $service_to_airr_mapping['repertoire_id']) {
@@ -430,7 +434,7 @@ class AirrClone extends Model
             $count_timeout = $query->getCountTimeout();
             $query_params['maxTimeMS'] = $count_timeout;
 
-            foreach ($sample_id_list as $current_repertoire_id =>$current_sample_id) {
+            foreach ($sample_id_query_results_list as $current_repertoire_id =>$current_sample_id) {
                 $total = 0;
                 foreach ($current_sample_id as $current_ir_annotation_set_metadata_id) {
                     $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_clone']] = $current_ir_annotation_set_metadata_id;
@@ -443,6 +447,7 @@ class AirrClone extends Model
                 }
             }
 
+            header('Content-Type: application/json; charset=utf-8');
             $response = AirrUtils::airrHeader();
             $response['Facet'] = self::airrCloneFacetsResponse($return_list);
             $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
@@ -525,14 +530,10 @@ class AirrClone extends Model
             $fields_to_display = array_keys($fields_to_display);
             $written_results = 0;
             if ($response_type == 'json') {
-                // header('Content-Type: application/json; charset=utf-8');
-                echo '{"Info":';
-                $response['Title'] = 'AIRR Data Commons API';
-                $response['description'] = 'API response for repertoire query - Optimized';
-                $response['version'] = 1.3;
-                $response['contact']['name'] = 'AIRR Community';
-                $response['contact']['url'] = 'https://github.com/airr-community';
-                echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            header('Content-Type: application/json; charset=utf-8');
+            $response = AirrUtils::AirrHeader();
+            echo "{Info:";
+            echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 echo ', "Clone":[';
                 echo "\n";
             }
@@ -542,7 +543,7 @@ class AirrClone extends Model
             }
             $current_result = 0;
             $first = true;
-            foreach ($sample_id_list as $current_sample_id) {
+            foreach ($sample_id_query_results_list as $current_repertoire_id => $current_sample_id) {
                 foreach ($current_sample_id as $current_ir_annotation_set_metadata_id) {
                     $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_clone']] = $current_ir_annotation_set_metadata_id;
                     $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
