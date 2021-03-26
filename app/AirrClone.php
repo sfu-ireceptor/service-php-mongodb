@@ -414,10 +414,9 @@ class AirrClone extends Model
         //if we don't have a list of repertoire ids, we will be looping over all the database entries
         //if we do have it, loop through to retrieve the connector id
         $sample_id_query = new AirrRepertoire();
-        $sample_id_query_results_list = Array();
-        if (count($sample_id_list) != 0) 
-        {
-           $sample_id_query = $sample_id_query->whereIn($repertoire_service_to_db_mapping['ir_project_sample_id'], $sample_id_list );
+        $sample_id_query_results_list = [];
+        if (count($sample_id_list) != 0) {
+            $sample_id_query = $sample_id_query->whereIn($repertoire_service_to_db_mapping['ir_project_sample_id'], $sample_id_list);
         }
         $result = $sample_id_query->get();
         foreach ($result as $repertoire) {
@@ -530,10 +529,10 @@ class AirrClone extends Model
             $fields_to_display = array_keys($fields_to_display);
             $written_results = 0;
             if ($response_type == 'json') {
-            header('Content-Type: application/json; charset=utf-8');
-            $response = AirrUtils::AirrHeader();
-            echo "{Info:";
-            echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                header('Content-Type: application/json; charset=utf-8');
+                $response = AirrUtils::AirrHeader();
+                echo '{Info:';
+                echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 echo ', "Clone":[';
                 echo "\n";
             }
