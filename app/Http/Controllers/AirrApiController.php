@@ -92,7 +92,7 @@ class AirrApiController extends Controller
                     if (isset($params['format']) && $params['format'] != '') {
                         $response_type = strtolower($params['format']);
                     }
-                    $response['Info']['Title'] = 'AIRR Data Commons API';
+                    $response['Info']['title'] = 'AIRR Data Commons API';
                     $response['Info']['description'] = 'API response for repertoire query';
                     $response['Info']['version'] = 1.3;
                     $response['Info']['contact']['name'] = 'AIRR Community';
@@ -115,7 +115,7 @@ class AirrApiController extends Controller
     public function airr_repertoire_single($repertoire_id)
     {
         $repertoire = AirrRepertoire::airrRepertoireSingle($repertoire_id);
-        $response['Info']['Title'] = 'AIRR Data Commons API';
+        $response['Info']['title'] = 'AIRR Data Commons API';
         $response['Info']['description'] = 'API response for repertoire query';
         $response['Info']['version'] = 1.3;
         $response['Info']['contact']['name'] = 'AIRR Community';
