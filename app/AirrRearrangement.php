@@ -249,14 +249,10 @@ class AirrRearrangement extends Model
         }
 
         if ($response_type == 'json') {
-            // header('Content-Type: application/json; charset=utf-8');
-            echo '{"Info":';
-            $response['title'] = 'AIRR Data Commons API';
-            $response['description'] = 'API response for repertoire query';
-            $response['version'] = 1.3;
-            $response['contact']['name'] = 'AIRR Community';
-            $response['contact']['url'] = 'https://github.com/airr-community';
-            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            header('Content-Type: application/json; charset=utf-8');
+            $response = AirrUtils::AirrHeader();
+            echo '{Info:';
+            echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             echo ', "Rearrangement":[';
             echo "\n";
         }
@@ -597,14 +593,10 @@ class AirrRearrangement extends Model
                 $fields_to_display = array_keys($fields_to_display);
                 $written_results = 0;
                 if ($response_type == 'json') {
-                    // header('Content-Type: application/json; charset=utf-8');
-                    echo '{"Info":';
-                    $response['title'] = 'AIRR Data Commons API';
-                    $response['description'] = 'API response for repertoire query';
-                    $response['version'] = 1.3;
-                    $response['contact']['name'] = 'AIRR Community';
-                    $response['contact']['url'] = 'https://github.com/airr-community';
-                    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                    header('Content-Type: application/json; charset=utf-8');
+                    $response = AirrUtils::AirrHeader();
+                    echo '{Info:';
+                    echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                     echo ', "Rearrangement":[';
                     echo "\n";
                 }
