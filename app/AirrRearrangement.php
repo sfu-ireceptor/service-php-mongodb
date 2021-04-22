@@ -251,7 +251,7 @@ class AirrRearrangement extends Model
         if ($response_type == 'json') {
             // header('Content-Type: application/json; charset=utf-8');
             echo '{"Info":';
-            $response['Title'] = 'AIRR Data Commons API';
+            $response['title'] = 'AIRR Data Commons API';
             $response['description'] = 'API response for repertoire query';
             $response['version'] = 1.3;
             $response['contact']['name'] = 'AIRR Community';
@@ -599,7 +599,7 @@ class AirrRearrangement extends Model
                 if ($response_type == 'json') {
                     // header('Content-Type: application/json; charset=utf-8');
                     echo '{"Info":';
-                    $response['Title'] = 'AIRR Data Commons API';
+                    $response['title'] = 'AIRR Data Commons API';
                     $response['description'] = 'API response for repertoire query';
                     $response['version'] = 1.3;
                     $response['contact']['name'] = 'AIRR Community';
