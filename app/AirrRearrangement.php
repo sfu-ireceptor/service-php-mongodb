@@ -597,6 +597,7 @@ class AirrRearrangement extends Model
                     $response = AirrUtils::AirrHeader();
                     echo '{"Info":';
                     echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
                     echo ', "Rearrangement":[';
                     echo "\n";
                 }
