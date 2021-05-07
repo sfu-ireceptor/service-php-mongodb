@@ -1,4 +1,4 @@
-FROM php:7.2-apache
+FROM php:7.3.27-apache
 
 # install MongoDB PHP extension
 RUN pecl install mongodb && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongo.ini
@@ -9,6 +9,7 @@ RUN apt-get update && \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Apache setup
+RUN a2dismod cgi
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
 	sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
@@ -23,10 +24,15 @@ WORKDIR /var/www/html
 RUN composer install
 
 # Laravel setup
-RUN chmod -R 777 /var/www/html/storage && \
-	cp .env.example .env && \
-	php artisan key:generate
+RUN chown -R www-data:www-data /var/www/html/storage && \
+        chown root:root /var/www/html && \
+        chmod go-w /var/www/html && \
+        chmod u+w /var/www/html && \
+        find /var/www -perm 0777 | xargs chmod 0755 && \
+        find storage -name .gitignore | xargs chmod 0644 && \
+        cp .env.example .env && \
+        php artisan key:generate
 
 # download mapping file
 ADD https://raw.githubusercontent.com/sfu-ireceptor/config/turnkey-v3/AIRR-iReceptorMapping.txt /var/www/html/config/
-RUN chmod 755 /var/www/html/config/AIRR-iReceptorMapping.txt
+RUN chmod 644 /var/www/html/config/AIRR-iReceptorMapping.txt
