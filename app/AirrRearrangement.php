@@ -323,7 +323,7 @@ class AirrRearrangement extends Model
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, provided they don't override AIRR elements already mapped
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
-                    // 
+                    //
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")
                         && $response_type == 'tsv') {
                         $return_element = implode($return_element->jsonSerialize(), ', ');
