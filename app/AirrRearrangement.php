@@ -320,6 +320,12 @@ class AirrRearrangement extends Model
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
+                    //problem with TSV download is that there are fields not in the database but it's hard to 
+                    //  put them into headers - for now skip them in the TSV 
+                    if ($response_type == 'tsv')
+                    {
+                        continue;
+                    }
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, provided they don't override AIRR elements already mapped
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
