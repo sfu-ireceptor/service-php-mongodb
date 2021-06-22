@@ -600,7 +600,7 @@ class AirrUtils extends Model
                 } else {
                     // if we have junction_aa, we do a query on substring field instead, case insensitive
                     if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
-                        $db_filters[$service_to_db_mapping['substring']] = strtoupper(string) $filter_piece['content']['value']);
+                        $db_filters[$service_to_db_mapping['substring']] = strtoupper((string) $filter_piece['content']['value']);
                     } else {
                         $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
