@@ -37,4 +37,5 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
 RUN mkdir /config
 ADD https://raw.githubusercontent.com/sfu-ireceptor/config/clone-and-stats-mapping/AIRR-iReceptorMapping.txt /config/
 RUN ln -s /config/AIRR-iReceptorMapping.txt /var/www/html/config/AIRR-iReceptorMapping.txt
+
 RUN chmod 644 /var/www/html/config/AIRR-iReceptorMapping.txt
