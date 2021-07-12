@@ -502,6 +502,7 @@ class AirrUtils extends Model
             if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields) && $filters['content']['field'] != $airr_names['junction_aa']) {
                 return true;
             }
+           
             //Special case - contains query on junction_aa field translates into a 'substring' query and is thus optimizable
             if ($filters['op'] == 'contains' && $filters['content']['field'] == $airr_names['junction_aa']) {
                 return true;
