@@ -154,7 +154,7 @@ class AirrApiController extends Controller
             return response()->streamDownload(function () use ($params) {
                 AirrRearrangement::airrOptimizedRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
             });
-        } else {            
+        } else {
             $l = AirrRearrangement::airrRearrangementRequest($params, JSON_OBJECT_AS_ARRAY);
             switch ($l) {
                  case 'error':
