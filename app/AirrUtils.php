@@ -640,4 +640,218 @@ class AirrUtils extends Model
 
         return $response;
     }
+
+    public static function cloneQueryOptimizable($query)
+    {
+        //method to check if a rearrangement query can be optimized for iReceptor repository
+        //  returns true if yes, false otherwise
+        //rules are:
+        //  -if it's an equals query on a single indexed field, or single indexed field and repertoire id, yes
+        //  -if it's a facets query on repertoire_id, and equals on an indexed field, yes
+        //  -if it's a contains query on junction_aa, and optionally repertoire_id, yes
+        //  -if it's a facets query on repertoire_id with no filter, yes
+        //  -otherwise, not optimizable
+
+        //create helper mappings to avoid hard-coding terms
+        //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
+
+        //return false;
+
+        try {
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
+            //  note that indexed fields on non-AIRR terms can and do exist
+            $indexed_fields = ([$airr_names['repertoire_id'], $airr_names['junction_aa_length'],
+                $airr_names['junction_aa'], $airr_names['v_call'], $airr_names['d_call'],
+                $airr_names['j_call'], ]
+            );
+            $filters = '';
+            $facets = '';
+
+            //size must be an integer
+            if (isset($query['size']) && ! is_int($query['size'])) {
+                return false;
+            }
+
+            // similar to size, from must be integer
+            if (isset($query['from']) && ! is_int($query['from'])) {
+                return false;
+            }
+
+            if (isset($query['filters'])) {
+                $filters = $query['filters'];
+            }
+            if (isset($query['facets'])) {
+                $facets = $query['facets'];
+            } else {
+                //for now, let's only optimize facets queries. the count() vs aggregate() is about a
+                //  factor of 10 in performance, whereas downloading tsv/json data would do index scan
+                //  either way
+                //return false;
+            }
+            // no filters, no facets - doesn't matter, so go through the regular pipeline
+            if (($filters == '' || count($filters) == 0) && $facets == '') {
+                //echo 'no filter';
+
+                return false;
+            }
+
+            //check that the filter is correct - easiest way is to run it through unoptimized
+            //  filter creation and see if it's returning null
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
+            if ($query_string == null && $filters != '') {
+                return false;
+            }
+
+            //first pass is easiest, any facets query not on repertoire_id will not be optimized
+            if ($facets != '' && $facets != 'repertoire_id') {
+                //echo 'bad facet ' . $facets;
+
+                return false;
+            }
+
+            //if we have no filter, it's a count on repertoire_id and we can definitely optimize it
+            if ($filters == '' || count($filters) == 0) {
+                return true;
+            }
+
+            //if filter is not 'and', '=', 'contains' or 'in', we can't do it
+            if (! in_array($filters['op'], ['and', '=', 'contains', 'in'])) {
+                //echo 'bad op ' . $filters['op'];
+
+                return false;
+            }
+            //single '=' query on indexed fields, definitely optimizable (if facets exist they should be on repertoire_id at this point
+            //  so no reason to check).
+            //But, junction_aa is special. Right now it's not really indexed, so we want to skip it on '=' but allow on 'contains'
+            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields) && $filters['content']['field'] != $airr_names['junction_aa']) {
+                return true;
+            }
+            //Special case - contains query on junction_aa field translates into a 'substring' query and is thus optimizable
+            if ($filters['op'] == 'contains' && $filters['content']['field'] == $airr_names['junction_aa']) {
+                return true;
+            }
+
+            //a 'in' query on repertoire_id is optimizable, we just will iterate over it
+            if ($filters['op'] == 'in' && $filters['content']['field'] == $airr_names['repertoire_id']) {
+                return true;
+            }
+
+            //most complicated case is an 'and' filter with two parameters, an indexed field with '=' query and repertoire_id '=' or 'contains'
+            if ($filters['op'] == 'and' && is_array($filters['content']) && count($filters['content']) == 2) {
+                $has_indexed = false;
+                foreach ($filters['content'] as $filter) {
+                    //first, check if op is '=', 'in' or 'contains'. Anything else we can't do
+                    if ($filter['op'] != '=' && $filter['op'] !== 'contains' & $filter['op'] != 'in') {
+                        // echo 'bad op ' . $filter['op'];
+
+                        return false;
+                    }
+
+                    //can't do anything good if field isn't indexed
+                    if (! in_array($filter['content']['field'], $indexed_fields, true)) {
+                        //echo 'unindex field ' . $filter['content']['field'];
+
+                        return false;
+                    }
+
+                    //we can only do 'contains' on junction_aa
+                    if ($filter['op'] == 'contains' && $filter['content']['field'] != $airr_names['junction_aa']) {
+                        //echo 'bad contains ' . $filter['content']['field'];
+
+                        return false;
+                    }
+
+                    //'in' only works on repertoire_id
+                    if ($filter['op'] == 'in' && $filter['content']['field'] != $airr_names['repertoire_id']) {
+                        //echo 'bad in on ' . $filter['content']['field'];
+
+                        return false;
+                    }
+
+                    //'=' works on any indexed field - BUT - we have to make sure query only uses one
+                    //  indexed field and repertoir_id
+                    if ($filter['op'] == '=') {
+                        //special case right now is junction_aa where we optimized on substring search, not exact match
+                        if ($filter['content']['field'] == $airr_names['junction_aa']) {
+                            return false;
+                        }
+                        if ($has_indexed) {
+                            //echo 'Attempt to AND multiple fields ' . var_dump($filters);
+
+                            return false;
+                        } else {
+                            if (in_array($filter['content']['field'], $indexed_fields) && $filter['content']['field'] != $airr_names['repertoire_id']) {
+                                $has_indexed = true;
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+            //any filter with more than two parameters can't be optimized
+            if (is_array($filters['content']) && count($filters['content']) > 2) {
+                return false;
+            }
+            // shouldn't get here
+            //echo 'no return';
+
+            return false;
+        } catch (\Exception $e) {
+            echo "$e";
+
+            return false;
+        }
+    }
+
+    //if given a filter, map it to appropriate database field, create a MongoDB query,
+    //  separate repertoire ids (if any) into a list and return it for further processing
+    public static function optimizeCloneFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters, $db_types_array)
+    {
+        // if our top-level op is 'and', that means we have a list of repertoire_ids and another query parameter
+        //   (otherwise, the query would not be optimizable)
+        if ($filter['op'] == 'and') {
+            foreach ($filter['content'] as $filter_piece) {
+                // repertoire query goes into sample_id_list
+                if ($filter_piece['content']['field'] == $service_to_airr_mapping['repertoire_id']) {
+                    if (is_array($filter_piece['content']['value'])) {
+                        foreach ($filter_piece['content']['value'] as $filter_id) {
+                            $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter_piece['content']['field']]);
+                        }
+                    } else {
+                        $sample_id_list[] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
+                    }
+                } else {
+                    // if we have junction_aa, we do a query on substring field instead
+                    if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
+                        $db_filters[$service_to_db_mapping['substring']] = (string) $filter_piece['content']['value'];
+                    } else {
+                        $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
+                    }
+                }
+            }
+        } else {
+            //we have a single query parameter, either repertoire id or filter
+            if ($filter['content']['field'] == $service_to_airr_mapping['repertoire_id']) {
+                if (is_array($filter['content']['value'])) {
+                    foreach ($filter['content']['value'] as $filter_id) {
+                        $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
+                    }
+                } else {
+                    $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
+                }
+            } else {
+                // if we have junction_aa, we do a query on substring field instead
+                if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
+                    $db_filters[$service_to_db_mapping['substring']] = (string) $filter['content']['value'];
+                } else {
+                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
+                }
+            }
+        }
+    }
 }
