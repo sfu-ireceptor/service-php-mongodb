@@ -605,7 +605,7 @@ class AirrClone extends Model
                             $written_results++;
                         }
                         if ($max_values > 0 && $written_results >= $max_values) {
-                            break 2;
+                            break 3;
                         }
                     }
                 }
