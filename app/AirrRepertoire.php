@@ -298,6 +298,11 @@ class AirrRepertoire extends Model
                                     $return_value = strval($return_element);
                                 }
                                 break;
+                            case 'object':
+                                if (is_object($return_value)) {
+                                    $return_value = $return_element->jsonSerialize();
+                                }
+                                break;
                             default:
                                 //bad data type
                                 break;

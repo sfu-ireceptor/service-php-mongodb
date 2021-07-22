@@ -250,7 +250,7 @@ class AirrRearrangement extends Model
 
         if ($response_type == 'json') {
             header('Content-Type: application/json; charset=utf-8');
-            $response = AirrUtils::AirrHeader();
+            $response = AirrUtils::airrHeader();
             echo '{"Info":';
             echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             echo ', "Rearrangement":[';
@@ -594,7 +594,7 @@ class AirrRearrangement extends Model
                 $written_results = 0;
                 if ($response_type == 'json') {
                     header('Content-Type: application/json; charset=utf-8');
-                    $response = AirrUtils::AirrHeader();
+                    $response = AirrUtils::airrHeader();
                     echo '{"Info":';
                     echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                     echo ', "Rearrangement":[';
