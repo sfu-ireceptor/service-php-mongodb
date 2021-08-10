@@ -5,7 +5,6 @@ RUN pecl install mongodb && echo "extension=mongodb.so" > /usr/local/etc/php/con
 
 # install zip, composer
 RUN apt-get update && \
-	apt-get dist-upgrade -y && \
 	apt-get install -y zip && \ 
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
