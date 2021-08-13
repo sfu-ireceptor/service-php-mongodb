@@ -15,6 +15,8 @@ Route::any('/airr/v1/repertoire', 'AirrApiController@airr_repertoire');
 Route::any('/airr/v1/repertoire/{repertoire_id}', 'AirrApiController@airr_repertoire_single');
 Route::any('/airr/v1/rearrangement', 'AirrApiController@airr_rearrangement');
 Route::any('/airr/v1/rearrangement/{rearrangement_id}', 'AirrApiController@airr_rearrangement_single');
+Route::any('/airr/v1/clone', 'AirrApiController@airr_clone');
+Route::any('/airr/v1/clone/{clone_id}', 'AirrApiController@airr_clone_single');
 Route::any('/irplus/v1/stats', 'StatsController@index');
 Route::any('/irplus/v1/stats/rearrangement/count', 'StatsController@rearrangement_count');
 Route::any('/irplus/v1/stats/rearrangement/junction_length', 'StatsController@rearrangement_junction_length');
