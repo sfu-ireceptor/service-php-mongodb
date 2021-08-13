@@ -105,7 +105,6 @@ class AirrRearrangement extends Model
             }
             $options['projection'] = $fields_to_retrieve;
         }
-
         //if required fields are set, map the appropriate column to the return
         // if neither required nor fields is set, we still want to return required
         if (isset($params['include_fields'])) {
@@ -320,8 +319,18 @@ class AirrRearrangement extends Model
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
+                    //in TSV, skip fields that aren't in the header - TODO is a better way to do this
+                    if ($response_type == 'tsv') {
+                        continue;
+                    }
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, provided they don't override AIRR elements already mapped
+                    // mongodb BSON array needs to be serialized or it can't be used in TSV output
+                    //
+                    if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")
+                        && $response_type == 'tsv') {
+                        $return_element = implode($return_element->jsonSerialize(), ', ');
+                    }
                     if (! isset($return_array[$return_key])) {
                         $return_array[$return_key] = $return_element;
                     }
