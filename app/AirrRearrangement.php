@@ -319,7 +319,9 @@ class AirrRearrangement extends Model
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
-                    //in TSV, skip fields that aren't in the header - TODO is a better way to do this
+
+                    //problem with TSV download is that there are fields not in the database but it's hard to
+                    //  put them into headers - for now skip them in the TSV
                     if ($response_type == 'tsv') {
                         continue;
                     }
