@@ -118,9 +118,9 @@ class Stats extends Model
                     $data_processing_id = $repertoire[$service_to_repertoire_db_mapping['data_processing_id']];
                     $connector_id = $repertoire[$service_to_repertoire_db_mapping['ir_annotation_set_metadata_id']];
 
-                    $response_object['repertoires']['repertoire_id'] = strval($repertoire_id);
-                    $response_object['repertoires']['sample_processing_id'] = strval($sample_processing_id);
-                    $response_object['repertoires']['data_processing_id'] = strval($data_processing_id);
+                    $response_object['repertoire']['repertoire_id'] = strval($repertoire_id);
+                    $response_object['repertoire']['sample_processing_id'] = strval($sample_processing_id);
+                    $response_object['repertoire']['data_processing_id'] = strval($data_processing_id);
 
                     foreach ($entry_point_fields as $current_field) {
                         $stats_object = [];
