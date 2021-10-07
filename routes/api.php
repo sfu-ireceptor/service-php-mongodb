@@ -19,3 +19,7 @@ Route::any('/irplus/v1/stats', 'StatsController@index');
 Route::any('/irplus/v1/stats/rearrangement/count', 'StatsController@rearrangement_count');
 Route::any('/irplus/v1/stats/rearrangement/junction_length', 'StatsController@rearrangement_junction_length');
 Route::any('/irplus/v1/stats/rearrangement/gene_usage', 'StatsController@rearrangement_gene_usage');
+Route::any('/airr/v2/repertoire', 'AirrApiController@airr_repertoire');
+Route::any('/airr/v2/repertoire/{repertoire_id}', 'AirrApiController@airr_repertoire_single');
+Route::any('/airr/v2/rearrangement', 'AirrApiController@airr_rearrangement');
+Route::any('/airr/v2/rearrangement/{rearrangement_id}', 'AirrApiController@airr_rearrangement_single');
