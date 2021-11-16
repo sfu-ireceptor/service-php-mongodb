@@ -83,9 +83,9 @@ class Stats extends Model
                         $repertoire_id = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
                         $sample_processing_id = $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']];
                         $data_processing_id = $repertoire[$service_to_repertoire_db_mapping['data_processing_id']];
-                        $repertoire_all_object = ['repertoire_id' => $repertoire_id,
-                            'sample_processing_id' => $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']],
-                            'data_processing_id' => $repertoire[$service_to_repertoire_db_mapping['data_processing_id']], ];
+                        $repertoire_all_object = array( "repertoire_id" => $repertoire_id,
+                                                    "sample_processing_id" => $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']] ,
+                                                    "data_processing_id" => $repertoire[$service_to_repertoire_db_mapping['data_processing_id']]);
                         $params[$service_to_api_input_mapping['repertoires']][]['repertoire'] = $repertoire_all_object;
                     }
                 }
@@ -111,7 +111,7 @@ class Stats extends Model
                 }
                 if (isset($repertoire_object['repertoire_id']) && ! is_null($repertoire_object['repertoire_id'])) {
                     $repertoire_id = AirrUtils::typeConvertHelperRaw($repertoire_object['repertoire_id'], $repertoire_db_types[$repertoire_service_to_db_mapping['ir_project_sample_id']]);
-                    $repertoire_query['ir_project_sample_id'] = $repertoire_id;
+                    $repertoire_query[$repertoire_service_to_db_mapping['ir_project_sample_id']] = $repertoire_id;
                 } else {
                     //repertoire id is required, fail if it's not provided
                     return 'error';
@@ -121,7 +121,7 @@ class Stats extends Model
                     $return_sample_processing = true;
                     if (! is_null($repertoire_object['sample_processing_id']) && $repertoire_object['sample_processing_id'] != 'all') {
                         $sample_processing_id = AirrUtils::typeConvertHelperRaw($repertoire_object['sample_processing_id'], $repertoire_db_types[$repertoire_service_to_db_mapping['sample_processing_id']]);
-                        $repertoire_query['sample_processing_id'] = $sample_processing_id;
+                        $repertoire_query[$repertoire_service_to_db_mapping['sample_processing_id']] = $sample_processing_id;
                     }
                 }
                 if (isset($repertoire_object['data_processing_id'])) {
@@ -129,7 +129,7 @@ class Stats extends Model
                     $return_data_processing = true;
                     if (! is_null($repertoire_object['data_processing_id']) && $repertoire_object['data_processing_id'] != 'all') {
                         $data_processing_id = AirrUtils::typeConvertHelperRaw($repertoire_object['data_processing_id'], $repertoire_db_types[$repertoire_service_to_db_mapping['data_processing_id']]);
-                        $repertoire_query['data_processing_id'] = $data_processing_id;
+                        $repertoire_query[$repertoire_service_to_db_mapping['data_processing_id']] = $data_processing_id;
                     }
                 }
                 $repertoire_result = AirrRepertoire::findRepertoire($repertoire_query);
