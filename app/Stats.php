@@ -71,7 +71,38 @@ class Stats extends Model
         }
 
         $sample_id_list = [];
+        // non-count entry points require 'repertoires' parameter
+        if (!isset($params[$service_to_api_input_mapping['repertoires']]))
+        {
+            if ($entry_point != "rearrangement_count") {
+                return 'error';
+            }
+            else {
+                $all_repertoires = AirrRepertoire::findRepertoire([]);
+                foreach ($all_repertoires as $repertoire)
+                {
+                    //only return repertoires that have stats
+                    if ($repertoire[$service_to_repertoire_db_mapping['ir_sequence_count']] > 0 )
+                    {
+                        $repertoire_id = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
+                        $sample_processing_id = $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']];
+                        $data_processing_id = $repertoire[$service_to_repertoire_db_mapping['data_processing_id']];
+                        $repertoire_all_object = array( "repertoire_id" => $repertoire_id,
+                                                    "sample_processing_id" => $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']] ,
+                                                    "data_processing_id" => $repertoire[$service_to_repertoire_db_mapping['data_processing_id']]);
+                        //$repertoire_object['repertoire_id'] = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
+                        //$repertoire_object['sample_processing_id'] = $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']];
+                        //$repertoire_object['data_processing_id'] = $repertoire[$service_to_repertoire_db_mapping['data_processing_id']];
+                        $params[$service_to_api_input_mapping['repertoires']][]['repertoire'] = $repertoire_all_object;
+                    }
+                }
+                unset($all_repertoires);
+            }
+
+        }
+        
         // if 'repertoires' is set, loop through it and create an array of repertoire ids to search
+        //  otherwise, loop through entire repertoires collection
         if (isset($params[$service_to_api_input_mapping['repertoires']])) {
             if (! is_array($params[$service_to_api_input_mapping['repertoires']]) || sizeof($params[$service_to_api_input_mapping['repertoires']]) == 0) {
                 return 'error';
