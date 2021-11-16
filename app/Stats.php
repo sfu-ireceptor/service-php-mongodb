@@ -83,9 +83,9 @@ class Stats extends Model
                         $repertoire_id = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
                         $sample_processing_id = $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']];
                         $data_processing_id = $repertoire[$service_to_repertoire_db_mapping['data_processing_id']];
-                        $repertoire_all_object = array( "repertoire_id" => $repertoire_id,
-                                                    "sample_processing_id" => $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']] ,
-                                                    "data_processing_id" => $repertoire[$service_to_repertoire_db_mapping['data_processing_id']]);
+                        $repertoire_all_object = ['repertoire_id' => $repertoire_id,
+                            'sample_processing_id' => $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']],
+                            'data_processing_id' => $repertoire[$service_to_repertoire_db_mapping['data_processing_id']], ];
                         $params[$service_to_api_input_mapping['repertoires']][]['repertoire'] = $repertoire_all_object;
                     }
                 }
