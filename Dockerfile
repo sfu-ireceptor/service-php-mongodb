@@ -10,6 +10,16 @@ RUN apt-get update && \
 
 # Apache setup
 RUN a2dismod cgi
+RUN a2enmod ssl && a2enmod rewrite
+
+RUN mkdir -p /etc/apache2/ssl
+RUN openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
+            -subj "/C=CA/ST=BC/L=Vancouver/O=iReceptor/CN=ireceptor-service" \
+            -keyout /etc/apache2/ssl/private-key.pem  -out /etc/apache2/ssl/certificate.pem
+RUN cp /etc/apache2/ssl/certificate.pem /etc/apache2/ssl/intermediate.pem
+
+COPY ./docker/apache-vhosts.conf /etc/apache2/sites-available/000-default.conf
+
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
 	sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
