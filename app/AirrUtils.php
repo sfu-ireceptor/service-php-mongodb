@@ -498,8 +498,7 @@ class AirrUtils extends Model
             }
             //single '=' query on indexed fields, definitely optimizable (if facets exist they should be on repertoire_id at this point
             //  so no reason to check).
-            //But, junction_aa is special. Right now it's not really indexed, so we want to skip it on '=' but allow on 'contains'
-            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields) && $filters['content']['field'] != $airr_names['junction_aa']) {
+            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields) ) {
                 return true;
             }
             //Special case - contains query on junction_aa field translates into a 'substring' query and is thus optimizable
@@ -599,7 +598,7 @@ class AirrUtils extends Model
                     }
                 } else {
                     // if we have junction_aa, we do a query on substring field instead, case insensitive
-                    if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
+                    if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa'] && $filter_piece['op'] == 'contains') {
                         $db_filters[$service_to_db_mapping['substring']] = strtoupper((string) $filter_piece['content']['value']);
                     } else {
                         $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
@@ -618,7 +617,8 @@ class AirrUtils extends Model
                 }
             } else {
                 // if we have junction_aa, we do a query on substring field instead
-                if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']) {
+                if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa'] 
+                    && $filter['op'] == 'contains') {
                     $db_filters[$service_to_db_mapping['substring']] = strtoupper((string) $filter['content']['value']);
                 } else {
                     $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
