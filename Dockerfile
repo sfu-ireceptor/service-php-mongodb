@@ -10,7 +10,7 @@ RUN apt-get update && \
 
 # Apache setup
 RUN a2dismod cgi
-RUN a2enmod ssl && a2enmod rewrite
+RUN a2enmod ssl
 
 RUN mkdir -p /etc/apache2/ssl
 RUN openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
@@ -18,7 +18,8 @@ RUN openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
             -keyout /etc/apache2/ssl/private-key.pem  -out /etc/apache2/ssl/certificate.pem
 RUN cp /etc/apache2/ssl/certificate.pem /etc/apache2/ssl/intermediate.pem
 
-COPY ./docker/apache-vhosts.conf /etc/apache2/sites-available/000-default.conf
+COPY ./docker/apache-vhost-https.conf /etc/apache2/sites-available/000-default.conf
+COPY ./docker/apache-vhost.conf /etc/apache2/sites-available/default-ssl.conf
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
