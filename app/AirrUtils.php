@@ -598,7 +598,7 @@ class AirrUtils extends Model
                     }
                 } else {
                     // if we have junction_aa, we do a query on substring field instead, case insensitive
-                    if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa'] 
+                    if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']
                             && $filter_piece['op'] == 'contains') {
                         $db_filters[$service_to_db_mapping['substring']] = strtoupper((string) $filter_piece['content']['value']);
                     } else {
