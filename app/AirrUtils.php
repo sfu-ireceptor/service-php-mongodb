@@ -854,4 +854,10 @@ class AirrUtils extends Model
             }
         }
     }
+    public static function cellQueryOptimizable($query)
+    {
+        //determine if a cell query is optimizable
+        // first pass-always fail
+        return  (false);
+    }
 }

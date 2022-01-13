@@ -21,3 +21,5 @@ Route::any('/irplus/v1/stats', 'StatsController@index');
 Route::any('/irplus/v1/stats/rearrangement/count', 'StatsController@rearrangement_count');
 Route::any('/irplus/v1/stats/rearrangement/junction_length', 'StatsController@rearrangement_junction_length');
 Route::any('/irplus/v1/stats/rearrangement/gene_usage', 'StatsController@rearrangement_gene_usage');
+Route::any('/airr/v1/cell', 'AirrApiController@airr_cell');
+Route::any('/airr/v1/cell/{cell}', 'AirrApiController@airr_cell_single');
