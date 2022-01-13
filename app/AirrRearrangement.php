@@ -104,7 +104,7 @@ class AirrRearrangement extends Model
                 }
             }
             $options['projection'] = $fields_to_retrieve;
-        }        
+        }
         //if required fields are set, map the appropriate column to the return
         // if neither required nor fields is set, we still want to return required
         if (isset($params['include_fields'])) {
@@ -321,6 +321,7 @@ class AirrRearrangement extends Model
                 } else {
                     //problem with TSV download is that there are fields not in the database but it's hard to
                     //  put them into headers - for now skip them in the TSV
+
                     if ($response_type == 'tsv') {
                         continue;
                     }
