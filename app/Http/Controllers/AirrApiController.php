@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\AirrCell;
 use App\AirrClone;
 use App\AirrRearrangement;
 use App\AirrRepertoire;
 use App\AirrUtils;
-use App\AirrCell;
 use App\Info;
 use Illuminate\Http\Request;
 
