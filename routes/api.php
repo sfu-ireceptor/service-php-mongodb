@@ -27,3 +27,7 @@ Route::any('/airr/v2/repertoire', 'AirrApiController@airr_repertoire');
 Route::any('/airr/v2/repertoire/{repertoire_id}', 'AirrApiController@airr_repertoire_single');
 Route::any('/airr/v2/rearrangement', 'AirrApiController@airr_rearrangement');
 Route::any('/airr/v2/rearrangement/{rearrangement_id}', 'AirrApiController@airr_rearrangement_single');
+Route::any('/airr/v2/cell', 'AirrApiController@airr_cell');
+Route::any('/airr/v2/cell/{cell}', 'AirrApiController@airr_cell_single');
+Route::any('/airr/v1/expression', 'AirrApiController@airr_gene_expression');
+Route::any('/airr/v2/expression', 'AirrApiController@airr_gene_expression');
