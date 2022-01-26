@@ -31,4 +31,3 @@ Route::any('/airr/v2/rearrangement/{rearrangement_id}', 'AirrApiController@airr_
 Route::any('/airr/v2/cell', 'AirrApiController@airr_cell');
 Route::any('/airr/v2/cell/{cell}', 'AirrApiController@airr_cell_single');
 Route::any('/airr/v2/expression', 'AirrApiController@airr_gene_expression');
-
