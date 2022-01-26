@@ -628,17 +628,16 @@ class AirrUtils extends Model
         }
     }
 
-    public static function airrHeader($type='AIRRC', $optimized=false)
+    public static function airrHeader($type = 'AIRRC', $optimized = false)
     {
         $response = [];
 
-        $optimized_string = "";
-        if ($optimized)
-        {
-            $optimized_string = "Optimized ";     
+        $optimized_string = '';
+        if ($optimized) {
+            $optimized_string = 'Optimized ';
         }
         $response['Info']['title'] = 'AIRR Data Commons API';
-        $response['Info']['description'] = $optimized_string.'API response for '.$type.' query';
+        $response['Info']['description'] = $optimized_string . 'API response for ' . $type . ' query';
         $response['Info']['version'] = 1.3;
         $response['Info']['contact']['name'] = 'AIRR Community';
         $response['Info']['contact']['url'] = 'https://github.com/airr-community';
@@ -876,14 +875,13 @@ class AirrUtils extends Model
         //create helper mappings to avoid hard-coding terms
         //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
 
-
         try {
             $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = ([$airr_names['repertoire_id'], $airr_names['data_processing_id'],
-                $airr_names['cell_id'], $airr_names['expression_study_method'], $airr_names['virtual_pairing']
-                 ]
+                $airr_names['cell_id'], $airr_names['expression_study_method'], $airr_names['virtual_pairing'],
+            ]
             );
             $filters = '';
             $facets = '';
@@ -903,7 +901,7 @@ class AirrUtils extends Model
             }
             if (isset($query['facets'])) {
                 $facets = $query['facets'];
-            } 
+            }
             // no filters, no facets - doesn't matter, so go through the regular pipeline
             if (($filters == '' || count($filters) == 0) && $facets == '') {
                 //echo 'no filter';
@@ -941,7 +939,7 @@ class AirrUtils extends Model
             }
             //single '=' query on indexed fields, definitely optimizable (if facets exist they should be on repertoire_id at this point
             //  so no reason to check).
-            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields) ) {
+            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields)) {
                 return true;
             }
             //a 'in' query on repertoire_id is optimizable, we just will iterate over it
@@ -966,7 +964,6 @@ class AirrUtils extends Model
 
                         return false;
                     }
-
 
                     //'in' only works on repertoire_id
                     if ($filter['op'] == 'in' && $filter['content']['field'] != $airr_names['repertoire_id']) {
@@ -1005,8 +1002,8 @@ class AirrUtils extends Model
 
             return false;
         }
-
     }
+
     //if given a filter, map it to appropriate database field, create a MongoDB query,
     //  separate repertoire ids (if any) into a list and return it for further processing
     public static function optimizeCellFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters, $db_types_array)
@@ -1025,8 +1022,7 @@ class AirrUtils extends Model
                         $sample_id_list[] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
                 } else {
-                        $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
-                    
+                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                 }
             }
         } else {
@@ -1040,11 +1036,11 @@ class AirrUtils extends Model
                     $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
                 }
             } else {
-                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
-                
+                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
             }
         }
     }
+
     public static function geneExpressionQueryOptimizable($query)
     {
         //determine if a cell query is optimizable
@@ -1061,14 +1057,13 @@ class AirrUtils extends Model
         //create helper mappings to avoid hard-coding terms
         //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
 
-
         try {
             $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = ([$airr_names['repertoire_id'], $airr_names['data_processing_id'],
-                $airr_names['cell_id'], $airr_names['property'], $airr_names['value']
-                 ]
+                $airr_names['cell_id'], $airr_names['property'], $airr_names['value'],
+            ]
             );
             $filters = '';
             $facets = '';
@@ -1088,7 +1083,7 @@ class AirrUtils extends Model
             }
             if (isset($query['facets'])) {
                 $facets = $query['facets'];
-            } 
+            }
             // no filters, no facets - doesn't matter, so go through the regular pipeline
             if (($filters == '' || count($filters) == 0) && $facets == '') {
                 //echo 'no filter';
@@ -1126,7 +1121,7 @@ class AirrUtils extends Model
             }
             //single '=' query on indexed fields, definitely optimizable (if facets exist they should be on repertoire_id at this point
             //  so no reason to check).
-            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields) ) {
+            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields)) {
                 return true;
             }
             //a 'in' query on repertoire_id is optimizable, we just will iterate over it
@@ -1139,7 +1134,7 @@ class AirrUtils extends Model
                 $has_indexed = false;
                 foreach ($filters['content'] as $filter) {
                     //first, check if op is '=', 'in' or 'contains'. Anything else we can't do
-                    if ($filter['op'] != '=' &&  $filter['op'] != 'in') {
+                    if ($filter['op'] != '=' && $filter['op'] != 'in') {
                         // echo 'bad op ' . $filter['op'];
 
                         return false;
@@ -1151,7 +1146,6 @@ class AirrUtils extends Model
 
                         return false;
                     }
-
 
                     //'in' only works on repertoire_id
                     if ($filter['op'] == 'in' && $filter['content']['field'] != $airr_names['repertoire_id']) {
@@ -1190,8 +1184,8 @@ class AirrUtils extends Model
 
             return false;
         }
-
     }
+
     //if given a filter, map it to appropriate database field, create a MongoDB query,
     //  separate repertoire ids (if any) into a list and return it for further processing
     public static function optimizeGeneExpressionFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters, $db_types_array)
@@ -1210,8 +1204,7 @@ class AirrUtils extends Model
                         $sample_id_list[] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
                 } else {
-                        $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
-                    
+                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                 }
             }
         } else {
@@ -1225,10 +1218,8 @@ class AirrUtils extends Model
                     $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
                 }
             } else {
-                    $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
-                
+                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
             }
         }
     }
 }
-

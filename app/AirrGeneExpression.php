@@ -447,7 +447,7 @@ class AirrGeneExpression extends Model
             }
 
             header('Content-Type: application/json; charset=utf-8');
-            $response = AirrUtils::airrHeader("Gene Expression", true);
+            $response = AirrUtils::airrHeader('Gene Expression', true);
             $response['Facet'] = self::airrGeneExpressionFacetsResponse($return_list);
             $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             echo $json;
@@ -530,7 +530,7 @@ class AirrGeneExpression extends Model
             $written_results = 0;
             if ($response_type == 'json') {
                 header('Content-Type: application/json; charset=utf-8');
-                $response = AirrUtils::AirrHeader("Gene Expression", true);
+                $response = AirrUtils::AirrHeader('Gene Expression', true);
                 echo '{Info:';
                 echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 echo ', "GeneExpression":[';
