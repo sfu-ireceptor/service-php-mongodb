@@ -250,14 +250,10 @@ class AirrGeneExpression extends Model
         }
 
         if ($response_type == 'json') {
-            // header('Content-Type: application/json; charset=utf-8');
+            header('Content-Type: application/json; charset=utf-8');
+            $response = AirrUtils::AirrHeader('Gene Expression', false);
             echo '{"Info":';
-            $response['Title'] = 'AIRR Data Commons API';
-            $response['description'] = 'API response for gene expression query';
-            $response['version'] = 1.3;
-            $response['contact']['name'] = 'AIRR Community';
-            $response['contact']['url'] = 'https://github.com/airr-community';
-            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             echo ', "GeneExpression":[';
             echo "\n";
         }

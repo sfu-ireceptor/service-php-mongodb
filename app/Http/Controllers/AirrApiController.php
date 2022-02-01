@@ -388,7 +388,7 @@ class AirrApiController extends Controller
                         $response_type = strtolower($params['format']);
                     }
                     if (isset($params['facets'])) {
-                        $response = AirrUtils::airrHeader();
+                        $response = AirrUtils::airrHeader("Cell", false);
 
                         //facets have different formatting requirements
                         $response['Facet'] = AirrCell::airrCellFacetsResponse($l);
@@ -467,7 +467,7 @@ class AirrApiController extends Controller
                         $response_type = strtolower($params['format']);
                     }
                     if (isset($params['facets'])) {
-                        $response = AirrUtils::airrHeader();
+                        $response = AirrUtils::airrHeader("Gene Expression", false);
 
                         //facets have different formatting requirements
                         $response['Facet'] = AirrGeneExpression::airrGeneExpressionFacetsResponse($l);

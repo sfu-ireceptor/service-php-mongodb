@@ -250,14 +250,10 @@ class AirrCell extends Model
         }
 
         if ($response_type == 'json') {
-            // header('Content-Type: application/json; charset=utf-8');
+            header('Content-Type: application/json; charset=utf-8');
+            $response = AirrUtils::AirrHeader('Cell', false);
             echo '{"Info":';
-            $response['Title'] = 'AIRR Data Commons API';
-            $response['description'] = 'API response for cell query';
-            $response['version'] = 1.3;
-            $response['contact']['name'] = 'AIRR Community';
-            $response['contact']['url'] = 'https://github.com/airr-community';
-            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+            echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             echo ', "Cell":[';
             echo "\n";
         }
@@ -447,7 +443,7 @@ class AirrCell extends Model
             }
 
             header('Content-Type: application/json; charset=utf-8');
-            $response = AirrUtils::airrHeader();
+            $response = AirrUtils::airrHeader('Cell', true);
             $response['Facet'] = self::airrCellFacetsResponse($return_list);
             $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             echo $json;
@@ -530,7 +526,7 @@ class AirrCell extends Model
             $written_results = 0;
             if ($response_type == 'json') {
                 header('Content-Type: application/json; charset=utf-8');
-                $response = AirrUtils::AirrHeader();
+                $response = AirrUtils::AirrHeader('Cell', true);
                 echo '{"Info":';
                 echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 echo ', "Cell":[';
