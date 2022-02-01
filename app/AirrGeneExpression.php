@@ -294,7 +294,6 @@ class AirrGeneExpression extends Model
 
                 //make all the requested fields null before populating if there are results
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
-
                     $service_name = $db_to_service[$return_key];
                     if ($service_name == 'ir_annotation_set_metadata_id_expression') {
                         $return_element = (string) $return_element;
@@ -308,7 +307,6 @@ class AirrGeneExpression extends Model
                             $return_element = 'F';
                         }
                     }
-
 
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
