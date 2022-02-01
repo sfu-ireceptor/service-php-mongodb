@@ -281,13 +281,18 @@ class AirrCell extends Model
 
             foreach ($cell as $return_key => $return_element) {
 
-                //make all the requested fields null before populating if there are results
+                //flatten any MongoDB ObjectId types
+                if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
+                    $return_element = $return_element->__toString();
+                }
+                // mongodb BSON array needs to be serialized or it can't be used in TSV output
+                //  we also want to return a string, not an array, in JSON response
+                if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
+                    $return_element = implode($return_element->jsonSerialize(), ', or ');
+                }
+
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     $service_name = $db_to_service[$return_key];
-                    //flatten any MongoDB ObjectId types
-                    if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
-                        $return_element = $return_element->__toString();
-                    }
 
                     if ($service_name == 'ir_annotation_set_metadata_id_cell') {
                         $return_element = (string) $return_element;
@@ -302,16 +307,11 @@ class AirrCell extends Model
                         }
                     }
 
-                    // mongodb BSON array needs to be serialized or it can't be used in TSV output
-                    //  we also want to return a string, not an array, in JSON response
-                    if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                        $return_element = implode($return_element->jsonSerialize(), ', or ');
-                    }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, but only if there was no constraint on the fields
-                    if (! isset($fields_to_display)) {
+                    if (! isset($fields_to_display[$return_key]) && $response_type != 'tsv') {
                         $return_array[$return_key] = $return_element;
                     }
                 }
@@ -531,7 +531,7 @@ class AirrCell extends Model
             if ($response_type == 'json') {
                 header('Content-Type: application/json; charset=utf-8');
                 $response = AirrUtils::AirrHeader();
-                echo '{Info:';
+                echo '{"Info":';
                 echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 echo ', "Cell":[';
                 echo "\n";
