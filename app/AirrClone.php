@@ -531,7 +531,7 @@ class AirrClone extends Model
             if ($response_type == 'json') {
                 header('Content-Type: application/json; charset=utf-8');
                 $response = AirrUtils::AirrHeader();
-                echo '{Info:';
+                echo '{"Info":';
                 echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 echo ', "Clone":[';
                 echo "\n";
@@ -605,7 +605,7 @@ class AirrClone extends Model
                             $written_results++;
                         }
                         if ($max_values > 0 && $written_results >= $max_values) {
-                            break 2;
+                            break 3;
                         }
                     }
                 }

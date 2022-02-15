@@ -86,9 +86,6 @@ class Stats extends Model
                         $repertoire_all_object = ['repertoire_id' => $repertoire_id,
                             'sample_processing_id' => $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']],
                             'data_processing_id' => $repertoire[$service_to_repertoire_db_mapping['data_processing_id']], ];
-                        //$repertoire_object['repertoire_id'] = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
-                        //$repertoire_object['sample_processing_id'] = $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']];
-                        //$repertoire_object['data_processing_id'] = $repertoire[$service_to_repertoire_db_mapping['data_processing_id']];
                         $params[$service_to_api_input_mapping['repertoires']][]['repertoire'] = $repertoire_all_object;
                     }
                 }
@@ -98,7 +95,6 @@ class Stats extends Model
 
         // if 'repertoires' is set, loop through it and create an array of repertoire ids to search
         //  otherwise, loop through entire repertoires collection
-
         if (isset($params[$service_to_api_input_mapping['repertoires']])) {
             if (! is_array($params[$service_to_api_input_mapping['repertoires']]) || sizeof($params[$service_to_api_input_mapping['repertoires']]) == 0) {
                 return 'error';

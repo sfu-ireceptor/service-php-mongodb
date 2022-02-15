@@ -1,4 +1,4 @@
-FROM php:7.3.27-apache
+FROM php:7.3.33-apache
 
 # install MongoDB PHP extension
 RUN pecl install mongodb && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongo.ini
@@ -9,14 +9,20 @@ RUN apt-get update && \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Apache setup
-RUN a2dismod cgi
+COPY ./docker/apache-vhost-https.conf /etc/apache2/sites-available/000-default.conf
+COPY ./docker/apache-vhost.conf /etc/apache2/sites-available/http.conf
+
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
 	sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
 	sed -ri -e 's!daily!monthly!g' /etc/logrotate.d/apache2 && \
 	sed -ri -e 's!rotate 14!rotate 120!g' /etc/logrotate.d/apache2 && \
-	a2enmod rewrite && \
+    a2enmod rewrite && \
+    a2dismod cgi && \
+	a2enmod ssl && \
 	a2enmod headers
+
+RUN mkdir -p /etc/apache2/ssl
 
 # add source code and dependencies
 COPY . /var/www/html
