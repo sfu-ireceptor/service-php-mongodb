@@ -597,7 +597,9 @@ class AirrUtils extends Model
                             $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter_piece['content']['field']]);
                             $empty_array = false;
                         }
-                        if ($empty_array) { $sample_id_list[] = null;}
+                        if ($empty_array) {
+                            $sample_id_list[] = null;
+                        }
                     } else {
                         $sample_id_list[] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
@@ -614,17 +616,19 @@ class AirrUtils extends Model
         } else {
             //we have a single query parameter, either repertoire id or filter
             if ($filter['content']['field'] == $service_to_airr_mapping['ir_project_sample_id']) {
-                      if (is_array($filter['content']['value'])) {
-                        //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
-                        $empty_array = true;
-                        foreach ($filter['content']['value'] as $filter_id) {
-                            $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
-                            $empty_array = false;
-                        }
-                        if ($empty_array) { $sample_id_list[] = null;}
-                    } else {
-                        $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
+                if (is_array($filter['content']['value'])) {
+                    //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
+                    $empty_array = true;
+                    foreach ($filter['content']['value'] as $filter_id) {
+                        $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
+                        $empty_array = false;
                     }
+                    if ($empty_array) {
+                        $sample_id_list[] = null;
+                    }
+                } else {
+                    $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
+                }
             } else {
                 // if we have junction_aa, we do a query on substring field instead
                 if ($airr_to_repository_mapping[$filter['content']['field']] == $service_to_airr_mapping['junction_aa']
@@ -831,17 +835,19 @@ class AirrUtils extends Model
             foreach ($filter['content'] as $filter_piece) {
                 // repertoire query goes into sample_id_list
                 if ($filter_piece['content']['field'] == $service_to_airr_mapping['repertoire_id']) {
-                     if (is_array($filter_piece['content']['value'])) {
+                    if (is_array($filter_piece['content']['value'])) {
                         //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
                         $empty_array = true;
                         foreach ($filter_piece['content']['value'] as $filter_id) {
                             $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter_piece['content']['field']]);
                             $empty_array = false;
                         }
-                        if ($empty_array) { $sample_id_list[] = null;}
+                        if ($empty_array) {
+                            $sample_id_list[] = null;
+                        }
                     } else {
                         $sample_id_list[] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
-                    }                
+                    }
                 } else {
                     // if we have junction_aa, we do a query on substring field instead
                     if ($airr_to_repository_mapping[$filter_piece['content']['field']] == $service_to_airr_mapping['junction_aa']) {
@@ -854,14 +860,16 @@ class AirrUtils extends Model
         } else {
             //we have a single query parameter, either repertoire id or filter
             if ($filter['content']['field'] == $service_to_airr_mapping['repertoire_id']) {
-                 if (is_array($filter['content']['value'])) {
+                if (is_array($filter['content']['value'])) {
                     //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
                     $empty_array = true;
                     foreach ($filter['content']['value'] as $filter_id) {
                         $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
                         $empty_array = false;
                     }
-                    if ($empty_array) { $sample_id_list[] = null;}
+                    if ($empty_array) {
+                        $sample_id_list[] = null;
+                    }
                 } else {
                     $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
                 }
@@ -1038,7 +1046,9 @@ class AirrUtils extends Model
                             $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter_piece['content']['field']]);
                             $empty_array = false;
                         }
-                        if ($empty_array) { $sample_id_list[] = null;}
+                        if ($empty_array) {
+                            $sample_id_list[] = null;
+                        }
                     } else {
                         $sample_id_list[] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
@@ -1056,7 +1066,9 @@ class AirrUtils extends Model
                         $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
                         $empty_array = false;
                     }
-                    if ($empty_array) { $sample_id_list[] = null;}
+                    if ($empty_array) {
+                        $sample_id_list[] = null;
+                    }
                 } else {
                     $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
                 }
@@ -1228,7 +1240,9 @@ class AirrUtils extends Model
                             $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter_piece['content']['field']]);
                             $empty_array = false;
                         }
-                        if ($empty_array) { $sample_id_list[] = null;}
+                        if ($empty_array) {
+                            $sample_id_list[] = null;
+                        }
                     } else {
                         $sample_id_list[] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
                     }
@@ -1240,13 +1254,15 @@ class AirrUtils extends Model
             //we have a single query parameter, either repertoire id or filter
             if ($filter['content']['field'] == $service_to_airr_mapping['repertoire_id']) {
                 if (is_array($filter['content']['value'])) {
-                        //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
-                        $empty_array = true;
-                        foreach ($filter['content']['value'] as $filter_id) {
-                            $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
-                            $empty_array = false;
-                        }
-                        if ($empty_array) { $sample_id_list[] = null;}
+                    //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
+                    $empty_array = true;
+                    foreach ($filter['content']['value'] as $filter_id) {
+                        $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
+                        $empty_array = false;
+                    }
+                    if ($empty_array) {
+                        $sample_id_list[] = null;
+                    }
                 } else {
                     $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
                 }
