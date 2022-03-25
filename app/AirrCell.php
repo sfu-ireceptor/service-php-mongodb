@@ -387,6 +387,8 @@ class AirrCell extends Model
         $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
         $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
         $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $db_to_airr_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
+        $db_to_service_mapping = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
 
         $sample_id_list = [];
         $query_params = [];
@@ -522,7 +524,7 @@ class AirrCell extends Model
                 }
             }
 
-            $fields_to_display = array_keys($fields_to_display);
+            $header_list = array_keys($fields_to_display);
             $written_results = 0;
             if ($response_type == 'json') {
                 header('Content-Type: application/json; charset=utf-8');
@@ -534,7 +536,7 @@ class AirrCell extends Model
             }
             if ($response_type == 'tsv') {
                 //output the headers
-                echo implode($fields_to_display, chr(9)) . "\n";
+                echo implode($header_list, chr(9)) . "\n";
             }
             $current_result = 0;
             $first = true;
@@ -543,60 +545,27 @@ class AirrCell extends Model
                     $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_cell']] = $current_ir_annotation_set_metadata_id;
                     $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
                     foreach ($result as $row) {
-                        $sequence_list = $row;
-                        $airr_list = [];
+                        $cell_list = $row;
+                        $return_array = Array();
 
-                        foreach ($airr_to_service_mapping as $airr_name => $service_name) {
-                            if (isset($service_name) && isset($service_to_db_mapping[$service_name])) {
-                                if (isset($sequence_list[$service_to_db_mapping[$service_name]])) {
-                                    $airr_list[$airr_name] = $sequence_list[$service_to_db_mapping[$service_name]];
-                                    if ($service_name == 'ir_annotation_set_metadata_id') {
-                                        $airr_list[$airr_name] = (string) $airr_list[$airr_name];
-                                    }
-                                }
-                            } else {
-                                $airr_list[$airr_name] = null;
-                            }
+                        //null out the required fields, then populate from database.
+                        foreach ($fields_to_display as $display_field=>$value) {
+                            array_set($return_array, $display_field, null);
                         }
+                        $return_array = AirrUtils::convertDbToAirr($cell_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_types, $fields_to_display, $response_type);
+
 
                         $current_result++;
-                        $new_line = [];
-                        foreach ($fields_to_display as $current_header) {
-                            if (isset($airr_list[$current_header])) {
-                                if (is_array($airr_list[$current_header])) {
-                                    $new_line[$current_header] = implode($airr_list[$current_header], ', or');
-                                } elseif ($airr_list[$current_header] != null && is_a($airr_list[$current_header], "MongoDB\Model\BSONArray")) {
-                                    $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
-                                } else {
-                                    //the database id should be converted to string using the BSON function
-                                    if (is_a($airr_list[$current_header], "MongoDB\BSON\ObjectId")) {
-                                        $airr_list[$current_header] = $airr_list[$current_header]->__toString();
-                                    }
-                                    $new_line[$current_header] = $airr_list[$current_header];
-                                }
-                            } else {
-                                $new_line[$current_header] = null;
-                            }
-
-                            //in TSV we want our boolean values to be 'T' and 'F'
-                            if (isset($new_line[$current_header]) && $airr_types[$current_header] == 'boolean' && $response_type == 'tsv') {
-                                if (strtolower($new_line[$current_header]) == 'true' || $new_line[$current_header] == true) {
-                                    $new_line[$current_header] = 'T';
-                                } else {
-                                    $new_line[$current_header] = 'F';
-                                }
-                            }
-                        }
                         if ($current_result > $start_at) {
                             if ($response_type == 'tsv') {
-                                echo implode($new_line, chr(9)) . "\n";
+                                echo implode($return_array, chr(9)) . "\n";
                             } else {
                                 if ($first) {
                                     $first = false;
                                 } else {
                                     echo ',';
                                 }
-                                echo json_encode($new_line, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                                echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                             }
                             $written_results++;
                         }

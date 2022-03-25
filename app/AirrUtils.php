@@ -658,6 +658,52 @@ class AirrUtils extends Model
         return $response;
     }
 
+    public static function convertDbToAirr($result_list, $db_to_airr_mapping, $db_to_service_mapping,
+            $airr_type, $fields_to_display, $response_type)
+    {
+        //given a single repository query result and mapping fields, process it 
+        //  into an array suitable for display
+        foreach ($result_list as $return_key => $return_element) {
+
+            //flatten any MongoDB ObjectId types
+            if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
+                $return_element = $return_element->__toString();
+            }
+
+            // mongodb BSON array needs to be serialized or it can't be used in TSV output
+            //  we also want to return a string, not an array, in JSON response
+            if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
+                $return_element = implode($return_element->jsonSerialize(), ', or ');
+            }
+
+            //make all the requested fields null before populating if there are results
+            if (isset($db_to_airr_mapping[$return_key]) && $db_to_airr_mapping[$return_key] != '') {
+                $service_name = $db_to_service_mapping[$return_key];
+                if ($service_name == 'ir_annotation_set_metadata_id_expression') {
+                    $return_element = (string) $return_element;
+                }
+                //in TSV we want our boolean values to be 'T' and 'F'
+                if ($airr_type[$db_to_airr_mapping[$return_key]] == 'boolean' && $response_type == 'tsv') {
+                    if (strtolower($return_element) == 'true' || $return_element == true) {
+                        $return_element = 'T';
+                    } else {
+                        $return_element = 'F';
+                    }
+                }
+                array_set($return_array, $db_to_airr_mapping[$return_key], $return_element);
+            }
+            else {
+                //if there are fields not in AIRR standard but in database, we want to
+                //  send those along too, but only if there was no constraint on the fields
+                if (! isset($fields_to_display[$return_key]) && $response_type != 'tsv' &&
+                    $return_key != '_id') {
+                    $return_array[$return_key] = $return_element;
+                }
+            }
+        }
+        return $return_array;
+    }
+
     public static function cloneQueryOptimizable($query)
     {
         //method to check if a clone query can be optimized for iReceptor repository
