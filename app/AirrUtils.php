@@ -661,7 +661,7 @@ class AirrUtils extends Model
     public static function convertDbToAirr($result_list, $db_to_airr_mapping, $db_to_service_mapping,
             $airr_type, $fields_to_display, $response_type)
     {
-        //given a single repository query result and mapping fields, process it 
+        //given a single repository query result and mapping fields, process it
         //  into an array suitable for display
         foreach ($result_list as $return_key => $return_element) {
 
@@ -691,8 +691,7 @@ class AirrUtils extends Model
                     }
                 }
                 array_set($return_array, $db_to_airr_mapping[$return_key], $return_element);
-            }
-            else {
+            } else {
                 //if there are fields not in AIRR standard but in database, we want to
                 //  send those along too, but only if there was no constraint on the fields
                 if (! isset($fields_to_display[$return_key]) && $response_type != 'tsv' &&
@@ -701,6 +700,7 @@ class AirrUtils extends Model
                 }
             }
         }
+
         return $return_array;
     }
 
