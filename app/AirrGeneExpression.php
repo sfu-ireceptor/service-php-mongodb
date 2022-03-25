@@ -393,7 +393,6 @@ class AirrGeneExpression extends Model
         $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
 
-
         $sample_id_list = [];
         $query_params = [];
         $db_filters = [];
@@ -550,8 +549,8 @@ class AirrGeneExpression extends Model
                     $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
                     foreach ($result as $row) {
                         $expression_list = $row;
-                        $return_array = Array();
-                        
+                        $return_array = [];
+
                         //null out the required fields, then populate from database.
                         foreach ($fields_to_display as $display_field=>$value) {
                             array_set($return_array, $display_field, null);

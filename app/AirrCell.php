@@ -546,14 +546,13 @@ class AirrCell extends Model
                     $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
                     foreach ($result as $row) {
                         $cell_list = $row;
-                        $return_array = Array();
+                        $return_array = [];
 
                         //null out the required fields, then populate from database.
                         foreach ($fields_to_display as $display_field=>$value) {
                             array_set($return_array, $display_field, null);
                         }
                         $return_array = AirrUtils::convertDbToAirr($cell_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_types, $fields_to_display, $response_type);
-
 
                         $current_result++;
                         if ($current_result > $start_at) {
