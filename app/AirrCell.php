@@ -552,7 +552,7 @@ class AirrCell extends Model
                         foreach ($fields_to_display as $display_field=>$value) {
                             array_set($return_array, $display_field, null);
                         }
-                        $return_array = AirrUtils::convertDbToAirr($cell_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_types, $fields_to_display, $response_type);
+                        $return_array = AirrUtils::convertDbToAirr($cell_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_types, $fields_to_display, $response_type, isset($request['include_fields']));
 
                         $current_result++;
                         if ($current_result > $start_at) {
