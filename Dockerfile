@@ -34,8 +34,8 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
         chown root:root /var/www/html && \
         chmod go-w /var/www/html && \
         chmod u+w /var/www/html && \
-        find /var/www -perm 0777 | xargs chmod 0755 && \
-        find storage -name .gitignore | xargs chmod 0644 && \
+        find /var/www -perm 0777 | xargs -r chmod 0755 && \
+        find storage -name .gitignore | xargs -r chmod 0644 && \
         cp .env.example .env && \
         php artisan key:generate
 
