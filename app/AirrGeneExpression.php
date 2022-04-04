@@ -308,8 +308,8 @@ class AirrGeneExpression extends Model
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, but only if there was no constraint on the fields
-                    if (! isset($fields_to_display[$return_key]) && $response_type != 'tsv' &&
-                        $return_key != '_id') {
+                    if (! isset($params['include_fields']) && ! isset ($params['fields']) && 
+                            $response_type == 'json' && $return_key !='_id' ) {
                         $return_array[$return_key] = $return_element;
                     }
                 }
