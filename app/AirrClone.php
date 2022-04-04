@@ -446,7 +446,7 @@ class AirrClone extends Model
             }
 
             header('Content-Type: application/json; charset=utf-8');
-            $response = AirrUtils::airrHeader("Clone", true);
+            $response = AirrUtils::airrHeader('Clone', true);
             $response['Facet'] = self::airrCloneFacetsResponse($return_list);
             $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             echo $json;
@@ -529,7 +529,7 @@ class AirrClone extends Model
             $written_results = 0;
             if ($response_type == 'json') {
                 header('Content-Type: application/json; charset=utf-8');
-                $response = AirrUtils::AirrHeader("Clone", true);
+                $response = AirrUtils::AirrHeader('Clone', true);
                 echo '{"Info":';
                 echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                 echo ', "Clone":[';
@@ -556,27 +556,26 @@ class AirrClone extends Model
                         $return_array = AirrUtils::convertDbToAirr($clone_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_types, $fields_to_display, $response_type, isset($request['include_fields']));
 
                         $current_result++;
- 
-                        }
-                        if ($current_result > $start_at) {
-                            if ($response_type == 'tsv') {
-                                echo implode($return_array, chr(9)) . "\n";
+                    }
+                    if ($current_result > $start_at) {
+                        if ($response_type == 'tsv') {
+                            echo implode($return_array, chr(9)) . "\n";
+                        } else {
+                            if ($first) {
+                                $first = false;
                             } else {
-                                if ($first) {
-                                    $first = false;
-                                } else {
-                                    echo ',';
-                                }
-                                echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                                echo ',';
                             }
-                            $written_results++;
+                            echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                         }
-                        if ($max_values > 0 && $written_results >= $max_values) {
-                            break 2;
-                        }
+                        $written_results++;
+                    }
+                    if ($max_values > 0 && $written_results >= $max_values) {
+                        break 2;
                     }
                 }
-            
+            }
+
             if ($response_type == 'json') {
                 echo "]}\n";
             }
