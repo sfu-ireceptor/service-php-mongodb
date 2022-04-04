@@ -277,7 +277,7 @@ class AirrClone extends Model
             }
 
             foreach ($clone as $return_key => $return_element) {
-
+                
                 //make all the requested fields null before populating if there are results
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     $service_name = $db_to_service[$return_key];
@@ -308,12 +308,12 @@ class AirrClone extends Model
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, but only if there was no constraint on the fields
-                    if (! isset($fields_to_display)) {
+                    if (! isset($params['include_fields']) && ! isset ($params['fields']) && 
+                            $response_type == 'json' && $return_key !='_id') {
                         $return_array[$return_key] = $return_element;
                     }
                 }
             }
-
             if ($response_type == 'tsv') {
                 echo implode($return_array, chr(9)) . "\n";
             } else {
