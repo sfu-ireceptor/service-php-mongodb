@@ -1145,7 +1145,7 @@ class AirrUtils extends Model
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = ([$airr_names['repertoire_id'], $airr_names['data_processing_id'],
-                $airr_names['cell_id'], $airr_names['property'], $airr_names['value'],
+                $airr_names['cell_id'], $airr_names['property_id'], $airr_names['property'], $airr_names['value'],
             ]
             );
             $filters = '';
