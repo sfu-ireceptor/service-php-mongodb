@@ -651,6 +651,7 @@ class AirrUtils extends Model
             $optimized_string = 'Optimized ';
         }
         $response['Info'] = Info::getAirrInfo();
+        
         return $response;
     }
 
