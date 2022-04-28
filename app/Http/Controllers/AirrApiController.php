@@ -94,11 +94,7 @@ class AirrApiController extends Controller
                     if (isset($params['format']) && $params['format'] != '') {
                         $response_type = strtolower($params['format']);
                     }
-                    $response['Info']['title'] = 'AIRR Data Commons API';
-                    $response['Info']['description'] = 'API response for repertoire query';
-                    $response['Info']['version'] = 1.3;
-                    $response['Info']['contact']['name'] = 'AIRR Community';
-                    $response['Info']['contact']['url'] = 'https://github.com/airr-community';
+                    $response['Info'] = AirrUtils::airrHeader();
 
                     if (isset($params['facets'])) {
                         //facets have different formatting requirements
@@ -117,11 +113,7 @@ class AirrApiController extends Controller
     public function airr_repertoire_single($repertoire_id)
     {
         $repertoire = AirrRepertoire::airrRepertoireSingle($repertoire_id);
-        $response['Info']['title'] = 'AIRR Data Commons API';
-        $response['Info']['description'] = 'API response for repertoire query';
-        $response['Info']['version'] = 1.3;
-        $response['Info']['contact']['name'] = 'AIRR Community';
-        $response['Info']['contact']['url'] = 'https://github.com/airr-community';
+        $response['Info'] = AirrUtils::airrHeader();
         $response['Repertoire'] = AirrRepertoire::airrRepertoireResponseSingle($repertoire);
 
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
