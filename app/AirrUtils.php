@@ -9,7 +9,6 @@ use Log;
 
 class AirrUtils extends Model
 {
-
     //method to convert a value to a given type and encode in a way
     //  suitable for JSON query
     public static function typeConvertHelper($value, $type)
@@ -651,7 +650,7 @@ class AirrUtils extends Model
             $optimized_string = 'Optimized ';
         }
         $response['Info'] = Info::getAirrInfo();
-        
+
         return $response;
     }
 
