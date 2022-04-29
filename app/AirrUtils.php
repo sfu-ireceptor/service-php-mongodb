@@ -649,11 +649,7 @@ class AirrUtils extends Model
         if ($optimized) {
             $optimized_string = 'Optimized ';
         }
-        $response['Info']['title'] = 'AIRR Data Commons API';
-        $response['Info']['description'] = $optimized_string . 'API response for ' . $type . ' query';
-        $response['Info']['version'] = 1.3;
-        $response['Info']['contact']['name'] = 'AIRR Community';
-        $response['Info']['contact']['url'] = 'https://github.com/airr-community';
+        $response['Info'] = Info::getAirrInfo();
 
         return $response;
     }

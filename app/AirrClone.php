@@ -556,22 +556,23 @@ class AirrClone extends Model
                         $return_array = AirrUtils::convertDbToAirr($clone_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_types, $fields_to_display, $response_type, isset($request['include_fields']));
 
                         $current_result++;
-                    }
-                    if ($current_result > $start_at) {
-                        if ($response_type == 'tsv') {
-                            echo implode($return_array, chr(9)) . "\n";
-                        } else {
-                            if ($first) {
-                                $first = false;
+
+                        if ($current_result > $start_at) {
+                            if ($response_type == 'tsv') {
+                                echo implode($return_array, chr(9)) . "\n";
                             } else {
-                                echo ',';
+                                if ($first) {
+                                    $first = false;
+                                } else {
+                                    echo ',';
+                                }
+                                echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
                             }
-                            echo json_encode($return_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+                            $written_results++;
                         }
-                        $written_results++;
-                    }
-                    if ($max_values > 0 && $written_results >= $max_values) {
-                        break 2;
+                        if ($max_values > 0 && $written_results >= $max_values) {
+                            break 3;
+                        }
                     }
                 }
             }
