@@ -277,9 +277,8 @@ class AirrRearrangement extends Model
 
                 //make all the requested fields null before populating if there are results
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
-                    //skip over 
-                    if ($response_type == 'tsv' && !array_key_exists($repository_to_airr[$return_key], $fields_to_display))
-                    {
+                    //skip over
+                    if ($response_type == 'tsv' && ! array_key_exists($repository_to_airr[$return_key], $fields_to_display)) {
                         continue;
                     }
                     $service_name = $db_to_service[$return_key];
