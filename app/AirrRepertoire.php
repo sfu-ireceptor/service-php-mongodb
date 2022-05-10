@@ -218,9 +218,9 @@ class AirrRepertoire extends Model
             }
         }
 
-        // if neither required nor fields is set, we still want to return required
+        // if neither required nor fields is set, we still want to return AIRR fields
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
-            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
                     $fully_qualified_path = $name;
