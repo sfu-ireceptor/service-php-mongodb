@@ -5,16 +5,16 @@ namespace App;
 use Illuminate\Support\Facades\DB;
 use Jenssegers\Mongodb\Eloquent\Model;
 
-class AirrClone extends Model
+class AirrGeneExpression extends Model
 {
     protected $collection;
 
     public function __construct()
     {
-        if (isset($_ENV['DB_CLONES_COLLECTION'])) {
-            $this->collection = $_ENV['DB_CLONES_COLLECTION'];
+        if (isset($_ENV['DB_GENE_EXPRESSION_COLLECTION'])) {
+            $this->collection = $_ENV['DB_GENE_EXPRESSION_COLLECTION'];
         } else {
-            $this->collection = 'clone';
+            $this->collection = 'expression';
         }
         //timeouts are set in seconds, so we should convert to miliseconds for
         //  mongoDB
@@ -50,25 +50,27 @@ class AirrClone extends Model
         return $this->fetch_timeout;
     }
 
-    public static function airrCloneSingle($clone_id)
+    public static function airrGeneExpressionSingle($expression_id)
     {
-        //function that finds a single clone based on the provided $clone_id
+        //function that finds a single gene expression based on the provided $expression_id
         $query = new self();
-        $query = $query->where('_id', $clone_id);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $db_expression_id_name = $repository_names['expression_id'];
+        $query = $query->where($db_expression_id_name, $expression_id);
         $result = $query->get();
 
         return $result->toArray();
     }
 
-    public static function airrCloneRequest($params)
+    public static function airrGeneExpressionRequest($params)
     {
         //function that processes AIRR API request and returns an array of fields matching
         //   the filters, with optional start number and max number of results
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $airr_to_repository = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $airr_to_repository = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
         ini_set('memory_limit', '2G');
         set_time_limit(60 * 60 * 24);
 
@@ -79,6 +81,7 @@ class AirrClone extends Model
 
         $fields_to_retrieve = [];
         $query = new self();
+
         $options['projection'] = [];
         // if we have filters, process them
         if (isset($params['filters']) && $params['filters'] != '' && ! empty($params['filters'])) {
@@ -117,7 +120,7 @@ class AirrClone extends Model
             }
 
             if ($map_fields_column != '') {
-                $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+                $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
                 foreach ($required_fields as $name => $value) {
                     if ($value && strtolower($value) != 'false') {
                         $fields_to_retrieve[$name] = 1;
@@ -146,9 +149,6 @@ class AirrClone extends Model
             }
         }
 
-        //echo "<br/>\n Returning $query_string";
-        //return ($query_string);
-
         //if facets is set we want to aggregate by that fields using the sum operation
         if (isset($params['facets']) && $params['facets'] != '') {
             if (! isset($airr_names[$params['facets']])) {
@@ -167,14 +167,14 @@ class AirrClone extends Model
             $options['noCursorTimeout'] = true;
             $list = DB::collection($query->getCollection())->raw()->find(json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string), true), $options);
         }
-        //return $list->toArray();
+
         return $list;
     }
 
-    public static function airrCloneFacetsResponse($response_list)
+    public static function airrGeneExpressionFacetsResponse($response_list)
     {
         $return_array = [];
-        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         foreach ($response_list as $response) {
@@ -190,7 +190,7 @@ class AirrClone extends Model
         return $return_array;
     }
 
-    public static function airrCloneResponse($response_list, $response_type, $params)
+    public static function airrGeneExpressionResponse($response_list, $response_type, $params)
     {
         //method that takes an array of AIRR terms and returns a JSON string
         //  that represents a repertoire response as defined in AIRR API
@@ -199,12 +199,12 @@ class AirrClone extends Model
 
         //first, we need some mappings to convert database values to AIRR terms
         //  and bucket them into appropriate AIRR classes
-        $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $db_to_service = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $db_to_service = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
 
         $fields_to_display = [];
 
@@ -227,7 +227,7 @@ class AirrClone extends Model
             }
 
             if ($map_fields_column != '') {
-                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
                 foreach ($required_fields as $name => $value) {
                     if ($value && strtolower($value) != 'false') {
                         $fully_qualified_path = $name;
@@ -240,7 +240,7 @@ class AirrClone extends Model
         $first = true;
         // if neither required nor fields is set, we still want to return required
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
-            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
                     $fully_qualified_path = $name;
@@ -250,12 +250,11 @@ class AirrClone extends Model
         }
 
         if ($response_type == 'json') {
-            // header('Content-Type: application/json; charset=utf-8');
             header('Content-Type: application/json; charset=utf-8');
-            $response = AirrUtils::AirrHeader('Clone', false);
+            $response = AirrUtils::AirrHeader('Cell Expression', false);
             echo '{"Info":';
             echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-            echo ', "Clone":[';
+            echo ', "CellExpression":[';
             echo "\n";
         }
         if ($response_type == 'tsv') {
@@ -268,7 +267,7 @@ class AirrClone extends Model
         if ($response_type == 'tsv') {
             echo implode(array_keys($fields_to_display), chr(9)) . "\n";
         }
-        foreach ($response_list as $clone) {
+        foreach ($response_list as $expression) {
             $return_array = [];
 
             //null out the required fields, then populate from database.
@@ -276,17 +275,23 @@ class AirrClone extends Model
                 array_set($return_array, $display_field, null);
             }
 
-            foreach ($clone as $return_key => $return_element) {
+            foreach ($expression as $return_key => $return_element) {
+
+                //flatten any MongoDB ObjectId types
+                if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
+                    $return_element = $return_element->__toString();
+                }
+
+                // mongodb BSON array needs to be serialized or it can't be used in TSV output
+                //  we also want to return a string, not an array, in JSON response
+                if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
+                    $return_element = implode($return_element->jsonSerialize(), ', or ');
+                }
 
                 //make all the requested fields null before populating if there are results
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     $service_name = $db_to_service[$return_key];
-                    //flatten any MongoDB ObjectId types
-                    if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
-                        $return_element = $return_element->__toString();
-                    }
-
-                    if ($service_name == 'ir_project_sample_id') {
+                    if ($service_name == 'ir_annotation_set_metadata_id_expression') {
                         $return_element = (string) $return_element;
                     }
 
@@ -299,11 +304,6 @@ class AirrClone extends Model
                         }
                     }
 
-                    // mongodb BSON array needs to be serialized or it can't be used in TSV output
-                    //  we also want to return a string, not an array, in JSON response
-                    if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                        $return_element = implode($return_element->jsonSerialize(), ', or ');
-                    }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
@@ -314,6 +314,7 @@ class AirrClone extends Model
                     }
                 }
             }
+
             if ($response_type == 'tsv') {
                 echo implode($return_array, chr(9)) . "\n";
             } else {
@@ -330,14 +331,14 @@ class AirrClone extends Model
         }
     }
 
-    public static function airrCloneResponseSingle($clone)
+    public static function airrGeneExpressionResponseSingle($expression)
     {
 
-        //take a single clone from database query and create a response as per
+        //take a single gene expression from database query and create a response as per
         //  AIRR API standard
-        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_response', 'service_name', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_response', 'service_name', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
 
         foreach ($required_fields as $name => $value) {
             if ($value) {
@@ -352,8 +353,8 @@ class AirrClone extends Model
             array_set($result, $display_field, null);
         }
 
-        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        foreach ($clone as $key=>$value) {
+        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        foreach ($expression as $key=>$value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
                     $result[$response_mapping[$key]] = implode($value, ', or ');
@@ -371,7 +372,7 @@ class AirrClone extends Model
         return $return_list;
     }
 
-    public static function airrOptimizedCloneRequest($request)
+    public static function airrOptimizedGeneExpressionRequest($request)
     {
         //method to run an optimized MongoDB query on the filters that can support it
         //  a single '=' search on an indexed field, a search on indexed field and
@@ -379,17 +380,18 @@ class AirrClone extends Model
         ini_set('memory_limit', '2G');
         set_time_limit(60 * 60 * 24);
 
-        $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $db_to_service_mapping = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $db_to_airr_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
         $repertoire_service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
         $repertoire_airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
+        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
         $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $db_to_airr_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        $db_to_service_mapping = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+        $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
 
         $sample_id_list = [];
         $query_params = [];
@@ -408,7 +410,7 @@ class AirrClone extends Model
 
         //create a list of repertoire ids we'll be looping over, and a filter we can pass to MongoDB
         if (isset($filter) && $filter != '') {
-            AirrUtils::optimizeCloneFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters, $db_types);
+            AirrUtils::optimizeGeneExpressionFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, $sample_id_list, $db_filters, $db_types);
         }
         //if we don't have a list of repertoire ids, we will be looping over all the database entries
         //if we do have it, loop through to retrieve the connector id
@@ -435,7 +437,7 @@ class AirrClone extends Model
             foreach ($sample_id_query_results_list as $current_repertoire_id =>$current_sample_id) {
                 $total = 0;
                 foreach ($current_sample_id as $current_ir_annotation_set_metadata_id) {
-                    $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_clone']] = $current_ir_annotation_set_metadata_id;
+                    $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_expression']] = $current_ir_annotation_set_metadata_id;
                     $total += DB::collection($query->getCollection())->raw()->count($db_filters, $query_params);
                 }
                 if ($total > 0) {
@@ -446,8 +448,8 @@ class AirrClone extends Model
             }
 
             header('Content-Type: application/json; charset=utf-8');
-            $response = AirrUtils::airrHeader('Clone', true);
-            $response['Facet'] = self::airrCloneFacetsResponse($return_list);
+            $response = AirrUtils::airrHeader('Cell Expression', true);
+            $response['Facet'] = self::airrGeneExpressionFacetsResponse($return_list);
             $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
             echo $json;
         } else {
@@ -504,7 +506,7 @@ class AirrClone extends Model
                 }
 
                 if ($map_fields_column != '') {
-                    $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+                    $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
                     foreach ($required_fields as $name => $value) {
                         if ($value && strtolower($value) != 'false') {
                             $fully_qualified_path = $name;
@@ -516,7 +518,7 @@ class AirrClone extends Model
 
             // if neither required nor fields is set, we still want to return required
             if (! isset($request['include_fields']) && ! isset($request['fields'])) {
-                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['geneexpression', 'ir_expression', 'GeneExpression', 'IR_Expression']]);
                 foreach ($required_fields as $name => $value) {
                     if ($value) {
                         $fully_qualified_path = $name;
@@ -525,38 +527,37 @@ class AirrClone extends Model
                 }
             }
 
-            $fields_to_display = array_keys($fields_to_display);
+            $header_fields = array_keys($fields_to_display);
             $written_results = 0;
             if ($response_type == 'json') {
                 header('Content-Type: application/json; charset=utf-8');
-                $response = AirrUtils::AirrHeader('Clone', true);
+                $response = AirrUtils::AirrHeader('Cell Expression', true);
                 echo '{"Info":';
                 echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-                echo ', "Clone":[';
+                echo ', "CellExpression":[';
                 echo "\n";
             }
             if ($response_type == 'tsv') {
                 //output the headers
-                echo implode($fields_to_display, chr(9)) . "\n";
+                echo implode($header_fields, chr(9)) . "\n";
             }
             $current_result = 0;
             $first = true;
             foreach ($sample_id_query_results_list as $current_repertoire_id => $current_sample_id) {
                 foreach ($current_sample_id as $current_ir_annotation_set_metadata_id) {
-                    $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_clone']] = $current_ir_annotation_set_metadata_id;
+                    $db_filters[$service_to_db_mapping['ir_annotation_set_metadata_id_expression']] = $current_ir_annotation_set_metadata_id;
                     $result = DB::collection($query->getCollection())->raw()->find($db_filters, $query_params);
                     foreach ($result as $row) {
-                        $clone_list = $row;
+                        $expression_list = $row;
                         $return_array = [];
 
                         //null out the required fields, then populate from database.
                         foreach ($fields_to_display as $display_field=>$value) {
                             array_set($return_array, $display_field, null);
                         }
-                        $return_array = AirrUtils::convertDbToAirr($clone_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_types, $fields_to_display, $response_type, isset($request['include_fields']));
+                        $return_array = AirrUtils::convertDbToAirr($expression_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_type, $fields_to_display, $response_type, isset($request['include_fields']));
 
                         $current_result++;
-
                         if ($current_result > $start_at) {
                             if ($response_type == 'tsv') {
                                 echo implode($return_array, chr(9)) . "\n";
@@ -571,12 +572,11 @@ class AirrClone extends Model
                             $written_results++;
                         }
                         if ($max_values > 0 && $written_results >= $max_values) {
-                            break 3;
+                            break 2;
                         }
                     }
                 }
             }
-
             if ($response_type == 'json') {
                 echo "]}\n";
             }

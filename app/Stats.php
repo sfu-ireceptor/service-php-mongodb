@@ -100,7 +100,6 @@ class Stats extends Model
                 return 'error';
             }
 
-            $repertoire_id_list = [];
             foreach ($params[$service_to_api_input_mapping['repertoires']] as $repertoire_element) {
                 //each repertoire object has repertoire_id, optional sample_processing_id and
                 //  optional data_processing id, that we can use to find the repertoire in repertoire collection
@@ -134,8 +133,6 @@ class Stats extends Model
                 }
                 $repertoire_result = AirrRepertoire::findRepertoire($repertoire_query);
                 foreach ($repertoire_result as $repertoire) {
-                    $response_object = [];
-
                     $repertoire_id = $repertoire[$service_to_repertoire_db_mapping['ir_project_sample_id']];
                     $sample_processing_id = $repertoire[$service_to_repertoire_db_mapping['sample_processing_id']];
                     $data_processing_id = $repertoire[$service_to_repertoire_db_mapping['data_processing_id']];

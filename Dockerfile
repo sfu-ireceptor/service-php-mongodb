@@ -34,7 +34,9 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
         chown root:root /var/www/html && \
         chmod go-w /var/www/html && \
         chmod u+w /var/www/html && \
-        find storage -name .gitignore | xargs chmod 0644 && \
+
+        find /var/www -perm 0777 | xargs -r chmod 0755 && \
+        find storage -name .gitignore | xargs -r chmod 0644 && \
         cp .env.example .env && \
         php artisan key:generate
 
@@ -42,4 +44,5 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
 RUN mkdir /config
 ADD https://raw.githubusercontent.com/sfu-ireceptor/config/clone-and-stats-mapping/AIRR-iReceptorMapping.txt /config/
 RUN ln -s /config/AIRR-iReceptorMapping.txt /var/www/html/config/AIRR-iReceptorMapping.txt
+
 RUN chmod 644 /var/www/html/config/AIRR-iReceptorMapping.txt

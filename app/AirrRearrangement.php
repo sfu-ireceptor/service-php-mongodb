@@ -238,7 +238,7 @@ class AirrRearrangement extends Model
         $first = true;
         // if neither required nor fields is set, we still want to return required
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
-            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'ir_rearrangement']]);
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
                     $fully_qualified_path = $name;
@@ -321,6 +321,7 @@ class AirrRearrangement extends Model
                 } else {
                     //problem with TSV download is that there are fields not in the database but it's hard to
                     //  put them into headers - for now skip them in the TSV
+
                     if ($response_type == 'tsv') {
                         continue;
                     }
@@ -475,6 +476,7 @@ class AirrRearrangement extends Model
                 }
             }
             header('Content-Type: application/json; charset=utf-8');
+
             $response = AirrUtils::airrHeader();
             $response['Facet'] = self::airrRearrangementFacetsResponse($sample_id_list);
             $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
@@ -508,6 +510,7 @@ class AirrRearrangement extends Model
                     }
                 }
                 header('Content-Type: application/json; charset=utf-8');
+
                 $response = AirrUtils::airrHeader();
                 $response['Facet'] = self::airrRearrangementFacetsResponse($return_list);
                 $json = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
@@ -607,6 +610,7 @@ class AirrRearrangement extends Model
                     $response = AirrUtils::airrHeader();
                     echo '{"Info":';
                     echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
                     echo ', "Rearrangement":[';
                     echo "\n";
                 }
