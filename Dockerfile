@@ -9,14 +9,20 @@ RUN apt-get update && \
 	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Apache setup
-RUN a2dismod cgi
+COPY ./docker/apache-vhost-https.conf /etc/apache2/sites-available/000-default.conf
+COPY ./docker/apache-vhost.conf /etc/apache2/sites-available/http.conf
+
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
 	sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
 	sed -ri -e 's!daily!monthly!g' /etc/logrotate.d/apache2 && \
 	sed -ri -e 's!rotate 14!rotate 120!g' /etc/logrotate.d/apache2 && \
-	a2enmod rewrite && \
+    a2enmod rewrite && \
+    a2dismod cgi && \
+	a2enmod ssl && \
 	a2enmod headers
+
+RUN mkdir -p /etc/apache2/ssl
 
 # add source code and dependencies
 COPY . /var/www/html
@@ -28,13 +34,15 @@ RUN chown -R www-data:www-data /var/www/html/storage && \
         chown root:root /var/www/html && \
         chmod go-w /var/www/html && \
         chmod u+w /var/www/html && \
-        find /var/www -perm 0777 | xargs chmod 0755 && \
-        find storage -name .gitignore | xargs chmod 0644 && \
+        find /var/www -perm 0777 | xargs -r chmod 0755 && \
+        find storage -name .gitignore | xargs -r chmod 0644 && \
         cp .env.example .env && \
         php artisan key:generate
 
-# download mapping file
+# add mapping file
+RUN mkdir /config
+ADD https://raw.githubusercontent.com/sfu-ireceptor/config/ipa5-v3-stats/AIRR-iReceptorMapping.txt /config/
+RUN ln -s /config/AIRR-iReceptorMapping.txt /var/www/html/config/AIRR-iReceptorMapping.txt
 
-ADD https://raw.githubusercontent.com/sfu-ireceptor/config/ipa5-v3-stats/AIRR-iReceptorMapping.txt /var/www/html/config/
 RUN chmod 644 /var/www/html/config/AIRR-iReceptorMapping.txt
 

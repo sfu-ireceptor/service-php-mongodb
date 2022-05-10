@@ -43,6 +43,7 @@ class StatsController extends Controller
         }
         $response['Result'] = $l;
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        unset($l);
 
         return response($return_response, 200)->header('Content-Type', 'application/json');
     }
