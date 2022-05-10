@@ -238,9 +238,9 @@ class AirrClone extends Model
         }
 
         $first = true;
-        // if neither required nor fields is set, we still want to return required
+        // if neither required nor fields is set, we still want to return all AIRR fields
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
-            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
                     $fully_qualified_path = $name;
@@ -514,9 +514,9 @@ class AirrClone extends Model
                 }
             }
 
-            // if neither required nor fields is set, we still want to return required
+            // if neither required nor fields is set, we still want to return all AIRR fields
             if (! isset($request['include_fields']) && ! isset($request['fields'])) {
-                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
                 foreach ($required_fields as $name => $value) {
                     if ($value) {
                         $fully_qualified_path = $name;
