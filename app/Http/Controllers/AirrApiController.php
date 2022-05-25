@@ -24,7 +24,7 @@ class AirrApiController extends Controller
 
     public function info()
     {
-        $response=Info::getAirrInfo();
+        $response = Info::getAirrInfo();
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
         return response($return_response)->header('Content-Type', 'application/json');
