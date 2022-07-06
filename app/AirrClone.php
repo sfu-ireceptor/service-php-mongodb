@@ -300,9 +300,13 @@ class AirrClone extends Model
                     }
 
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
-                    //  we also want to return a string, not an array, in JSON response
+                    //  we also want to return a string, not an array, in JSON response, unless its
+                    //  return type is an array
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                        $return_element = implode($return_element->jsonSerialize(), ', or ');
+                        if ($response_type == 'tsv' ||
+                            (isset($airr_type[$repository_to_airr[$return_key]]) && $airr_type[$repository_to_airr[$return_key]] != 'array')) {
+                            $return_element = implode($return_element->jsonSerialize(), ', or ');
+                        }
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
