@@ -300,9 +300,14 @@ class AirrClone extends Model
                     }
 
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
-                    //  we also want to return a string, not an array, in JSON response
+                    //  we also want to return a string, not an array, in JSON response, unless its
+                    //  return type is an array
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                        $return_element = implode($return_element->jsonSerialize(), ', or ');
+                        if ($response_type == 'tsv' || 
+                            (isset ($airr_type[$repository_to_airr[$return_key]]) && $airr_type[$repository_to_airr[$return_key]]!= 'array'))
+                        {                    
+                            $return_element = implode($return_element->jsonSerialize(), ', or ');
+                        }
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
@@ -416,6 +421,7 @@ class AirrClone extends Model
         $sample_id_query_results_list = [];
         if (count($sample_id_list) != 0) {
             $sample_id_query = $sample_id_query->whereIn($repertoire_service_to_db_mapping['ir_project_sample_id'], $sample_id_list);
+
         }
         $result = $sample_id_query->get();
         foreach ($result as $repertoire) {
