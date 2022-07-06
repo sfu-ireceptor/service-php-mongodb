@@ -303,9 +303,8 @@ class AirrClone extends Model
                     //  we also want to return a string, not an array, in JSON response, unless its
                     //  return type is an array
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                        if ($response_type == 'tsv' || 
-                            (isset ($airr_type[$repository_to_airr[$return_key]]) && $airr_type[$repository_to_airr[$return_key]]!= 'array'))
-                        {                    
+                        if ($response_type == 'tsv' ||
+                            (isset($airr_type[$repository_to_airr[$return_key]]) && $airr_type[$repository_to_airr[$return_key]] != 'array')) {
                             $return_element = implode($return_element->jsonSerialize(), ', or ');
                         }
                     }
@@ -421,7 +420,6 @@ class AirrClone extends Model
         $sample_id_query_results_list = [];
         if (count($sample_id_list) != 0) {
             $sample_id_query = $sample_id_query->whereIn($repertoire_service_to_db_mapping['ir_project_sample_id'], $sample_id_list);
-
         }
         $result = $sample_id_query->get();
         foreach ($result as $repertoire) {
