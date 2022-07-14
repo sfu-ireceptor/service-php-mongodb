@@ -667,8 +667,10 @@ class AirrUtils extends Model
             }
 
             // mongodb BSON array needs to be serialized or it can't be used in TSV output
-            //  we also want to return a string, not an array, in JSON response
-            if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
+            //  we also want to return a string, not an array, in JSON response if it is
+            //  a string in AIRR
+            if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray") &&
+                ($response_type == 'tsv' || (isset ($db_to_airr_mapping[$return_key]) && $airr_type[$db_to_airr_mapping[$return_key]] == 'string'))) {
                 $return_element = implode($return_element->jsonSerialize(), ', or ');
             }
 

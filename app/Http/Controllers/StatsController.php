@@ -103,4 +103,13 @@ class StatsController extends Controller
 
         return response($return_response, 200)->header('Content-Type', 'application/json');
     }
+    public function clone_general_response(Request $request)
+    {
+        $response = [];
+        $response['Info'] = Info::getIrPlusInfo_stats();
+        $response['Message'] = "Clone statistics have not been implemented yet";
+        $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+        return response($return_response, 200)->header('Content-Type', 'application/json');
+    }
 }
