@@ -55,15 +55,12 @@ class AirrClone extends Model
         //function that finds a single clone based on the provided $clone_id
         $query = new self();
         $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-        if (isset($airr_names["clone_id"]))
-        {
-            $db_id = $airr_names["clone_id"];
+        if (isset($airr_names['clone_id'])) {
+            $db_id = $airr_names['clone_id'];
+        } else {
+            $db_id = '_id';
         }
-        else
-        {
-            $db_id = "_id";
-        }
-        
+
         $query = $query->where($db_id, $clone_id);
         $result = $query->get();
 
