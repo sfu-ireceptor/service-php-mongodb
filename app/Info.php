@@ -67,7 +67,7 @@ class Info extends Model
         if (isset($_ENV['AIRR_INFO_API_VERSION'])) {
             $this->airr_info_api_version = $_ENV['AIRR_INFO_API_VERSION'];
         } else {
-            $this->airr_info_api_version = '1.0';
+            $this->airr_info_api_version = '1.2.0';
         }
         if (isset($_ENV['AIRR_INFO_API_CONTACT_NAME'])) {
             $this->airr_info_api_contact_name = $_ENV['AIRR_INFO_API_CONTACT_NAME'];
@@ -103,7 +103,7 @@ class Info extends Model
         if (isset($_ENV['AIRR_INFO_SCHEMA_VERSION'])) {
             $this->airr_info_schema_version = $_ENV['AIRR_INFO_SCHEMA_VERSION'];
         } else {
-            $this->airr_info_schema_version = '1.3';
+            $this->airr_info_schema_version = '1.4.0';
         }
         if (isset($_ENV['AIRR_INFO_SCHEMA_CONTACT_NAME'])) {
             $this->airr_info_schema_contact_name = $_ENV['AIRR_INFO_SCHEMA_CONTACT_NAME'];
