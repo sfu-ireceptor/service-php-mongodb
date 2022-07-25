@@ -27,9 +27,7 @@ class AirrApiController extends Controller
         $response = Info::getAirrInfo();
         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        return response($return_response)->header('Content-Type', 'application/json'); JSON_PRETTY_PRINT);
-
-        return response($return_response)->header('Content-Type', 'application/json');
+        return response($return_response)->header('Content-Type', 'application/json'); 
     }
 
     public function swagger()
