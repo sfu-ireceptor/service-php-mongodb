@@ -16,13 +16,6 @@ class Info extends Model
             $this->collection = 'info';
         }
 
-        // get AIRR Info: sections from the .env file if set,
-        //  use defaults otherwise
-        if (isset($_ENV['AIRR_INFO_TITLE'])) {
-            $this->airr_info_title = $_ENV['AIRR_INFO_TITLE'];
-        } else {
-            $this->airr_info_title = 'airr-api-ireceptor';
-        }
         if (isset($_ENV['AIRR_INFO_DESC'])) {
             $this->airr_info_desc = $_ENV['AIRR_INFO_DESC'];
         } else {
@@ -136,7 +129,7 @@ class Info extends Model
         $info = new self();
         $response = [];
 
-        $response['title'] = $info->airr_info_title;
+        $response['title'] = config('ireceptor.airr_info_title');
         $response['description'] = $info->airr_info_desc;
         $response['version'] = $info->airr_info_version;
         $response['last_update'] = $info->airr_info_last_update;

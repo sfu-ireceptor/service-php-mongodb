@@ -27,4 +27,12 @@ return [
 
     // default
     'airr_mapping_file' => env('IRECEPTOR_AIRR_MAPPING_FILE', 'AIRR-iReceptorMapping.txt'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | /info data
+    |--------------------------------------------------------------------------
+    */
+
+    'airr_info_title' => env('AIRR_INFO_TITLE', 'iReceptor AIRR API'),
 ];
