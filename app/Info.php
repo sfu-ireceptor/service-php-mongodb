@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Jenssegers\Mongodb\Eloquent\Model;
 use ireceptor;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 class Info extends Model
 {
@@ -19,99 +19,99 @@ class Info extends Model
 
         // get AIRR Info: sections from the .env file if set,
         //  use defaults otherwise
-        if (config('ireceptor.airr_info_title')!= null) {
+        if (config('ireceptor.airr_info_title') != null) {
             $this->airr_info_title = config('ireceptor.airr_info_title');
         } else {
             $this->airr_info_title = 'airr-api-ireceptor';
         }
-        if (config('ireceptor.airr_info_desc')!= null) {
+        if (config('ireceptor.airr_info_desc') != null) {
             $this->airr_info_desc = config('ireceptor.airr_info_desc');
         } else {
             $this->airr_info_desc = 'AIRR Data Commons API for iReceptor';
         }
-        if (config('ireceptor.airr_info_version')!= null) {
+        if (config('ireceptor.airr_info_version') != null) {
             $this->airr_info_version = config('ireceptor.airr_info_version');
         } else {
             $this->airr_info_version = '3.0';
         }
-        if (config('ireceptor.airr_info_last_update')!= null) {
+        if (config('ireceptor.airr_info_last_update') != null) {
             $this->airr_info_last_update = config('ireceptor.airr_info_last_update');
         } else {
             $this->airr_info_last_update = null;
         }
-        if (config('ireceptor.airr_info_contact_name')!= null) {
+        if (config('ireceptor.airr_info_contact_name') != null) {
             $this->airr_info_contact_name = config('ireceptor.airr_info_contact_name');
         } else {
             $this->airr_info_contact_name = 'iReceptor';
         }
-        if (config('ireceptor.airr_info_contact_url')!= null) {
+        if (config('ireceptor.airr_info_contact_url') != null) {
             $this->airr_info_contact_url = config('ireceptor.airr_info_contact_url');
         } else {
             $this->airr_info_contact_url = 'http://www.ireceptor.org';
         }
-        if (config('ireceptor.airr_info_contact_email')!= null) {
+        if (config('ireceptor.airr_info_contact_email') != null) {
             $this->airr_info_contact_email = config('ireceptor.airr_info_contact_email');
         } else {
             $this->airr_info_contact_email = 'support@ireceptor.org';
         }
-        if (config('ireceptor.airr_info_license_name')!= null) {
+        if (config('ireceptor.airr_info_license_name') != null) {
             $this->airr_info_license_name = config('ireceptor.airr_info_license_name');
         } else {
             $this->airr_info_license_name = 'GNU LGPL V3';
         }
 
-        if (config('ireceptor.airr_info_api_title')!= null) {
+        if (config('ireceptor.airr_info_api_title') != null) {
             $this->airr_info_api_title = config('ireceptor.airr_info_api_title');
         } else {
             $this->airr_info_api_title = 'AIRR Data Commons API';
         }
-        if (config('ireceptor.airr_info_api_version')!= null) {
+        if (config('ireceptor.airr_info_api_version') != null) {
             $this->airr_info_api_version = config('ireceptor.airr_info_api_version');
         } else {
             $this->airr_info_api_version = '1.2.0';
         }
-        if (config('ireceptor.airr_info_api_contact_name')!= null) {
+        if (config('ireceptor.airr_info_api_contact_name') != null) {
             $this->airr_info_api_contact_name = config('ireceptor.airr_info_api_contact_name');
         } else {
             $this->airr_info_api_contact_name = 'AIRR Community';
         }
-        if (config('ireceptor.airr_info_api_contact_url')!= null) {
+        if (config('ireceptor.airr_info_api_contact_url') != null) {
             $this->airr_info_api_contact_url = config('ireceptor.airr_info_api_contact_url');
         } else {
             $this->airr_info_api_contact_url = 'http://www.airr-community.org/';
         }
-        if (config('ireceptor.airr_info_api_contact_email')!= null) {
+        if (config('ireceptor.airr_info_api_contact_email') != null) {
             $this->airr_info_api_contact_email = config('ireceptor.airr_info_api_contact_email');
         } else {
             $this->airr_info_api_contact_email = 'join@airr-community.org';
         }
-        if (config('ireceptor.airr_info_api_contact_desc')!= null) {
+        if (config('ireceptor.airr_info_api_contact_desc') != null) {
             $this->airr_info_api_contact_desc = config('ireceptor.airr_info_api_contact_desc');
         } else {
             $this->airr_info_api_contact_desc = 'Major Version 1 of the Adaptive Immune Receptor Repertoire (AIRR) data repository web service application programming interface (API).';
         }
 
-        if (config('ireceptor.airr_info_schema_title')!= null) {
+        if (config('ireceptor.airr_info_schema_title') != null) {
             $this->airr_info_schema_title = config('ireceptor.airr_info_schema_title');
         } else {
             $this->airr_info_schema_title = 'AIRR Schema';
         }
-        if (config('ireceptor.airr_info_schema_desc')!= null) {
+        if (config('ireceptor.airr_info_schema_desc') != null) {
             $this->airr_info_schema_desc = config('ireceptor.airr_info_schema_desc');
         } else {
             $this->airr_info_schema_desc = 'Schema definitions for AIRR standards objects';
         }
-        if (config('ireceptor.airr_info_schema_version')!= null) {
+        if (config('ireceptor.airr_info_schema_version') != null) {
             $this->airr_info_schema_version = config('ireceptor.airr_info_schema_version');
         } else {
             $this->airr_info_schema_version = '1.4.0';
         }
-        if (config('ireceptor.airr_info_schema_contact_name')!= null) {
+        if (config('ireceptor.airr_info_schema_contact_name') != null) {
             $this->airr_info_schema_contact_name = config('ireceptor.airr_info_schema_contact_name');
         } else {
             $this->airr_info_schema_contact_name = 'AIRR Community';
         }
-        if (config('ireceptor.airr_info_schema_contact_url')!= null) {
+        if (config('ireceptor.airr_info_schema_contact_url') != null) {
             $this->airr_info_schema_contact_url = config('ireceptor.airr_info_schema_contact_url');
         } else {
             $this->airr_info_schema_contact_url = 'https://github.com/airr-community';

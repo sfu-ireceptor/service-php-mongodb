@@ -33,7 +33,7 @@ return [
     | ADC Info object
     |--------------------------------------------------------------------------
     | Variables used in Info portion of ADC API response
-    | More info: 
+    | More info:
     | https://github.com/airr-community/airr-standards/blob/master/specs/airr-schema.yaml
     */
 
