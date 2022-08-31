@@ -25,35 +25,42 @@
 		<div class="container">
 			<h1>
 				<img src="/images/ireceptor_logo.png">
-				iReceptor Repository
+				iReceptor Repository - {{ config('ireceptor.airr_info_title') }}
 			</h1>
 
 			<div class="row">
+
 				<div class="col-md-6">
-					@if (config('ireceptor.provenance_url') != '')
-						<h2>Provenance</h2>
-						<p>
-							<a href="{{ config('ireceptor.provenance_url') }}">
-								{{ config('ireceptor.provenance_url') }}
-							</a>
-						</p>
-					@endif
+					<p>
+						This AIRR-seq data repository can be searched using the <a href="https://docs.airr-community.org/en/latest/api/adc_api.html">AIRR Data Commons API</a>. <br />
+						<strong>API version: {{ config('ireceptor.airr_info_api_version') }}</strong>
+					</p>
 
-					<h2>ADC API</h2>
-					<p> The iReceptor Web Service implements the AIRR Data Commons Web API to search repositories that are compliant with the AIRR Community standards. This web service is the entry point to searching the AIRR-seq data stored in this repository. For more information on searching this repository, please refer to the <a href="https://docs.airr-community.org/en/latest/api/adc_api.html">AIRR Data Commons API documentation</a></p>
+					<p>For example, to get the list of repertoires using <code>curl</code>:</p>
+					<pre><code>curl -k --data "{}" "https://this_repository_URL/airr/v1/repertoire"</code></pre>
+
+					<p>For more information about this repository's API, see the <a href="/airr/v1/info">/info</a> entry point.</p>
+
+					<h2>About the data</h2>
 					<ul>
-						<li><a href="/airr/v1/info">/airr/v1/info</a></li>
-
-						<li><a href="https://docs.airr-community.org/en/latest/datarep/metadata.html">AIRR Repertoire Schema</a>, an abstract organizational unit of analysis that is defined by the researcher and consists of study metadata, subject metadata, sample metadata, cell processing metadata, nucleic acid processing metadata, sequencing run metadata, a set of raw sequence files, data processing metadata, and a set of Rearrangements.</li>
-						<li><a href="https://docs.airr-community.org/en/latest/datarep/rearrangements.html">AIRR Rearrangement Schema</a>, a sequence which describes a rearranged adaptive immune receptor chain (e.g., antibody heavy chain or TCR beta chain) along with a host of annotations.</li>
-						
+						<li><a href="https://docs.airr-community.org/en/latest/datarep/metadata.html">AIRR repertoires</a>: abstract organizational units of analysis defined by the researcher, consisting of study metadata, subject metadata, sample metadata, cell processing metadata, nucleic acid processing metadata, sequencing run metadata, a set of raw sequence files, data processing metadata, and a set of AIRR Rearrangements.</li>
+						<li><a href="https://docs.airr-community.org/en/latest/datarep/rearrangements.html">AIRR rearrangements</a>: sequences describing a rearranged adaptive immune receptor chain (e.g., antibody heavy chain or TCR beta chain), along with a host of annotations.</li>
 					</ul>
-					
+				</div>
+				<div class="col-md-1"></div>
+				<div class="col-md-4 sidebar">
+					<h2>Contact</h2>
+						<p>
+							<span class="glyphicon glyphicon-globe" aria-hidden="true"></span>  Website: <a href="{{ config('ireceptor.airr_info_contact_url') }}" class="external" target="_blank">{{ config('ireceptor.airr_info_contact_url') }}</a><br />
+							<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Email: <a href="mailto:{{ config('ireceptor.airr_info_contact_email') }}">{{ config('ireceptor.airr_info_contact_email') }}</a>
+						</p>
 					<h2>About iReceptor</h2>
 					<p>iReceptor federates Adaptive Immune Receptor Repertoire (AIRR-seq) data repositories from multiple laboratories and enable researchers to easily and efficiently perform complex analyses on these federated repositories via the <a href="https://gateway.ireceptor.org">iRececeptor Gateway</a>.</p>
+					<p>This repository is an <a href="https://github.com/sfu-ireceptor/turnkey-service-php/">iReceptor Turnkey</a>, a quick and easy solution for researchers to create their own AIRR Data Commons repository.</p>
 					<p>For more information, visit the <a href="https://ireceptor.org">iReceptor website</a>.</p>
-
 				</div>
+
 			</div>
+
 	</body>
 </html>
