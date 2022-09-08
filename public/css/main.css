@@ -1,8 +1,8 @@
 h1 {
 	position: relative;
 	margin-bottom: 30px;
-	padding-left: 94px;
-	padding-top: 12px;
+	padding-left: 98px;
+	padding-top: 2px;
 	min-height: 75px;
 }
 
@@ -21,6 +21,7 @@ h1 img {
 }
 
 
+/* desktop only */
 @media (min-width: 971px) {
 	h2 {
 		margin-top: 40px;
@@ -34,9 +35,11 @@ h1 img {
 	}
 }
 
+/* phone only */
 @media (max-width: 768px) {
 	h1 {
 		font-size: 24px;
+		padding-top: 12px;
 	}
 
 	h1 em {
