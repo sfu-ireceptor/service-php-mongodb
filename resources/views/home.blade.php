@@ -25,7 +25,8 @@
 		<div class="container">
 			<h1>
 				<img src="/images/ireceptor_logo.png">
-				iReceptor Repository - {{ config('ireceptor.airr_info_title') }}
+				{{ config('ireceptor.airr_info_title') }}
+				<em>iReceptor Repository</em>
 			</h1>
 
 			<div class="row">
