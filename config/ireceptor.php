@@ -37,7 +37,7 @@ return [
     | https://github.com/airr-community/airr-standards/blob/master/specs/airr-schema.yaml
     */
 
-    'airr_info_title' => env('AIRR-INFO-TITLE', 'iReceptor Service'),
+    'airr_info_title' => env('AIRR_INFO_TITLE', 'iReceptor Service'),
     'airr_info_desc' => env('AIRR_INFO_DESC', 'AIRR Data Commons API for iReceptor'),
     'airr_info_version' => env('AIRR_INFO_VERSION', '3.0'),
     'airr_info_contact_name' => env('AIRR_INFO_CONTACT_NAME', 'iReceptor support'),
