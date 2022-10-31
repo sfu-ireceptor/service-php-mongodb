@@ -263,7 +263,7 @@ class AirrRearrangement extends Model
 
         // if we have tsv, dump the return array's keys as headers
         if ($response_type == 'tsv') {
-            echo implode(array_keys($fields_to_display), chr(9)) . "\n";
+            echo implode(array_keys(chr(9), $fields_to_display)) . "\n";
         }
         foreach ($response_list as $rearrangement) {
             $return_array = [];
@@ -319,7 +319,7 @@ class AirrRearrangement extends Model
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
                     //  we also want to return a string, not an array, in JSON response
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                        $return_element = implode($return_element->jsonSerialize(), ', or ');
+                        $return_element = implode(', or ', $return_element->jsonSerialize());
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
@@ -335,7 +335,7 @@ class AirrRearrangement extends Model
                     //
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")
                         && $response_type == 'tsv') {
-                        $return_element = implode($return_element->jsonSerialize(), ', ');
+                        $return_element = implode(', ', $return_element->jsonSerialize());
                     }
                     if (! isset($return_array[$return_key])) {
                         $return_array[$return_key] = $return_element;
@@ -344,7 +344,7 @@ class AirrRearrangement extends Model
             }
 
             if ($response_type == 'tsv') {
-                echo implode($return_array, chr(9)) . "\n";
+                echo implode(chr(9), $return_array) . "\n";
             } else {
                 if ($first) {
                     $first = false;
@@ -404,7 +404,7 @@ class AirrRearrangement extends Model
         foreach ($rearrangement as $key=>$value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                    $result[$response_mapping[$key]] = implode($value, ', or ');
+                    $result[$response_mapping[$key]] = implode(', or ', $value);
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }
@@ -620,7 +620,7 @@ class AirrRearrangement extends Model
                 }
                 if ($response_type == 'tsv') {
                     //output the headers
-                    echo implode($fields_to_display, chr(9)) . "\n";
+                    echo implode(chr(9), $fields_to_display) . "\n";
                 }
                 $current_result = 0;
                 $first = true;
@@ -664,9 +664,9 @@ class AirrRearrangement extends Model
                         foreach ($fields_to_display as $current_header) {
                             if (isset($airr_list[$current_header])) {
                                 if (is_array($airr_list[$current_header])) {
-                                    $new_line[$current_header] = implode($airr_list[$current_header], ', or');
+                                    $new_line[$current_header] = implode(', or', $airr_list[$current_header]);
                                 } elseif ($airr_list[$current_header] != null && is_a($airr_list[$current_header], "MongoDB\Model\BSONArray")) {
-                                    $new_line[$current_header] = implode($airr_list[$current_header]->jsonSerialize(), ', or ');
+                                    $new_line[$current_header] = implode(', or ', $airr_list[$current_header]->jsonSerialize());
                                 } else {
                                     //the database id should be converted to string using the BSON function
                                     if (is_a($airr_list[$current_header], "MongoDB\BSON\ObjectId")) {
@@ -689,7 +689,7 @@ class AirrRearrangement extends Model
                         }
                         if ($current_result > $start_at) {
                             if ($response_type == 'tsv') {
-                                echo implode($new_line, chr(9)) . "\n";
+                                echo implode(chr(9), $new_line) . "\n";
                             } else {
                                 if ($first) {
                                     $first = false;

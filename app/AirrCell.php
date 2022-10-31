@@ -265,7 +265,7 @@ class AirrCell extends Model
 
         // if we have tsv, dump the return array's keys as headers
         if ($response_type == 'tsv') {
-            echo implode(array_keys($fields_to_display), chr(9)) . "\n";
+            echo implode( chr(9), array_keys($fields_to_display)) . "\n";
         }
         foreach ($response_list as $cell) {
             $return_array = [];
@@ -284,7 +284,7 @@ class AirrCell extends Model
                 // mongodb BSON array needs to be serialized or it can't be used in TSV output
                 //  we also want to return a string, not an array, in JSON response
                 if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                    $return_element = implode($return_element->jsonSerialize(), ', or ');
+                    $return_element = implode(', or ', $return_element->jsonSerialize());
                 }
 
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
@@ -315,7 +315,7 @@ class AirrCell extends Model
             }
 
             if ($response_type == 'tsv') {
-                echo implode($return_array, chr(9)) . "\n";
+                echo implode(chr(9), $return_array) . "\n";
             } else {
                 if ($first) {
                     $first = false;
@@ -356,7 +356,7 @@ class AirrCell extends Model
         foreach ($cell as $key=>$value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                    $result[$response_mapping[$key]] = implode($value, ', or ');
+                    $result[$response_mapping[$key]] = implode(', or ', $value );
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }
@@ -537,7 +537,7 @@ class AirrCell extends Model
             }
             if ($response_type == 'tsv') {
                 //output the headers
-                echo implode($header_list, chr(9)) . "\n";
+                echo implode(chr(9), $header_list) . "\n";
             }
             $current_result = 0;
             $first = true;
@@ -558,7 +558,7 @@ class AirrCell extends Model
                         $current_result++;
                         if ($current_result > $start_at) {
                             if ($response_type == 'tsv') {
-                                echo implode($return_array, chr(9)) . "\n";
+                                echo implode(chr(9), $return_array) . "\n";
                             } else {
                                 if ($first) {
                                     $first = false;

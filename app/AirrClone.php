@@ -273,7 +273,7 @@ class AirrClone extends Model
 
         // if we have tsv, dump the return array's keys as headers
         if ($response_type == 'tsv') {
-            echo implode(array_keys($fields_to_display), chr(9)) . "\n";
+            echo implode(chr(9), array_keys($fields_to_display)) . "\n";
         }
         foreach ($response_list as $clone) {
             $return_array = [];
@@ -312,7 +312,7 @@ class AirrClone extends Model
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
                         if ($response_type == 'tsv' ||
                             (isset($airr_type[$repository_to_airr[$return_key]]) && $airr_type[$repository_to_airr[$return_key]] != 'array')) {
-                            $return_element = implode($return_element->jsonSerialize(), ', or ');
+                            $return_element = implode(', or ', $return_element->jsonSerialize());
                         }
                     }
                     array_set($return_array, $repository_to_airr[$return_key], $return_element);
@@ -326,7 +326,7 @@ class AirrClone extends Model
                 }
             }
             if ($response_type == 'tsv') {
-                echo implode($return_array, chr(9)) . "\n";
+                echo implode(chr(9), $return_array) . "\n";
             } else {
                 if ($first) {
                     $first = false;
@@ -367,7 +367,7 @@ class AirrClone extends Model
         foreach ($clone as $key=>$value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                    $result[$response_mapping[$key]] = implode($value, ', or ');
+                    $result[$response_mapping[$key]] = implode(', or ', $value);
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }
@@ -548,7 +548,7 @@ class AirrClone extends Model
             }
             if ($response_type == 'tsv') {
                 //output the headers
-                echo implode($fields_to_display, chr(9)) . "\n";
+                echo implode(chr(9), $fields_to_display) . "\n";
             }
             $current_result = 0;
             $first = true;
@@ -570,7 +570,7 @@ class AirrClone extends Model
 
                         if ($current_result > $start_at) {
                             if ($response_type == 'tsv') {
-                                echo implode($return_array, chr(9)) . "\n";
+                                echo implode(chr(9), $return_array) . "\n";
                             } else {
                                 if ($first) {
                                     $first = false;
