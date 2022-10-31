@@ -265,7 +265,7 @@ class AirrCell extends Model
 
         // if we have tsv, dump the return array's keys as headers
         if ($response_type == 'tsv') {
-            echo implode( chr(9), array_keys($fields_to_display)) . "\n";
+            echo implode(chr(9), array_keys($fields_to_display)) . "\n";
         }
         foreach ($response_list as $cell) {
             $return_array = [];
@@ -356,7 +356,7 @@ class AirrCell extends Model
         foreach ($cell as $key=>$value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                    $result[$response_mapping[$key]] = implode(', or ', $value );
+                    $result[$response_mapping[$key]] = implode(', or ', $value);
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }
