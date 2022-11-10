@@ -1,4 +1,4 @@
-FROM php:7.3.33-apache
+FROM php:7.4.8-apache
 
 # install MongoDB PHP extension
 RUN pecl install mongodb && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongo.ini
