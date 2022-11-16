@@ -28,3 +28,5 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 </IfModule>
+#increase memory limit for PHP so large repertoires can be processed
+php_value memory_limit 256M
