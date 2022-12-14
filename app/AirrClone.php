@@ -280,7 +280,7 @@ class AirrClone extends Model
 
             //null out the required fields, then populate from database.
             foreach ($fields_to_display as $display_field=>$value) {
-                data_set($return_array, $display_field, null);
+                array_set($return_array, $display_field, null);
             }
 
             foreach ($clone as $return_key => $return_element) {
@@ -315,7 +315,7 @@ class AirrClone extends Model
                             $return_element = implode(', or ', $return_element->jsonSerialize());
                         }
                     }
-                    data_set($return_array, $repository_to_airr[$return_key], $return_element);
+                    array_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, but only if there was no constraint on the fields
@@ -360,7 +360,7 @@ class AirrClone extends Model
         $result = [];
         //make all the requested fields null before populating if there are results
         foreach ($fields_to_display as $display_field=>$value) {
-            data_set($result, $display_field, null);
+            array_set($result, $display_field, null);
         }
 
         $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
@@ -562,7 +562,7 @@ class AirrClone extends Model
 
                         //null out the required fields, then populate from database.
                         foreach ($fields_to_display as $display_field=>$value) {
-                            data_set($return_array, $display_field, null);
+                            array_set($return_array, $display_field, null);
                         }
                         $return_array = AirrUtils::convertDbToAirr($clone_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_types, $fields_to_display, $response_type, isset($request['include_fields']));
 

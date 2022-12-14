@@ -237,7 +237,7 @@ class AirrRepertoire extends Model
 
             //make all the requested fields null before populating if there are results
             foreach ($fields_to_display as $display_field=>$value) {
-                data_set($return_array, $display_field, null);
+                array_set($return_array, $display_field, null);
             }
 
             foreach ($repertoire as $return_key => $return_element) {
@@ -322,7 +322,7 @@ class AirrRepertoire extends Model
                         }
                     }
 
-                    data_set($return_array, $fully_qualified_path, $return_value);
+                    array_set($return_array, $fully_qualified_path, $return_value);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, provided they don't override AIRR elements already mapped
@@ -371,7 +371,7 @@ class AirrRepertoire extends Model
 
             //make all the requested fields null before populating if there are results
             foreach ($fields_to_display as $display_field=>$value) {
-                data_set($return_array, $display_field, null);
+                array_set($return_array, $display_field, null);
             }
 
             foreach ($repertoire as $return_key => $return_element) {
@@ -459,7 +459,7 @@ class AirrRepertoire extends Model
                             }
                         }
                     }
-                    data_set($return_array, $fully_qualified_path, $return_value);
+                    array_set($return_array, $fully_qualified_path, $return_value);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, provided they don't override AIRR elements already mapped

@@ -688,7 +688,7 @@ class AirrUtils extends Model
                         $return_element = 'F';
                     }
                 }
-                data_set($return_array, $db_to_airr_mapping[$return_key], $return_element);
+                array_set($return_array, $db_to_airr_mapping[$return_key], $return_element);
             } else {
                 //if there are fields not in AIRR standard but in database, we want to
                 //  send those along too, but only if there was no constraint on the fields
