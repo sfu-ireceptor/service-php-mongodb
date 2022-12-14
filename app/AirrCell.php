@@ -272,7 +272,7 @@ class AirrCell extends Model
 
             //null out the required fields, then populate from database.
             foreach ($fields_to_display as $display_field=>$value) {
-                array_set($return_array, $display_field, null);
+                data_set($return_array, $display_field, null);
             }
 
             foreach ($cell as $return_key => $return_element) {
@@ -303,7 +303,7 @@ class AirrCell extends Model
                         }
                     }
 
-                    array_set($return_array, $repository_to_airr[$return_key], $return_element);
+                    data_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, but only if there was no constraint on the fields
@@ -349,7 +349,7 @@ class AirrCell extends Model
         $result = [];
         //make all the requested fields null before populating if there are results
         foreach ($fields_to_display as $display_field=>$value) {
-            array_set($result, $display_field, null);
+            data_set($result, $display_field, null);
         }
 
         $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
@@ -551,7 +551,7 @@ class AirrCell extends Model
 
                         //null out the required fields, then populate from database.
                         foreach ($fields_to_display as $display_field=>$value) {
-                            array_set($return_array, $display_field, null);
+                            data_set($return_array, $display_field, null);
                         }
                         $return_array = AirrUtils::convertDbToAirr($cell_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_types, $fields_to_display, $response_type, isset($request['include_fields']));
 

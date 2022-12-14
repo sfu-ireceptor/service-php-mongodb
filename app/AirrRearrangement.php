@@ -270,7 +270,7 @@ class AirrRearrangement extends Model
 
             //null out the required fields, then populate from database.
             foreach ($fields_to_display as $display_field=>$value) {
-                array_set($return_array, $display_field, null);
+                data_set($return_array, $display_field, null);
             }
 
             foreach ($rearrangement as $return_key => $return_element) {
@@ -321,7 +321,7 @@ class AirrRearrangement extends Model
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
                         $return_element = implode(', or ', $return_element->jsonSerialize());
                     }
-                    array_set($return_array, $repository_to_airr[$return_key], $return_element);
+                    data_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
                     //problem with TSV download is that there are fields not in the database but it's hard to
                     //  put them into headers - for now skip them in the TSV
@@ -397,7 +397,7 @@ class AirrRearrangement extends Model
         $result = [];
         //make all the requested fields null before populating if there are results
         foreach ($fields_to_display as $display_field=>$value) {
-            array_set($result, $display_field, null);
+            data_set($result, $display_field, null);
         }
 
         $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
@@ -612,7 +612,7 @@ class AirrRearrangement extends Model
                 if ($response_type == 'json') {
                     header('Content-Type: application/json; charset=utf-8');
                     $response = AirrUtils::airrHeader();
-                    echo '{"Info":';
+                    echo '{"Info":'; 
                     echo json_encode($response['Info'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
                     echo ', "Rearrangement":[';
