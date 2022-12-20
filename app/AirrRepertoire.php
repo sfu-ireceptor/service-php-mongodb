@@ -483,13 +483,15 @@ class AirrRepertoire extends Model
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         //  This method fills the AIRR API response with values from MongoDB query
+        //  Note that now response is no longer a simple array for _id as before but 
+        //    a BSON object
         foreach ($response_list as $response) {
             $temp = [];
             $facet = $response['_id']->jsonSerialize();
             $count = $response['count'];
             $facet_repository_name = key($facet);
             $facet_name = $response_mapping[$facet_repository_name];
-            $temp[$facet_name] = $facet[$facet_repository_name];
+            $temp[$facet_name] = $facet->$facet_repository_name;
             $temp['count'] = $count;
             $return_array[] = $temp;
         }
