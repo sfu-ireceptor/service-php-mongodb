@@ -179,10 +179,11 @@ class AirrGeneExpression extends Model
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         foreach ($response_list as $response) {
             $temp = [];
-            $facet = $response['_id'];
+            $facet = $response['_id']->jsonSerialize();
             $count = $response['count'];
-            $facet_name = $response_mapping[key($facet)];
-            $temp[$facet_name] = $facet[key($facet)];
+            $facet_repository_name = key($facet);
+            $facet_name = $response_mapping[$facet_repository_name];
+            $temp[$facet_name] = $facet->$facet_repository_name;
             $temp['count'] = $count;
             $return_array[] = $temp;
         }
