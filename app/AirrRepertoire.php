@@ -483,7 +483,7 @@ class AirrRepertoire extends Model
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         //  This method fills the AIRR API response with values from MongoDB query
-        //  Note that now response is no longer a simple array for _id as before but 
+        //  Note that now response is no longer a simple array for _id as before but
         //    a BSON object
         foreach ($response_list as $response) {
             $temp = [];
