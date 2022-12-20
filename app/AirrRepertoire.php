@@ -487,17 +487,13 @@ class AirrRepertoire extends Model
         //    a BSON object, unless we used an optimized path
         foreach ($response_list as $response) {
             $temp = [];
-            if (is_a($response['_id'], "MongoDB\Model\BSONDocument"))
-            {
+            if (is_a($response['_id'], "MongoDB\Model\BSONDocument")) {
                 $facet = $response['_id']->jsonSerialize();
                 $facet_repository_name = key($facet);
-            $facet_name = $response_mapping[$facet_repository_name];
+                $facet_name = $response_mapping[$facet_repository_name];
                 $temp[$facet_name] = $facet->$facet_repository_name;
-
-            }
-            else
-            {
-                $facet=$response['_id'];
+            } else {
+                $facet = $response['_id'];
                 $facet_repository_name = key($facet);
                 $facet_name = $response_mapping[$facet_repository_name];
                 $temp[$facet_name] = $facet[$facet_repository_name];
