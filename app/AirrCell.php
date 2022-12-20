@@ -178,17 +178,14 @@ class AirrCell extends Model
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         foreach ($response_list as $response) {
-             $temp = [];
-            if (is_a($response['_id'], "MongoDB\Model\BSONDocument"))
-            {
+            $temp = [];
+            if (is_a($response['_id'], "MongoDB\Model\BSONDocument")) {
                 $facet = $response['_id']->jsonSerialize();
                 $facet_repository_name = key($facet);
                 $facet_name = $response_mapping[$facet_repository_name];
                 $temp[$facet_name] = $facet->$facet_repository_name;
-            }
-            else
-            {
-                $facet=$response['_id'];
+            } else {
+                $facet = $response['_id'];
                 $facet_repository_name = key($facet);
                 $facet_name = $response_mapping[$facet_repository_name];
                 $temp[$facet_name] = $facet[$facet_repository_name];
@@ -197,6 +194,7 @@ class AirrCell extends Model
             $temp['count'] = $count;
             $return_array[] = $temp;
         }
+
         return $return_array;
     }
 
