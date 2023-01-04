@@ -263,7 +263,6 @@ class AirrRearrangement extends Model
 
         // if we have tsv, dump the return array's keys as headers
         if ($response_type == 'tsv') {
-            //echo implode(array_keys(chr(9), $fields_to_display)) . "\n";
             echo implode(chr(9), array_keys($fields_to_display)) . "\n";
         }
         foreach ($response_list as $rearrangement) {
