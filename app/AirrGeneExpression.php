@@ -179,10 +179,18 @@ class AirrGeneExpression extends Model
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         foreach ($response_list as $response) {
             $temp = [];
-            $facet = $response['_id'];
+            if (is_a($response['_id'], "MongoDB\Model\BSONDocument")) {
+                $facet = $response['_id']->jsonSerialize();
+                $facet_repository_name = key($facet);
+                $facet_name = $response_mapping[$facet_repository_name];
+                $temp[$facet_name] = $facet->$facet_repository_name;
+            } else {
+                $facet = $response['_id'];
+                $facet_repository_name = key($facet);
+                $facet_name = $response_mapping[$facet_repository_name];
+                $temp[$facet_name] = $facet[$facet_repository_name];
+            }
             $count = $response['count'];
-            $facet_name = $response_mapping[key($facet)];
-            $temp[$facet_name] = $facet[key($facet)];
             $temp['count'] = $count;
             $return_array[] = $temp;
         }
@@ -272,7 +280,7 @@ class AirrGeneExpression extends Model
 
             //null out the required fields, then populate from database.
             foreach ($fields_to_display as $display_field=>$value) {
-                array_set($return_array, $display_field, null);
+                data_set($return_array, $display_field, null);
             }
 
             foreach ($expression as $return_key => $return_element) {
@@ -304,7 +312,7 @@ class AirrGeneExpression extends Model
                         }
                     }
 
-                    array_set($return_array, $repository_to_airr[$return_key], $return_element);
+                    data_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, but only if there was no constraint on the fields
@@ -350,7 +358,7 @@ class AirrGeneExpression extends Model
         $result = [];
         //make all the requested fields null before populating if there are results
         foreach ($fields_to_display as $display_field=>$value) {
-            array_set($result, $display_field, null);
+            data_set($result, $display_field, null);
         }
 
         $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
@@ -553,7 +561,7 @@ class AirrGeneExpression extends Model
 
                         //null out the required fields, then populate from database.
                         foreach ($fields_to_display as $display_field=>$value) {
-                            array_set($return_array, $display_field, null);
+                            data_set($return_array, $display_field, null);
                         }
                         $return_array = AirrUtils::convertDbToAirr($expression_list, $db_to_airr_mapping, $db_to_service_mapping, $airr_type, $fields_to_display, $response_type, isset($request['include_fields']));
 

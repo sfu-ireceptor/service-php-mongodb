@@ -237,7 +237,7 @@ class AirrRepertoire extends Model
 
             //make all the requested fields null before populating if there are results
             foreach ($fields_to_display as $display_field=>$value) {
-                array_set($return_array, $display_field, null);
+                data_set($return_array, $display_field, null);
             }
 
             foreach ($repertoire as $return_key => $return_element) {
@@ -322,7 +322,7 @@ class AirrRepertoire extends Model
                         }
                     }
 
-                    array_set($return_array, $fully_qualified_path, $return_value);
+                    data_set($return_array, $fully_qualified_path, $return_value);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, provided they don't override AIRR elements already mapped
@@ -371,7 +371,7 @@ class AirrRepertoire extends Model
 
             //make all the requested fields null before populating if there are results
             foreach ($fields_to_display as $display_field=>$value) {
-                array_set($return_array, $display_field, null);
+                data_set($return_array, $display_field, null);
             }
 
             foreach ($repertoire as $return_key => $return_element) {
@@ -459,7 +459,7 @@ class AirrRepertoire extends Model
                             }
                         }
                     }
-                    array_set($return_array, $fully_qualified_path, $return_value);
+                    data_set($return_array, $fully_qualified_path, $return_value);
                 } else {
                     //if there are fields not in AIRR standard but in database, we want to
                     //  send those along too, provided they don't override AIRR elements already mapped
@@ -483,12 +483,22 @@ class AirrRepertoire extends Model
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         //  This method fills the AIRR API response with values from MongoDB query
+        //  Note that response is no longer a simple array for _id as before but
+        //    a BSON object, unless we used an optimized path
         foreach ($response_list as $response) {
             $temp = [];
-            $facet = $response['_id'];
+            if (is_a($response['_id'], "MongoDB\Model\BSONDocument")) {
+                $facet = $response['_id']->jsonSerialize();
+                $facet_repository_name = key($facet);
+                $facet_name = $response_mapping[$facet_repository_name];
+                $temp[$facet_name] = $facet->$facet_repository_name;
+            } else {
+                $facet = $response['_id'];
+                $facet_repository_name = key($facet);
+                $facet_name = $response_mapping[$facet_repository_name];
+                $temp[$facet_name] = $facet[$facet_repository_name];
+            }
             $count = $response['count'];
-            $facet_name = $response_mapping[key($facet)];
-            $temp[$facet_name] = $facet[key($facet)];
             $temp['count'] = $count;
             $return_array[] = $temp;
         }
