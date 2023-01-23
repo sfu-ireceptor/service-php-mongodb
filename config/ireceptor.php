@@ -39,7 +39,7 @@ return [
 
     'airr_info_title' => env('AIRR_INFO_TITLE', 'iReceptor Service'),
     'airr_info_desc' => env('AIRR_INFO_DESC', 'AIRR Data Commons API for iReceptor'),
-    'airr_info_version' => env('AIRR_INFO_VERSION', '3.0'),
+    'airr_info_version' => env('AIRR_INFO_VERSION', '4.0'),
     'airr_info_contact_name' => env('AIRR_INFO_CONTACT_NAME', 'iReceptor support'),
     'airr_info_contact_url' => env('AIRR_INFO_CONTACT_URL', 'http://www.ireceptor.org'),
     'airr_info_contact_email' => env('AIRR_INFO_CONTACT_EMAIL', 'support@ireceptor.org'),
