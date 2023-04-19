@@ -247,66 +247,65 @@ class AirrRepertoire extends Model
                     // typecast the return values
                     $return_value = $return_element;
                     if (isset($db_names_to_airr_types[$return_key])) {
-
                         //we only want to typecast values that are set, because
                         //   a 'null' is considered 0/unset in PHP so it converts it to
                         //	 appopriate value based on type
                         if (isset($return_value)) {
                             switch ($db_names_to_airr_types[$return_key]) {
-                            // make sure that type actually matches value or fail
-                            case 'integer':
-                                if (is_object($return_value)) {
-                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
-                                    //  serialized before PHP can handle them
-                                    $return_value = array_map('intval', $return_element->jsonSerialize());
-                                } elseif (is_array($return_value)) {
-                                    $return_value = array_map('intval', array_map(AirrUtils::stringToNumber, $return_element));
-                                } else {
-                                    $return_value = intval(AirrUtils::stringToNumber($return_element));
-                                }
-                                break;
-                            case 'number':
-                                if (is_object($return_value)) {
-                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
-                                    //  serialized before PHP can handle them
-                                    $return_value = array_map('doubleval', $return_element->jsonSerialize());
-                                } elseif (is_array($return_value)) {
-                                    $return_value = array_map('doubleval', array_map(AirrUtils::stringToNumber, $return_element));
-                                } else {
-                                    $return_value = floatval(AirrUtils::stringToNumber($return_element));
-                                }
-                                break;
-                            case 'boolean':
-                                if (is_object($return_value)) {
-                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
-                                    //  serialized before PHP can handle them
-                                    $return_value = array_map('boolval', $return_element->jsonSerialize());
-                                } elseif (is_array($return_value)) {
-                                    $return_value = array_map('boolval', $return_element);
-                                } else {
-                                    $return_value = boolval($return_element);
-                                }
-                                break;
-                            case 'string':
-                                if (is_object($return_value)) {
-                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
-                                    //  serialized before PHP can handle them
-                                    $return_value = array_map('strval', $return_element->jsonSerialize());
-                                } elseif (is_array($return_value)) {
-                                    $return_value = array_map('strval', $return_element);
-                                } else {
-                                    $return_value = strval($return_element);
-                                }
-                                break;
-                            case 'object':
-                                if (is_object($return_value)) {
-                                    $return_value = $return_element->jsonSerialize();
-                                }
-                                break;
-                            default:
-                                //bad data type
-                                break;
-                                }
+                                // make sure that type actually matches value or fail
+                                case 'integer':
+                                    if (is_object($return_value)) {
+                                        //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                        //  serialized before PHP can handle them
+                                        $return_value = array_map('intval', $return_element->jsonSerialize());
+                                    } elseif (is_array($return_value)) {
+                                        $return_value = array_map('intval', array_map(AirrUtils::stringToNumber, $return_element));
+                                    } else {
+                                        $return_value = intval(AirrUtils::stringToNumber($return_element));
+                                    }
+                                    break;
+                                case 'number':
+                                    if (is_object($return_value)) {
+                                        //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                        //  serialized before PHP can handle them
+                                        $return_value = array_map('doubleval', $return_element->jsonSerialize());
+                                    } elseif (is_array($return_value)) {
+                                        $return_value = array_map('doubleval', array_map(AirrUtils::stringToNumber, $return_element));
+                                    } else {
+                                        $return_value = floatval(AirrUtils::stringToNumber($return_element));
+                                    }
+                                    break;
+                                case 'boolean':
+                                    if (is_object($return_value)) {
+                                        //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                        //  serialized before PHP can handle them
+                                        $return_value = array_map('boolval', $return_element->jsonSerialize());
+                                    } elseif (is_array($return_value)) {
+                                        $return_value = array_map('boolval', $return_element);
+                                    } else {
+                                        $return_value = boolval($return_element);
+                                    }
+                                    break;
+                                case 'string':
+                                    if (is_object($return_value)) {
+                                        //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                        //  serialized before PHP can handle them
+                                        $return_value = array_map('strval', $return_element->jsonSerialize());
+                                    } elseif (is_array($return_value)) {
+                                        $return_value = array_map('strval', $return_element);
+                                    } else {
+                                        $return_value = strval($return_element);
+                                    }
+                                    break;
+                                case 'object':
+                                    if (is_object($return_value)) {
+                                        $return_value = $return_element->jsonSerialize();
+                                    }
+                                    break;
+                                default:
+                                    //bad data type
+                                    break;
+                            }
                             // there's a chance a field that should be an array in response wasn't processed as one
                             //  in that case we want to convert it to array. Heuristic is that a string of data processing files
                             //  or a string of keywords might be a comma-separated list, otherwise just convert to array as-is
@@ -390,61 +389,60 @@ class AirrRepertoire extends Model
                     // typecast the return values
                     $return_value = $return_element;
                     if (isset($db_names_to_airr_types[$return_key])) {
-
                         //we only want to typecast values that are set, because
                         //   a 'null' is considered 0/unset in PHP so it converts it to
                         //   appopriate value based on type
                         if (isset($return_value)) {
                             switch ($db_names_to_airr_types[$return_key]) {
-                            // make sure that type actually matches value or fail
-                            case 'integer':
-                                if (is_object($return_value)) {
-                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
-                                    //  serialized before PHP can handle them
-                                    $return_value = array_map('intval', $return_element->jsonSerialize());
-                                } elseif (is_array($return_value)) {
-                                    $return_value = array_map('intval', array_map(AirrUtils::stringToNumber, $return_element));
-                                } else {
-                                    $return_value = intval(AirrUtils::stringToNumber($return_element));
-                                }
-                                break;
-                            case 'number':
-                                if (is_object($return_value)) {
-                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
-                                    //  serialized before PHP can handle them
-                                    $return_value = array_map('doubleval', $return_element->jsonSerialize());
-                                } elseif (is_array($return_value)) {
-                                    $return_value = array_map('doubleval', array_map(AirrUtils::stringToNumber, $return_element));
-                                } else {
-                                    $return_value = floatval(AirrUtils::stringToNumber($return_element));
-                                }
-                                break;
-                            case 'boolean':
-                                if (is_object($return_value)) {
-                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
-                                    //  serialized before PHP can handle them
-                                    $return_value = array_map('boolval', $return_element->jsonSerialize());
-                                } elseif (is_array($return_value)) {
-                                    $return_value = array_map('boolval', $return_element);
-                                } else {
-                                    $return_value = boolval($return_element);
-                                }
-                                break;
-                            case 'string':
-                                if (is_object($return_value)) {
-                                    //arrays and similar objects may be BSONArray and BSONObject, which must be
-                                    //  serialized before PHP can handle them
-                                    $return_value = array_map('strval', $return_element->jsonSerialize());
-                                } elseif (is_array($return_value)) {
-                                    $return_value = array_map('strval', $return_element);
-                                } else {
-                                    $return_value = strval($return_element);
-                                }
-                                break;
-                            default:
-                                //bad data type
-                                break;
-                                }
+                                // make sure that type actually matches value or fail
+                                case 'integer':
+                                    if (is_object($return_value)) {
+                                        //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                        //  serialized before PHP can handle them
+                                        $return_value = array_map('intval', $return_element->jsonSerialize());
+                                    } elseif (is_array($return_value)) {
+                                        $return_value = array_map('intval', array_map(AirrUtils::stringToNumber, $return_element));
+                                    } else {
+                                        $return_value = intval(AirrUtils::stringToNumber($return_element));
+                                    }
+                                    break;
+                                case 'number':
+                                    if (is_object($return_value)) {
+                                        //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                        //  serialized before PHP can handle them
+                                        $return_value = array_map('doubleval', $return_element->jsonSerialize());
+                                    } elseif (is_array($return_value)) {
+                                        $return_value = array_map('doubleval', array_map(AirrUtils::stringToNumber, $return_element));
+                                    } else {
+                                        $return_value = floatval(AirrUtils::stringToNumber($return_element));
+                                    }
+                                    break;
+                                case 'boolean':
+                                    if (is_object($return_value)) {
+                                        //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                        //  serialized before PHP can handle them
+                                        $return_value = array_map('boolval', $return_element->jsonSerialize());
+                                    } elseif (is_array($return_value)) {
+                                        $return_value = array_map('boolval', $return_element);
+                                    } else {
+                                        $return_value = boolval($return_element);
+                                    }
+                                    break;
+                                case 'string':
+                                    if (is_object($return_value)) {
+                                        //arrays and similar objects may be BSONArray and BSONObject, which must be
+                                        //  serialized before PHP can handle them
+                                        $return_value = array_map('strval', $return_element->jsonSerialize());
+                                    } elseif (is_array($return_value)) {
+                                        $return_value = array_map('strval', $return_element);
+                                    } else {
+                                        $return_value = strval($return_element);
+                                    }
+                                    break;
+                                default:
+                                    //bad data type
+                                    break;
+                            }
                             // there's a chance a field that should be an array in response wasn't processed as one
                             //  in that case we want to convert it to array. Heuristic is that a string of data processing files
                             //  or a string of keywords might be a comma-separated list, otherwise just convert to array as-is
