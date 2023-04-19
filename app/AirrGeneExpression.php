@@ -284,7 +284,6 @@ class AirrGeneExpression extends Model
             }
 
             foreach ($expression as $return_key => $return_element) {
-
                 //flatten any MongoDB ObjectId types
                 if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
                     $return_element = $return_element->__toString();
@@ -341,7 +340,6 @@ class AirrGeneExpression extends Model
 
     public static function airrGeneExpressionResponseSingle($expression)
     {
-
         //take a single gene expression from database query and create a response as per
         //  AIRR API standard
         $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
