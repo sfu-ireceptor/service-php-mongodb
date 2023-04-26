@@ -273,7 +273,6 @@ class Sequence extends Model
         //we process each working sample ID in turn so no need to look at sample id list
         $return_match[$ir_project_sample_id_repository_name] = (int) $id;
         foreach ($f as $filtername => $filtervalue) {
-
             // map the API terms to repository by going through service terms
             if ($filtername == $ir_project_sample_id_list_api_name) {
                 continue;

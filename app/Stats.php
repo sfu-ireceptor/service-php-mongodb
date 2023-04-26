@@ -34,7 +34,7 @@ class Stats extends Model
         $stats_api_input_to_db_mapping = FileMapping::createMappingArray('irplus_stats_api_query', 'ir_repository',
             ['ir_class'=>['IRPlus_stats']]);
         $service_to_api_input_mapping = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query',
-             ['ir_class'=>['IRPlus_stats']]);
+            ['ir_class'=>['IRPlus_stats']]);
         $service_to_api_output_mapping = FileMapping::createMappingArray('service_name', 'irplus_stats_api_response',
             ['ir_class'=>['IRPlus_stats']]);
         $service_to_stats_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository',
