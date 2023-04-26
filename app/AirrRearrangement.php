@@ -274,7 +274,6 @@ class AirrRearrangement extends Model
             }
 
             foreach ($rearrangement as $return_key => $return_element) {
-
                 //make all the requested fields null before populating if there are results
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     //skip over
@@ -388,7 +387,6 @@ class AirrRearrangement extends Model
 
     public static function airrRearrangementResponseSingle($rearrangement)
     {
-
         //take a single rearrangement from database query and create a response as per
         //  AIRR API standard
         $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);

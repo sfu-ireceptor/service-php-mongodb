@@ -258,27 +258,27 @@ class AirrUtils extends Model
                     //bad data type
                     return;
                     break;
-                }
+            }
 
             //check also that 'in' and 'exlcude' ops have array parameter, and all
             //  others do not
             // 'and' and 'or' can go either ways so ignore them
             switch ($f['op']) {
-                    case 'and':
-                    case 'or':
-                        break;
-                    case 'in':
-                    case 'exclude':
-                        if (! (is_array($content['value']))) {
-                            return;
-                        }
-                        break;
-                    default:
-                        if (is_array($content['value'])) {
-                            return;
-                        }
-                        break;
-                }
+                case 'and':
+                case 'or':
+                    break;
+                case 'in':
+                case 'exclude':
+                    if (! is_array($content['value'])) {
+                        return;
+                    }
+                    break;
+                default:
+                    if (is_array($content['value'])) {
+                        return;
+                    }
+                    break;
+            }
         }
         switch ($f['op']) {
             case '=':
@@ -429,14 +429,13 @@ class AirrUtils extends Model
             $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
-            $indexed_fields = ([$airr_names['ir_project_sample_id'], $airr_names['junction_aa_length'],
+            $indexed_fields = [$airr_names['ir_project_sample_id'], $airr_names['junction_aa_length'],
                 $airr_names['junction_aa'], $airr_names['v_call'], $airr_names['d_call'],
                 $airr_names['j_call'],
                 $airr_names['functional'],
                 $airr_names['vgene_gene'], $airr_names['vgene_family'],
                 $airr_names['dgene_gene'], $airr_names['dgene_family'],
-                $airr_names['jgene_gene'], $airr_names['jgene_family'], ]
-            );
+                $airr_names['jgene_gene'], $airr_names['jgene_family'], ];
             $filters = '';
             $facets = '';
 
@@ -660,7 +659,6 @@ class AirrUtils extends Model
         //given a single repository query result and mapping fields, process it
         //  into an array suitable for display
         foreach ($result_list as $return_key => $return_element) {
-
             //flatten any MongoDB ObjectId types
             if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
                 $return_element = $return_element->__toString();
@@ -722,13 +720,12 @@ class AirrUtils extends Model
             $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
-            $indexed_fields = ([$airr_names['repertoire_id'], $airr_names['junction_aa_length'],
+            $indexed_fields = [$airr_names['repertoire_id'], $airr_names['junction_aa_length'],
                 $airr_names['junction_aa'], $airr_names['v_call'], $airr_names['d_call'],
                 $airr_names['j_call'],
                 $airr_names['vgene_gene'], $airr_names['vgene_family'],
                 $airr_names['dgene_gene'], $airr_names['dgene_family'],
-                $airr_names['jgene_gene'], $airr_names['jgene_family'], ]
-            );
+                $airr_names['jgene_gene'], $airr_names['jgene_family'], ];
             $filters = '';
             $facets = '';
 
@@ -951,10 +948,9 @@ class AirrUtils extends Model
             $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
-            $indexed_fields = ([$airr_names['repertoire_id'], $airr_names['data_processing_id'],
+            $indexed_fields = [$airr_names['repertoire_id'], $airr_names['data_processing_id'],
                 $airr_names['cell_id'], $airr_names['expression_study_method'], $airr_names['virtual_pairing'],
-            ]
-            );
+            ];
             $filters = '';
             $facets = '';
 
@@ -1145,10 +1141,9 @@ class AirrUtils extends Model
             $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
-            $indexed_fields = ([$airr_names['repertoire_id'], $airr_names['data_processing_id'],
+            $indexed_fields = [$airr_names['repertoire_id'], $airr_names['data_processing_id'],
                 $airr_names['cell_id'], $airr_names['property_id'], $airr_names['property'], $airr_names['value'],
-            ]
-            );
+            ];
             $filters = '';
             $facets = '';
 

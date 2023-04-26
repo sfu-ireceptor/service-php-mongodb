@@ -96,7 +96,6 @@ class Sample extends Model
         $list = $query->get()->toArray();
         $return_array = [];
         foreach ($list as $element) {
-
             //if there's a mapping for any return value, replace it
             foreach ($element as $element_name=>$element_value) {
                 // this is baked into mongodb, so doesn't really belong in a mapping file

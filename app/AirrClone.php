@@ -292,7 +292,6 @@ class AirrClone extends Model
             }
 
             foreach ($clone as $return_key => $return_element) {
-
                 //make all the requested fields null before populating if there are results
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
                     $service_name = $db_to_service[$return_key];
@@ -351,7 +350,6 @@ class AirrClone extends Model
 
     public static function airrCloneResponseSingle($clone)
     {
-
         //take a single clone from database query and create a response as per
         //  AIRR API standard
         $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
