@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\AirrReactivity;
+use App\AirrReceptor;
 use App\AirrCell;
 use App\AirrClone;
 use App\AirrGeneExpression;
