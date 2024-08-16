@@ -426,7 +426,7 @@ class AirrUtils extends Model
         //return false;
 
         try {
-            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['ir_project_sample_id'], $airr_names['junction_aa_length'],
@@ -469,9 +469,9 @@ class AirrUtils extends Model
 
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
-            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
-            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
-            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null && $filters != '') {
                 return false;
@@ -717,7 +717,7 @@ class AirrUtils extends Model
         //return false;
 
         try {
-            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => ['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['repertoire_id'], $airr_names['junction_aa_length'],
@@ -759,9 +759,9 @@ class AirrUtils extends Model
 
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
-            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null && $filters != '') {
                 return false;
@@ -945,7 +945,7 @@ class AirrUtils extends Model
         //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
 
         try {
-            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => ['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['repertoire_id'], $airr_names['data_processing_id'],
@@ -979,9 +979,9 @@ class AirrUtils extends Model
 
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
-            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
-            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
-            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null && $filters != '') {
                 return false;
@@ -1138,7 +1138,7 @@ class AirrUtils extends Model
         //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
 
         try {
-            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => ['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['repertoire_id'], $airr_names['data_processing_id'],
@@ -1172,9 +1172,9 @@ class AirrUtils extends Model
 
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
-            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
-            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
-            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null && $filters != '') {
                 return false;
