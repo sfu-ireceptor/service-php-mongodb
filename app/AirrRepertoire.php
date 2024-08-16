@@ -30,8 +30,8 @@ class AirrRepertoire extends Model
 
         $query = new self;
         //var_dump($params); die();
-        $repository_names = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        foreach ($params as $key=>$value) {
+        $repository_names = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        foreach ($params as $key => $value) {
             if (isset($repository_names[$key])) {
                 $query = $query->where($key, '=', $value);
             }
@@ -44,10 +44,10 @@ class AirrRepertoire extends Model
     {
         //function that processes AIRR API request and returns a response
         //  currently the response is iReceptor API response
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         $query_string = '{}';
         $options = [];
@@ -89,7 +89,7 @@ class AirrRepertoire extends Model
             }
 
             if ($map_fields_column != '') {
-                $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+                $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
                 foreach ($required_fields as $name => $value) {
                     if ($value && strtolower($value) != 'false') {
                         $fields_to_retrieve[$name] = 1;
@@ -126,7 +126,7 @@ class AirrRepertoire extends Model
             }
             $aggOptions = [];
             $aggOptions[0]['$match'] = json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string));
-            $aggOptions[1]['$group'] = ['_id'=> [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
+            $aggOptions[1]['$group'] = ['_id' => [$airr_names[$params['facets']] => '$' . $airr_names[$params['facets']]]];
             $aggOptions[1]['$group']['count'] = ['$sum' => 1];
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
@@ -140,8 +140,8 @@ class AirrRepertoire extends Model
     public static function airrRepertoireSingle($repertoire_id)
     {
         //return a single repertoire based on the repertoire_id
-        $repository_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $repository_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repository_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repository_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         $query = new self;
         // we have to adjust query based on type of field, because it will default to string
@@ -169,15 +169,15 @@ class AirrRepertoire extends Model
 
         //first, we need some mappings to convert database values to AIRR terms
         //  and bucket them into appropriate AIRR classes
-        $airr_classes = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $airr_class_to_name = FileMapping::createMappingArray('ir_adc_api_query', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $db_names_to_airr_types = FileMapping::createMappingArray('ir_repository', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_classes = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_class_to_name = FileMapping::createMappingArray('ir_adc_api_query', 'ir_adc_api_response', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'airr', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $db_names_to_airr_types = FileMapping::createMappingArray('ir_repository', 'airr_type', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $fields_to_display = [];
-        $airr_is_array = FileMapping::createMappingArray('ir_adc_api_response', 'airr_is_array', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $service_to_airr_response = FileMapping::createMappingArray('service_name', 'ir_adc_api_response', 'airr_is_array', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_is_array = FileMapping::createMappingArray('ir_adc_api_response', 'airr_is_array', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $service_to_airr_response = FileMapping::createMappingArray('service_name', 'ir_adc_api_response', 'airr_is_array', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         // if fields parameter is set, we only want to return the fields specified
         if (isset($params['fields']) && $params['fields'] != '') {
@@ -208,7 +208,7 @@ class AirrRepertoire extends Model
             }
 
             if ($map_fields_column != '') {
-                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
                 foreach ($required_fields as $name => $value) {
                     if ($value && strtolower($value) != 'false') {
                         $fully_qualified_path = $name;
@@ -220,7 +220,7 @@ class AirrRepertoire extends Model
 
         // if neither required nor fields is set, we still want to return AIRR fields
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
-            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
                     $fully_qualified_path = $name;
@@ -236,7 +236,7 @@ class AirrRepertoire extends Model
             $return_array = [];
 
             //make all the requested fields null before populating if there are results
-            foreach ($fields_to_display as $display_field=>$value) {
+            foreach ($fields_to_display as $display_field => $value) {
                 data_set($return_array, $display_field, null);
             }
 
@@ -344,11 +344,11 @@ class AirrRepertoire extends Model
 
         //first, we need some mappings to convert database values to AIRR terms
         //  and bucket them into appropriate AIRR classes
-        $airr_classes = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'airr', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $db_names_to_airr_types = FileMapping::createMappingArray('ir_repository', 'airr_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_classes = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'airr', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'airr', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $db_names_to_airr_types = FileMapping::createMappingArray('ir_repository', 'airr_type', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         //each iReceptor 'sample' is an AIRR repertoire consisting of a single sample and  a single rearrangement set
         //  associated with it, so we will take the array of samples and place each element into an appropriate section
@@ -357,7 +357,7 @@ class AirrRepertoire extends Model
         $return_list = [];
         $fields_to_display = [];
 
-        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         foreach ($required_fields as $name => $value) {
             if ($value) {
                 $fully_qualified_path = $name;
@@ -369,7 +369,7 @@ class AirrRepertoire extends Model
             $return_array = [];
 
             //make all the requested fields null before populating if there are results
-            foreach ($fields_to_display as $display_field=>$value) {
+            foreach ($fields_to_display as $display_field => $value) {
                 data_set($return_array, $display_field, null);
             }
 
@@ -476,7 +476,7 @@ class AirrRepertoire extends Model
     public static function airrRepertoireFacetsResponse($response_list)
     {
         $return_array = [];
-        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
