@@ -52,7 +52,7 @@ class AirrReceptor extends Model
 
     public static function getMapClasses()
     {
-	return ['Receptor', 'IR_Receptor'];
+        return ['Receptor', 'IR_Receptor'];
     }
 
     public static function airrReceptorSingle($receptor_id)
@@ -401,7 +401,7 @@ class AirrReceptor extends Model
         $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => AirrReceptor::getMapClasses()]);
         $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class' => AirrReceptor::getMapClasses()]);
 
-	$rep_classes = ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire'];
+        $rep_classes = ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire'];
         $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class' => $rep_classes]);
         $repertoire_airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => $rep_classes]);
         $repertoire_service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => $rep_classes]);

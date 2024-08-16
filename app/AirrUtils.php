@@ -1336,7 +1336,7 @@ class AirrUtils extends Model
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['receptor_id'], $airr_names['receptor_hash'],
-                $airr_names['receptor_type'], $airr_names['receptor_ref']
+                $airr_names['receptor_type'], $airr_names['receptor_ref'],
             ];
             $filters = '';
             $facets = '';
@@ -1529,8 +1529,8 @@ class AirrUtils extends Model
             $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => $map_classes]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
-	    $indexed_fields = [ $airr_names['antigen'], $airr_names['mhc_gene_1'], $airr_names['antigen_source_species'],
-		                $airr_names['ligand_type'],$airr_names['antigen_type']
+            $indexed_fields = [$airr_names['antigen'], $airr_names['mhc_gene_1'], $airr_names['antigen_source_species'],
+                $airr_names['ligand_type'], $airr_names['antigen_type'],
             ];
             $filters = '';
             $facets = '';
@@ -1702,4 +1702,3 @@ class AirrUtils extends Model
         }
     }
 }
-
