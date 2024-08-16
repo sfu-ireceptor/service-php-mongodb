@@ -33,7 +33,7 @@ class AirrReactivity extends Model
         } else {
             $this->temp_files = sys_get_temp_dir();
         }
-	$this->map_classes = ['ReceptorReactivity', 'IR_ReceptorReactivity'];
+        $this->map_classes = ['ReceptorReactivity', 'IR_ReceptorReactivity'];
     }
 
     public function getCollection()
@@ -397,7 +397,7 @@ class AirrReactivity extends Model
         $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => $this->map_classes]);
         $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class' => $this->map_classes]);
 
-	$rep_classes = ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire'];
+        $rep_classes = ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire'];
         $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class' => $rep_classes]);
         $repertoire_airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => $rep_classes]);
         $repertoire_service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => $rep_classes]);
