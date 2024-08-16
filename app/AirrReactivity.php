@@ -33,7 +33,6 @@ class AirrReactivity extends Model
         } else {
             $this->temp_files = sys_get_temp_dir();
         }
-        $this->map_classes = ['ReceptorReactivity', 'IR_ReceptorReactivity'];
     }
 
     public function getCollection()
@@ -51,11 +50,16 @@ class AirrReactivity extends Model
         return $this->fetch_timeout;
     }
 
+    public static function getMapClasses()
+    {
+        return ['ReceptorReactivity', 'IR_ReceptorReactivity'];
+    }
+
     public static function airrReactivitySingle($reactivity_id)
     {
         //function that finds a single reactivity based on the provided $reactivity_id
         $query = new self();
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => $this->map_classes]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => AirrReactivity::getMapClasses()]);
         $db_reactivity_id_name = $repository_names['reactivity_id'];
         $query = $query->where($db_reactivity_id_name, $reactivity_id);
         $result = $query->get();
@@ -67,11 +71,11 @@ class AirrReactivity extends Model
     {
         //function that processes AIRR API request and returns an array of fields matching
         //   the filters, with optional start number and max number of results
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => $this->map_classes]);
-        $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => $this->map_classes]);
-        $airr_to_repository = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => $this->map_classes]);
-        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => $this->map_classes]);
-        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => $this->map_classes]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_to_repository = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => AirrReactivity::getMapClasses()]);
         ini_set('memory_limit', '2G');
         set_time_limit(60 * 60 * 24);
 
@@ -121,7 +125,7 @@ class AirrReactivity extends Model
             }
 
             if ($map_fields_column != '') {
-                $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class' => $this->map_classes]);
+                $required_fields = FileMapping::createMappingArray('ir_repository', $map_fields_column, ['ir_class' => AirrReactivity::getMapClasses()]);
                 foreach ($required_fields as $name => $value) {
                     if ($value && strtolower($value) != 'false') {
                         $fields_to_retrieve[$name] = 1;
@@ -175,7 +179,7 @@ class AirrReactivity extends Model
     public static function airrReactivityFacetsResponse($response_list)
     {
         $return_array = [];
-        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class' => $this->map_classes]);
+        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class' => AirrReactivity::getMapClasses()]);
         //MongoDB by default aggregates in the format _id: {column: value}, count: sum
         //  AIRR expects {column: value, count: sum} {column: value2, count: sum}
         foreach ($response_list as $response) {
@@ -208,12 +212,12 @@ class AirrReactivity extends Model
 
         //first, we need some mappings to convert database values to AIRR terms
         //  and bucket them into appropriate AIRR classes
-        $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => $this->map_classes]);
-        $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => $this->map_classes]);
-        $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class' => $this->map_classes]);
-        $db_to_service = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class' => $this->map_classes]);
-        $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => $this->map_classes]);
-        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class' => $this->map_classes]);
+        $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $db_to_service = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class' => AirrReactivity::getMapClasses()]);
 
         $fields_to_display = [];
 
@@ -236,7 +240,7 @@ class AirrReactivity extends Model
             }
 
             if ($map_fields_column != '') {
-                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class' => $this->map_classes]);
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class' => AirrReactivity::getMapClasses()]);
                 foreach ($required_fields as $name => $value) {
                     if ($value && strtolower($value) != 'false') {
                         $fully_qualified_path = $name;
@@ -249,7 +253,7 @@ class AirrReactivity extends Model
         $first = true;
         // if neither required nor fields is set, we still want to return all AIRR fields
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
-            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class' => $this->map_classes]);
+            $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class' => AirrReactivity::getMapClasses()]);
             foreach ($required_fields as $name => $value) {
                 if ($value) {
                     $fully_qualified_path = $name;
@@ -343,9 +347,9 @@ class AirrReactivity extends Model
     {
         //take a single reactivity from database query and create a response as per
         //  AIRR API standard
-        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class' => $this->map_classes]);
-        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_response', 'service_name', ['ir_class' => $this->map_classes]);
-        $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class' => $this->map_classes]);
+        $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'airr_required', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_response', 'service_name', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class' => AirrReactivity::getMapClasses()]);
 
         foreach ($required_fields as $name => $value) {
             if ($value) {
@@ -360,7 +364,7 @@ class AirrReactivity extends Model
             data_set($result, $display_field, null);
         }
 
-        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class' => $this->map_classes]);
+        $response_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class' => AirrReactivity::getMapClasses()]);
         foreach ($reactivity as $key => $value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
@@ -387,15 +391,15 @@ class AirrReactivity extends Model
         ini_set('memory_limit', '2G');
         set_time_limit(60 * 60 * 24);
 
-        $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => $this->map_classes]);
-        $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => $this->map_classes]);
-        $db_to_service_mapping = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class' => $this->map_classes]);
-        $db_to_airr_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class' => $this->map_classes]);
-        $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => $this->map_classes]);
-        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => $this->map_classes]);
-        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class' => $this->map_classes]);
-        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => $this->map_classes]);
-        $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class' => $this->map_classes]);
+        $service_to_airr_mapping = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $db_to_service_mapping = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $db_to_airr_mapping = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_response', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_to_repository_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => AirrReactivity::getMapClasses()]);
+        $airr_type = FileMapping::createMappingArray('ir_adc_api_response', 'airr_type', ['ir_class' => AirrReactivity::getMapClasses()]);
 
         $rep_classes = ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire'];
         $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type', ['ir_class' => $rep_classes]);
@@ -515,7 +519,7 @@ class AirrReactivity extends Model
                 }
 
                 if ($map_fields_column != '') {
-                    $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class' => $this->map_classes]);
+                    $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class' => AirrReactivity::getMapClasses()]);
                     foreach ($required_fields as $name => $value) {
                         if ($value && strtolower($value) != 'false') {
                             $fully_qualified_path = $name;
@@ -527,7 +531,7 @@ class AirrReactivity extends Model
 
             // if neither required nor fields is set, we still want to return all AIRR fields
             if (! isset($request['include_fields']) && ! isset($request['fields'])) {
-                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class' => $this->map_classes]);
+                $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class' => AirrReactivity::getMapClasses()]);
                 foreach ($required_fields as $name => $value) {
                     if ($value) {
                         $fully_qualified_path = $name;
