@@ -44,7 +44,7 @@ class FileMapping
         for ($i = 0; $i < $mapping->rows; $i++) {
             $mapping_row = $mapping->fileMappings[$i];
             //var_dump($mapping_row);
-            foreach ($mapping_row as $key=>$value) {
+            foreach ($mapping_row as $key => $value) {
                 echo "$key\t$value<br/>\n";
             }
         }
@@ -68,7 +68,7 @@ class FileMapping
             //check if there's a mapping condition and if so, does the row pass it
             $skip_row = false;
             if ($has_condition) {
-                foreach ($condition_array as $condition_name=>$condition_value) {
+                foreach ($condition_array as $condition_name => $condition_value) {
                     if (isset($mapping_row[$condition_name])) {
                         // we have the row with condition_name in it, let's see if passes the filter
                         if (is_array($condition_value)) {

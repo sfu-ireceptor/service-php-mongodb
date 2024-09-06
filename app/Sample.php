@@ -30,18 +30,18 @@ class Sample extends Model
         // $repository_names is for any special cases that are interpreted by the service
         // $filter_to_repo is for passthrough of API terms to repository terms because service
         //   doesn't have to interpret them
-        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $filter_types = FileMapping::createMappingArray('ir_api_input', 'ir_api_input_type', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $filter_to_repo = FileMapping::createMappingArray('ir_api_input', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
-        $repo_to_output = FileMapping::createMappingArray('ir_repository', 'ir_api_output', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $filter_names = FileMapping::createMappingArray('service_name', 'ir_api_input', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $filter_types = FileMapping::createMappingArray('ir_api_input', 'ir_api_input_type', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $filter_to_repo = FileMapping::createMappingArray('ir_api_input', 'ir_repository', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repo_to_output = FileMapping::createMappingArray('ir_repository', 'ir_api_output', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         $query = new self();
 
         //parse over input parameters and resolve them
         //  special cases go first
         //  otherwise, ints get equals, strings get substring, arrays get in operators
-        foreach ($f as $filter_name=>$filter_value) {
+        foreach ($f as $filter_name => $filter_value) {
             //empty values count as no filter
             if (! isset($filter_value) || $filter_value == '') {
                 continue;
@@ -97,7 +97,7 @@ class Sample extends Model
         $return_array = [];
         foreach ($list as $element) {
             //if there's a mapping for any return value, replace it
-            foreach ($element as $element_name=>$element_value) {
+            foreach ($element as $element_name => $element_value) {
                 // this is baked into mongodb, so doesn't really belong in a mapping file
                 if ($element_name == '_id') {
                     $element['ir_project_sample_id'] = $element['_id'];

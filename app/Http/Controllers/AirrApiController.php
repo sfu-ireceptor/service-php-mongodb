@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\AirrCell;
 use App\AirrClone;
 use App\AirrGeneExpression;
+use App\AirrReactivity;
 use App\AirrRearrangement;
+use App\AirrReceptor;
 use App\AirrRepertoire;
 use App\AirrUtils;
 use App\Info;
@@ -469,6 +471,162 @@ class AirrApiController extends Controller
                         //$response['result'] = Sequence::airrRearrangementResponse($l);
                         return response()->streamDownload(function () use ($l, $response_type, $params) {
                             AirrGeneExpression::airrGeneExpressionResponse($l, $response_type, $params);
+                        });
+                    }
+                    break;
+            }
+        }
+    }
+
+    public function airr_receptor(Request $request)
+    {
+        // /ADC API entry point that resolves an AIRR API receptor query request
+        $params = $request->json()->all();
+
+        $error = json_last_error();
+        if ($error) {
+            //something went bad and Laravel cound't parse the parameters as JSON
+            $response['message'] = 'Unable to parse JSON parameters:' . json_last_error_msg();
+
+            return response($response, 400)->header('Content-Type', 'application/json');
+        }
+
+        //check non-filter parameters and return error if there is one
+        $params_verify = AirrUtils::verifyParameters($params);
+        if ($params_verify != null) {
+            $response['message'] = 'Error in parameters: ' . $params_verify . "\n";
+
+            return response($response, 400)->header('Content-Type', 'application/json');
+        }
+        //check if we can optimize the ADC API query for our repository
+        //  if so, go down optimizied query path
+        if (AirrUtils::receptorQueryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
+            return response()->streamDownload(function () use ($params) {
+                AirrReceptor::airrOptimizedReceptorRequest($params, JSON_OBJECT_AS_ARRAY);
+            });
+        } else {
+            $l = AirrReceptor::airrReceptorRequest($params, JSON_OBJECT_AS_ARRAY);
+            switch ($l) {
+                case 'error':
+                    $response = [];
+                    $response['message'] = 'Unable to parse the filter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
+                    break;
+                case 'size_error':
+                    $response = [];
+                    $response['message'] = 'Invalid size parameter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
+                    break;
+
+                case 'from_error':
+                    $response = [];
+                    $response['message'] = 'Invalid from parameter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
+                    break;
+
+                default:
+                    //check what kind of response we have, default to JSON
+                    $response_type = 'json';
+                    if (isset($params['format']) && $params['format'] != '') {
+                        $response_type = strtolower($params['format']);
+                    }
+                    if (isset($params['facets'])) {
+                        $response = AirrUtils::airrHeader('Receptor', false);
+
+                        //facets have different formatting requirements
+                        $response['Facet'] = AirrReceptor::airrReceptorFacetsResponse($l);
+                        $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+                        return response($return_response)->header('Content-Type', 'application/json');
+                    } else {
+                        //regular response, needs to be formatted as per AIRR standard, as
+                        //  iReceptor repertoires are flat collections in MongoDB
+                        return response()->streamDownload(function () use ($l, $response_type, $params) {
+                            AirrReceptor::airrReceptorResponse($l, $response_type, $params);
+                        });
+                    }
+                    break;
+            }
+        }
+    }
+
+    public function airr_reactivity(Request $request)
+    {
+        // /ADC API entry point that resolves an AIRR API clone query request
+        $params = $request->json()->all();
+
+        $error = json_last_error();
+        if ($error) {
+            //something went bad and Laravel cound't parse the parameters as JSON
+            $response['message'] = 'Unable to parse JSON parameters:' . json_last_error_msg();
+
+            return response($response, 400)->header('Content-Type', 'application/json');
+        }
+
+        //check non-filter parameters and return error if there is one
+        $params_verify = AirrUtils::verifyParameters($params);
+        if ($params_verify != null) {
+            $response['message'] = 'Error in parameters: ' . $params_verify . "\n";
+
+            return response($response, 400)->header('Content-Type', 'application/json');
+        }
+        //check if we can optimize the ADC API query for our repository
+        //  if so, go down optimizied query path
+        if (AirrUtils::reactivityQueryOptimizable($params, JSON_OBJECT_AS_ARRAY)) {
+            return response()->streamDownload(function () use ($params) {
+                AirrReactivity::airrOptimizedReactivityRequest($params, JSON_OBJECT_AS_ARRAY);
+            });
+        } else {
+            $l = AirrReactivity::airrReactivityRequest($params, JSON_OBJECT_AS_ARRAY);
+            switch ($l) {
+                case 'error':
+                    $response = [];
+                    $response['message'] = 'Unable to parse the filter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
+                    break;
+                case 'size_error':
+                    $response = [];
+                    $response['message'] = 'Invalid size parameter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
+                    break;
+
+                case 'from_error':
+                    $response = [];
+                    $response['message'] = 'Invalid from parameter.';
+                    $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+                    return response($return_response, 400)->header('Content-Type', 'application/json');
+                    break;
+
+                default:
+                    //check what kind of response we have, default to JSON
+                    $response_type = 'json';
+                    if (isset($params['format']) && $params['format'] != '') {
+                        $response_type = strtolower($params['format']);
+                    }
+                    if (isset($params['facets'])) {
+                        $response = AirrUtils::airrHeader('Reactivity', false);
+
+                        //facets have different formatting requirements
+                        $response['Facet'] = AirrReactivity::airrReactivityFacetsResponse($l);
+                        $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+
+                        return response($return_response)->header('Content-Type', 'application/json');
+                    } else {
+                        //regular response, needs to be formatted as per AIRR standard, as
+                        //  iReceptor repertoires are flat collections in MongoDB
+                        return response()->streamDownload(function () use ($l, $response_type, $params) {
+                            AirrReactivity::airrReactivityResponse($l, $response_type, $params);
                         });
                     }
                     break;

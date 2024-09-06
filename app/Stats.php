@@ -26,31 +26,31 @@ class Stats extends Model
     {
         // given an array of repertoires, find the count of junction lengts for each
         $repertoire_service_to_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository',
-            ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+            ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $repertoire_db_types = FileMapping::createMappingArray('ir_repository', 'ir_repository_type',
-            ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Repertoire', 'IR_Repertoire']]);
+            ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Repertoire', 'IR_Repertoire']]);
         $stats_api_outputs = FileMapping::createMappingArray('irplus_stats_api_query', 'irplus_stats_api_response',
-            ['ir_class'=>['IRPlus_stats']]);
+            ['ir_class' => ['IRPlus_stats']]);
         $stats_api_input_to_db_mapping = FileMapping::createMappingArray('irplus_stats_api_query', 'ir_repository',
-            ['ir_class'=>['IRPlus_stats']]);
+            ['ir_class' => ['IRPlus_stats']]);
         $service_to_api_input_mapping = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query',
-            ['ir_class'=>['IRPlus_stats']]);
+            ['ir_class' => ['IRPlus_stats']]);
         $service_to_api_output_mapping = FileMapping::createMappingArray('service_name', 'irplus_stats_api_response',
-            ['ir_class'=>['IRPlus_stats']]);
+            ['ir_class' => ['IRPlus_stats']]);
         $service_to_stats_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository',
-            ['ir_class'=>['IRPlus_stats']]);
-        $service_to_repertoire_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+            ['ir_class' => ['IRPlus_stats']]);
+        $service_to_repertoire_db_mapping = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
         $entry_point_fields = [];
 
         switch ($entry_point) {
             case 'junction_length':
-                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_junction_length']]);
+                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass' => ['IRPlus_stats_junction_length']]);
                 break;
             case 'gene_usage':
-                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_gene_usage']]);
+                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass' => ['IRPlus_stats_gene_usage']]);
                 break;
             case 'rearrangement_count':
-                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass'=>['IRPlus_stats_rearrangement_count']]);
+                $entry_point_fields = FileMapping::createMappingArray('service_name', 'irplus_stats_api_query', ['ir_subclass' => ['IRPlus_stats_rearrangement_count']]);
                 break;
             default:
                 return 'error';
@@ -158,8 +158,8 @@ class Stats extends Model
                             $count = intval($stat['count']);
                             $stat_total += $count;
 
-                            $stats_object[$service_to_api_output_mapping['data']][] = [$service_to_api_output_mapping['key']=>$value,
-                                $service_to_api_output_mapping['value']=>$count, ];
+                            $stats_object[$service_to_api_output_mapping['data']][] = [$service_to_api_output_mapping['key'] => $value,
+                                $service_to_api_output_mapping['value'] => $count, ];
                         }
                         $stats_object[$service_to_api_output_mapping['total']] = $stat_total;
                         $response_object[$service_to_api_output_mapping['statistics']][] = $stats_object;

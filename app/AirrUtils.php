@@ -426,7 +426,7 @@ class AirrUtils extends Model
         //return false;
 
         try {
-            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['ir_project_sample_id'], $airr_names['junction_aa_length'],
@@ -469,9 +469,9 @@ class AirrUtils extends Model
 
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
-            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
-            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
-            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null && $filters != '') {
                 return false;
@@ -717,7 +717,7 @@ class AirrUtils extends Model
         //return false;
 
         try {
-            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => ['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['repertoire_id'], $airr_names['junction_aa_length'],
@@ -759,9 +759,9 @@ class AirrUtils extends Model
 
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
-            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
-            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['clone', 'ir_clone', 'Clone', 'IR_Clone']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null && $filters != '') {
                 return false;
@@ -945,7 +945,7 @@ class AirrUtils extends Model
         //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
 
         try {
-            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => ['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['repertoire_id'], $airr_names['data_processing_id'],
@@ -979,9 +979,9 @@ class AirrUtils extends Model
 
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
-            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
-            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
-            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['cell', 'ir_cell', 'Cell', 'IR_Cell']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null && $filters != '') {
                 return false;
@@ -1138,7 +1138,7 @@ class AirrUtils extends Model
         //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
 
         try {
-            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => ['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['repertoire_id'], $airr_names['data_processing_id'],
@@ -1172,9 +1172,9 @@ class AirrUtils extends Model
 
             //check that the filter is correct - easiest way is to run it through unoptimized
             //  filter creation and see if it's returning null
-            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
-            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
-            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class'=>['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => ['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => ['geneexpression', 'cellexpression', 'ir_expression', 'GeneExpression', 'CellExpression', 'IR_Expression']]);
             $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
             if ($query_string == null && $filters != '') {
                 return false;
@@ -1268,6 +1268,394 @@ class AirrUtils extends Model
     //if given a filter, map it to appropriate database field, create a MongoDB query,
     //  separate repertoire ids (if any) into a list and return it for further processing
     public static function optimizeGeneExpressionFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters, $db_types_array)
+    {
+        // if our top-level op is 'and', that means we have a list of repertoire_ids and another query parameter
+        //   (otherwise, the query would not be optimizable)
+        if ($filter['op'] == 'and') {
+            foreach ($filter['content'] as $filter_piece) {
+                // repertoire query goes into sample_id_list
+                if ($filter_piece['content']['field'] == $service_to_airr_mapping['repertoire_id']) {
+                    if (is_array($filter_piece['content']['value'])) {
+                        //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
+                        $empty_array = true;
+                        foreach ($filter_piece['content']['value'] as $filter_id) {
+                            $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter_piece['content']['field']]);
+                            $empty_array = false;
+                        }
+                        if ($empty_array) {
+                            $sample_id_list[] = null;
+                        }
+                    } else {
+                        $sample_id_list[] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
+                    }
+                } else {
+                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
+                }
+            }
+        } else {
+            //we have a single query parameter, either repertoire id or filter
+            if ($filter['content']['field'] == $service_to_airr_mapping['repertoire_id']) {
+                if (is_array($filter['content']['value'])) {
+                    //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
+                    $empty_array = true;
+                    foreach ($filter['content']['value'] as $filter_id) {
+                        $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
+                        $empty_array = false;
+                    }
+                    if ($empty_array) {
+                        $sample_id_list[] = null;
+                    }
+                } else {
+                    $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
+                }
+            } else {
+                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
+            }
+        }
+    }
+
+    public static function receptorQueryOptimizable($query)
+    {
+        //determine if a receptor query is optimizable
+        // first pass-always fail
+        //return  false;
+        //method to check if a receptor query can be optimized for iReceptor repository
+        //  returns true if yes, false otherwise
+        //rules are:
+        //  -if it's an equals query on a single indexed field, or single indexed field and repertoire id, yes
+        //  -if it's a facets query on repertoire_id, and equals on an indexed field, yes
+        //  -if it's a facets query on repertoire_id with no filter, yes
+        //  -otherwise, not optimizable
+
+        //create helper mappings to avoid hard-coding terms
+        //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
+
+        try {
+            $map_classes = ['Receptor', 'IR_Receptor'];
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => $map_classes]);
+            // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
+            //  note that indexed fields on non-AIRR terms can and do exist
+            $indexed_fields = [$airr_names['receptor_id'], $airr_names['receptor_hash'],
+                $airr_names['receptor_type'], $airr_names['receptor_ref'],
+            ];
+            $filters = '';
+            $facets = '';
+
+            //size must be an integer
+            if (isset($query['size']) && ! is_int($query['size'])) {
+                return false;
+            }
+
+            // similar to size, from must be integer
+            if (isset($query['from']) && ! is_int($query['from'])) {
+                return false;
+            }
+
+            if (isset($query['filters'])) {
+                $filters = $query['filters'];
+            }
+            if (isset($query['facets'])) {
+                $facets = $query['facets'];
+            }
+            // no filters, no facets - doesn't matter, so go through the regular pipeline
+            if (($filters == '' || count($filters) == 0) && $facets == '') {
+                //echo 'no filter';
+
+                return false;
+            }
+
+            //check that the filter is correct - easiest way is to run it through unoptimized
+            //  filter creation and see if it's returning null
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => $map_classes]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => $map_classes]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => $map_classes]);
+            $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
+            if ($query_string == null && $filters != '') {
+                return false;
+            }
+
+            //first pass is easiest, any facets query not on repertoire_id will not be optimized
+            if ($facets != '' && $facets != 'repertoire_id') {
+                //echo 'bad facet ' . $facets;
+
+                return false;
+            }
+
+            //if we have no filter, it's a count on repertoire_id and we can definitely optimize it
+            if ($filters == '' || count($filters) == 0) {
+                return true;
+            }
+
+            //if filter is not 'and', '=' or 'in', we can't do it
+            if (! in_array($filters['op'], ['and', '=', 'in'])) {
+                //echo 'bad op ' . $filters['op'];
+
+                return false;
+            }
+            //single '=' query on indexed fields, definitely optimizable (if facets exist they should be on repertoire_id at this point
+            //  so no reason to check).
+            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields)) {
+                return true;
+            }
+            //a 'in' query on repertoire_id is optimizable, we just will iterate over it
+            if ($filters['op'] == 'in' && $filters['content']['field'] == $airr_names['repertoire_id']) {
+                return true;
+            }
+
+            //most complicated case is an 'and' filter with two parameters, an indexed field with '=' query and repertoire_id '=' or 'contains'
+            if ($filters['op'] == 'and' && is_array($filters['content']) && count($filters['content']) == 2) {
+                $has_indexed = false;
+                foreach ($filters['content'] as $filter) {
+                    //first, check if op is '=', 'in' or 'contains'. Anything else we can't do
+                    if ($filter['op'] != '=' && $filter['op'] != 'in') {
+                        // echo 'bad op ' . $filter['op'];
+
+                        return false;
+                    }
+
+                    //can't do anything good if field isn't indexed
+                    if (! in_array($filter['content']['field'], $indexed_fields, true)) {
+                        //echo 'unindex field ' . $filter['content']['field'];
+
+                        return false;
+                    }
+
+                    //'in' only works on repertoire_id
+                    if ($filter['op'] == 'in' && $filter['content']['field'] != $airr_names['repertoire_id']) {
+                        //echo 'bad in on ' . $filter['content']['field'];
+
+                        return false;
+                    }
+
+                    //'=' works on any indexed field - BUT - we have to make sure query only uses one
+                    //  indexed field and repertoir_id
+                    if ($filter['op'] == '=') {
+                        if ($has_indexed) {
+                            //echo 'Attempt to AND multiple fields ' . var_dump($filters);
+
+                            return false;
+                        } else {
+                            if (in_array($filter['content']['field'], $indexed_fields) && $filter['content']['field'] != $airr_names['repertoire_id']) {
+                                $has_indexed = true;
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+            //any filter with more than two parameters can't be optimized
+            if (is_array($filters['content']) && count($filters['content']) > 2) {
+                return false;
+            }
+            // shouldn't get here
+            //echo 'no return';
+
+            return false;
+        } catch (\Exception $e) {
+            echo "$e";
+
+            return false;
+        }
+    }
+
+    //if given a filter, map it to appropriate database field, create a MongoDB query,
+    //  separate repertoire ids (if any) into a list and return it for further processing
+    public static function optimizeReceptorFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters, $db_types_array)
+    {
+        // if our top-level op is 'and', that means we have a list of repertoire_ids and another query parameter
+        //   (otherwise, the query would not be optimizable)
+        if ($filter['op'] == 'and') {
+            foreach ($filter['content'] as $filter_piece) {
+                // repertoire query goes into sample_id_list
+                if ($filter_piece['content']['field'] == $service_to_airr_mapping['repertoire_id']) {
+                    if (is_array($filter_piece['content']['value'])) {
+                        //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
+                        $empty_array = true;
+                        foreach ($filter_piece['content']['value'] as $filter_id) {
+                            $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter_piece['content']['field']]);
+                            $empty_array = false;
+                        }
+                        if ($empty_array) {
+                            $sample_id_list[] = null;
+                        }
+                    } else {
+                        $sample_id_list[] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
+                    }
+                } else {
+                    $db_filters[$airr_to_repository_mapping[$filter_piece['content']['field']]] = self::typeConvertHelperRaw($filter_piece['content']['value'], $db_types_array[$filter_piece['content']['field']]);
+                }
+            }
+        } else {
+            //we have a single query parameter, either repertoire id or filter
+            if ($filter['content']['field'] == $service_to_airr_mapping['repertoire_id']) {
+                if (is_array($filter['content']['value'])) {
+                    //corner case where an empty repertoire_id array is sent needs to fail, rather than take all repertoires
+                    $empty_array = true;
+                    foreach ($filter['content']['value'] as $filter_id) {
+                        $sample_id_list[] = self::typeConvertHelperRaw($filter_id, $db_types_array[$filter['content']['field']]);
+                        $empty_array = false;
+                    }
+                    if ($empty_array) {
+                        $sample_id_list[] = null;
+                    }
+                } else {
+                    $sample_id_list[] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
+                }
+            } else {
+                $db_filters[$airr_to_repository_mapping[$filter['content']['field']]] = self::typeConvertHelperRaw($filter['content']['value'], $db_types_array[$filter['content']['field']]);
+            }
+        }
+    }
+
+    public static function reactivityQueryOptimizable($query)
+    {
+        //determine if a reactivity query is optimizable
+        // first pass-always fail
+        //return  false;
+        //method to check if a reactivity query can be optimized for iReceptor repository
+        //  returns true if yes, false otherwise
+        //rules are:
+        //  -if it's an equals query on a single indexed field, or single indexed field and repertoire id, yes
+        //  -if it's a facets query on repertoire_id, and equals on an indexed field, yes
+        //  -if it's a facets query on repertoire_id with no filter, yes
+        //  -otherwise, not optimizable
+
+        //create helper mappings to avoid hard-coding terms
+        //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
+
+        try {
+            $map_classes = ['ReceptorReactivity', 'IR_ReceptorReactivity'];
+            $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => $map_classes]);
+            // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
+            //  note that indexed fields on non-AIRR terms can and do exist
+            $indexed_fields = [$airr_names['antigen'], $airr_names['mhc_gene_1'], $airr_names['antigen_source_species'],
+                $airr_names['ligand_type'], $airr_names['antigen_type'],
+            ];
+            $filters = '';
+            $facets = '';
+
+            //size must be an integer
+            if (isset($query['size']) && ! is_int($query['size'])) {
+                return false;
+            }
+
+            // similar to size, from must be integer
+            if (isset($query['from']) && ! is_int($query['from'])) {
+                return false;
+            }
+
+            if (isset($query['filters'])) {
+                $filters = $query['filters'];
+            }
+            if (isset($query['facets'])) {
+                $facets = $query['facets'];
+            }
+            // no filters, no facets - doesn't matter, so go through the regular pipeline
+            if (($filters == '' || count($filters) == 0) && $facets == '') {
+                //echo 'no filter';
+
+                return false;
+            }
+
+            //check that the filter is correct - easiest way is to run it through unoptimized
+            //  filter creation and see if it's returning null
+            $airr_db_names = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository', ['ir_class' => $map_classes]);
+            $airr_types = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => $map_classes]);
+            $db_types = FileMapping::createMappingArray('ir_adc_api_query', 'ir_repository_type', ['ir_class' => $map_classes]);
+            $query_string = self::processAirrFilter($filters, $airr_db_names, $airr_types, $db_types);
+            if ($query_string == null && $filters != '') {
+                return false;
+            }
+
+            //first pass is easiest, any facets query not on repertoire_id will not be optimized
+            if ($facets != '' && $facets != 'repertoire_id') {
+                //echo 'bad facet ' . $facets;
+
+                return false;
+            }
+
+            //if we have no filter, it's a count on repertoire_id and we can definitely optimize it
+            if ($filters == '' || count($filters) == 0) {
+                return true;
+            }
+
+            //if filter is not 'and', '=' or 'in', we can't do it
+            if (! in_array($filters['op'], ['and', '=', 'in'])) {
+                //echo 'bad op ' . $filters['op'];
+
+                return false;
+            }
+            //single '=' query on indexed fields, definitely optimizable (if facets exist they should be on repertoire_id at this point
+            //  so no reason to check).
+            if ($filters['op'] == '=' && in_array($filters['content']['field'], $indexed_fields)) {
+                return true;
+            }
+            //a 'in' query on repertoire_id is optimizable, we just will iterate over it
+            if ($filters['op'] == 'in' && $filters['content']['field'] == $airr_names['repertoire_id']) {
+                return true;
+            }
+
+            //most complicated case is an 'and' filter with two parameters, an indexed field with '=' query and repertoire_id '=' or 'contains'
+            if ($filters['op'] == 'and' && is_array($filters['content']) && count($filters['content']) == 2) {
+                $has_indexed = false;
+                foreach ($filters['content'] as $filter) {
+                    //first, check if op is '=', 'in' or 'contains'. Anything else we can't do
+                    if ($filter['op'] != '=' && $filter['op'] != 'in') {
+                        // echo 'bad op ' . $filter['op'];
+
+                        return false;
+                    }
+
+                    //can't do anything good if field isn't indexed
+                    if (! in_array($filter['content']['field'], $indexed_fields, true)) {
+                        //echo 'unindex field ' . $filter['content']['field'];
+
+                        return false;
+                    }
+
+                    //'in' only works on repertoire_id
+                    if ($filter['op'] == 'in' && $filter['content']['field'] != $airr_names['repertoire_id']) {
+                        //echo 'bad in on ' . $filter['content']['field'];
+
+                        return false;
+                    }
+
+                    //'=' works on any indexed field - BUT - we have to make sure query only uses one
+                    //  indexed field and repertoir_id
+                    if ($filter['op'] == '=') {
+                        if ($has_indexed) {
+                            //echo 'Attempt to AND multiple fields ' . var_dump($filters);
+
+                            return false;
+                        } else {
+                            if (in_array($filter['content']['field'], $indexed_fields) && $filter['content']['field'] != $airr_names['repertoire_id']) {
+                                $has_indexed = true;
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+            //any filter with more than two parameters can't be optimized
+            if (is_array($filters['content']) && count($filters['content']) > 2) {
+                return false;
+            }
+            // shouldn't get here
+            //echo 'no return';
+
+            return false;
+        } catch (\Exception $e) {
+            echo "$e";
+
+            return false;
+        }
+    }
+
+    //if given a filter, map it to appropriate database field, create a MongoDB query,
+    //  separate repertoire ids (if any) into a list and return it for further processing
+    public static function optimizeReactivityFilter($filter, $airr_to_repository_mapping, $airr_types, $service_to_airr_mapping, $service_to_db_mapping, &$sample_id_list, &$db_filters, $db_types_array)
     {
         // if our top-level op is 'and', that means we have a list of repertoire_ids and another query parameter
         //   (otherwise, the query would not be optimizable)

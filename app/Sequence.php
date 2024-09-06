@@ -181,7 +181,7 @@ class Sequence extends Model
         'junction_aa_length' => 'int',
         'functional' => 'int',
         'ir_annotation_tool' => 'string',
-        'sequence'=>'string',
+        'sequence' => 'string',
     ];
 
     public static function parseFilter(&$query, $f)
@@ -443,13 +443,13 @@ class Sequence extends Model
         }
 
         // translate repertoire-level terms to api output terms if they are different
-        $repo_to_output_sample = FileMapping::createMappingArray('ir_repository', 'ir_api_output', ['ir_class'=>['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
+        $repo_to_output_sample = FileMapping::createMappingArray('ir_repository', 'ir_api_output', ['ir_class' => ['repertoire', 'ir_repertoire', 'Repertoire', 'IR_Repertoire']]);
 
         // quick check to see if we have a filter that's not ir_project_sample_id_list
         //   if we don't, we can just use pre-computed sequence counts
         $has_filter = false;
 
-        foreach ($filter as $filtername=>$filtervalue) {
+        foreach ($filter as $filtername => $filtervalue) {
             if (array_key_exists($filtername, self::$coltype)) {
                 $has_filter = true;
             }
@@ -461,7 +461,7 @@ class Sequence extends Model
             //DB::enableQueryLog();
 
             //if there's a mapping for any return value, replace it
-            foreach ($psa as $psa_name=>$psa_value) {
+            foreach ($psa as $psa_name => $psa_value) {
                 // this is baked into mongodb, so doesn't really belong in a mapping file
                 if ($psa_name == '_id') {
                     $psa['ir_project_sample_id'] = $psa['_id'];
@@ -524,7 +524,7 @@ class Sequence extends Model
 
         // map the repository names to API expected output names through service terms
         $repository_names = FileMapping::createMappingArray('service_name', 'ir_repository');
-        $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $return_mapping = FileMapping::createMappingArray('ir_api_output', 'ir_repository', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
         $num_results = 25;
         $start_at = 0;
@@ -539,7 +539,7 @@ class Sequence extends Model
                 break;
             }
             $sequence_match = self::configurableSequenceMatch($sample['_id'], $f);
-            $result = DB::collection($query->getCollection())->raw()->find($sequence_match, ['limit'=>$needed_results]);
+            $result = DB::collection($query->getCollection())->raw()->find($sequence_match, ['limit' => $needed_results]);
             foreach ($result as $sequence) {
                 $result_array[] = $sequence;
                 $current_results++;
@@ -591,11 +591,11 @@ class Sequence extends Model
             }
             $return_row = [];
             //copy the row to array.
-            foreach ($row as $row_key=>$row_value) {
+            foreach ($row as $row_key => $row_value) {
                 $return_row[$row_key] = $row_value;
             }
             //map the terms specified in api output column, pass the other values through as-is
-            foreach ($return_mapping as $output_name=>$repo_name) {
+            foreach ($return_mapping as $output_name => $repo_name) {
                 $return_row['_id'] = $row['_id'];
                 if (isset($repo_name) && isset($row[$repo_name])) {
                     unset($return_row[$repo_name]);
@@ -635,7 +635,7 @@ class Sequence extends Model
 
         // Create mappings between service terms, database field names and AIRR TSV headers.
         //   as well as which sequence fields we want to fetch (fewer fields make query faster)
-        $database_fields = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class'=>['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+        $database_fields = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_fields = FileMapping::createMappingArray('airr_tsv', 'service_name');
         $projection_mapping = FileMapping::createMappingArray('ir_repository', 'projection');
 
@@ -660,7 +660,7 @@ class Sequence extends Model
         $d_call_airr_name = array_search('d_call', $airr_fields);
 
         //create what MongoDB calls 'projection' to retrieve only the fields we use for AIRR TSV
-        foreach ($projection_mapping as $key=>$value) {
+        foreach ($projection_mapping as $key => $value) {
             if ($value != null) {
                 $field_to_retrieve[$key] = 1;
             }
