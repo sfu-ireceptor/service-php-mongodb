@@ -52,7 +52,7 @@ class AirrReactivity extends Model
 
     public static function getMapClasses()
     {
-        return ['ReceptorReactivity', 'IR_ReceptorReactivity'];
+        return ['Reactivity', 'IR_Reactivity'];
     }
 
     public static function airrReactivitySingle($reactivity_id)
