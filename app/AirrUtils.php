@@ -1525,7 +1525,7 @@ class AirrUtils extends Model
         //  TODO? - add 'is_indexed' column to the mapping file, in case we adjust indexes
 
         try {
-            $map_classes = ['ReceptorReactivity', 'IR_ReceptorReactivity'];
+            $map_classes = ['Reactivity', 'IR_Reactivity'];
             $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => $map_classes]);
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
