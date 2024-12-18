@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Jenssegers\Mongodb\Eloquent\Model;
 
 class AirrReactivity extends Model
