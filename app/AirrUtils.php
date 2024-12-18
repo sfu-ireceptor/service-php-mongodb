@@ -7,7 +7,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-
 class AirrUtils extends Model
 {
     //method to convert a value to a given type and encode in a way
