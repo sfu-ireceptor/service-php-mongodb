@@ -170,7 +170,7 @@ class AirrUtils extends Model
                 && $airr_to_db_array[$content['field']] != '') {
                 $field = $airr_to_db_array[$content['field']];
             } else {
-		$field = $content['field'];
+                $field = $content['field'];
                 //return;
             }
 
@@ -179,8 +179,8 @@ class AirrUtils extends Model
                 $type = $airr_types_array[$content['field']];
                 $db_type = $db_types_array[$content['field']];
             } else {
-		$type = 'string';
-		$db_type = 'string';
+                $type = 'string';
+                $db_type = 'string';
                 //return;
             }
         }
