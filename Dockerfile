@@ -1,7 +1,7 @@
 FROM php:8.1-apache
 
-# install MongoDB PHP extension
-RUN pecl install mongodb && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongo.ini
+# install MongoDB PHP extension - needs version 1.15.0
+RUN pecl install mongodb-1.15.0 && echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongo.ini
 
 # install zip, composer
 RUN apt-get update && \

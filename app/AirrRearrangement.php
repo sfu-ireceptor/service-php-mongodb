@@ -320,7 +320,7 @@ class AirrRearrangement extends Model
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
                     //  we also want to return a string, not an array, in JSON response
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                        $return_element = implode(', or ', $return_element->jsonSerialize());
+                        $return_element = implode(',', $return_element->jsonSerialize());
                     }
                     data_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
@@ -336,7 +336,7 @@ class AirrRearrangement extends Model
                     //
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")
                         && $response_type == 'tsv') {
-                        $return_element = implode(', ', $return_element->jsonSerialize());
+                        $return_element = implode(',', $return_element->jsonSerialize());
                     }
                     if (! isset($return_array[$return_key])) {
                         $return_array[$return_key] = $return_element;
@@ -412,7 +412,7 @@ class AirrRearrangement extends Model
         foreach ($rearrangement as $key => $value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                    $result[$response_mapping[$key]] = implode(', or ', $value);
+                    $result[$response_mapping[$key]] = implode(',', $value);
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }
@@ -672,9 +672,9 @@ class AirrRearrangement extends Model
                         foreach ($fields_to_display as $current_header) {
                             if (isset($airr_list[$current_header])) {
                                 if (is_array($airr_list[$current_header])) {
-                                    $new_line[$current_header] = implode(', or', $airr_list[$current_header]);
+                                    $new_line[$current_header] = implode(',', $airr_list[$current_header]);
                                 } elseif ($airr_list[$current_header] != null && is_a($airr_list[$current_header], "MongoDB\Model\BSONArray")) {
-                                    $new_line[$current_header] = implode(', or ', $airr_list[$current_header]->jsonSerialize());
+                                    $new_line[$current_header] = implode(',', $airr_list[$current_header]->jsonSerialize());
                                 } else {
                                     //the database id should be converted to string using the BSON function
                                     if (is_a($airr_list[$current_header], "MongoDB\BSON\ObjectId")) {

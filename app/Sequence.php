@@ -560,19 +560,19 @@ class Sequence extends Model
                 $row[$v_call_repository_name] = $row[$v_call_repository_name]->jsonSerialize();
             }
             if (isset($row[$v_call_repository_name]) && is_array($row[$v_call_repository_name])) {
-                $row[$v_call_repository_name] = implode(', or ', $row[$v_call_repository_name]);
+                $row[$v_call_repository_name] = implode(',', $row[$v_call_repository_name]);
             }
             if (isset($row[$j_call_repository_name]) && ! is_string($row[$j_call_repository_name]) && ! is_null($row[$j_call_repository_name])) {
                 $row[$j_call_repository_name] = $row[$j_call_repository_name]->jsonSerialize();
             }
             if (isset($row[$j_call_repository_name]) && is_array($row[$j_call_repository_name])) {
-                $row[$j_call_repository_name] = implode(', or ', $row[$j_call_repository_name]);
+                $row[$j_call_repository_name] = implode(',', $row[$j_call_repository_name]);
             }
             if (isset($row[$d_call_repository_name]) && ! is_string($row[$d_call_repository_name]) && ! is_null($row[$d_call_repository_name])) {
                 $row[$d_call_repository_name] = $row[$d_call_repository_name]->jsonSerialize();
             }
             if (isset($row[$d_call_repository_name]) && is_array($row[$d_call_repository_name])) {
-                $row[$d_call_repository_name] = implode(', or ', $row[$d_call_repository_name]);
+                $row[$d_call_repository_name] = implode(',', $row[$d_call_repository_name]);
             }
 
             //functional might be an int so we convert to boolean
@@ -753,9 +753,9 @@ class Sequence extends Model
                     foreach (array_keys($airr_fields) as $current_header) {
                         if (isset($results_array[$current_header])) {
                             if (is_array($results_array[$current_header])) {
-                                $new_line[$current_header] = implode($results_array[$current_header], ', or');
+                                $new_line[$current_header] = implode($results_array[$current_header], ',');
                             } elseif (in_array($current_header, [$v_call_airr_name, $d_call_airr_name, $j_call_airr_name]) && $results_array[$current_header] != null && ! is_string($results_array[$current_header])) {
-                                $new_line[$current_header] = implode($results_array[$current_header]->jsonSerialize(), ', or ');
+                                $new_line[$current_header] = implode($results_array[$current_header]->jsonSerialize(), ',');
                             } else {
                                 $new_line[$current_header] = $results_array[$current_header];
                             }

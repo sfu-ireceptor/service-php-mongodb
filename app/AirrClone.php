@@ -320,7 +320,7 @@ class AirrClone extends Model
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
                         if ($response_type == 'tsv' ||
                             (isset($airr_type[$repository_to_airr[$return_key]]) && $airr_type[$repository_to_airr[$return_key]] != 'array')) {
-                            $return_element = implode(', or ', $return_element->jsonSerialize());
+                            $return_element = implode(',', $return_element->jsonSerialize());
                         }
                     }
                     data_set($return_array, $repository_to_airr[$return_key], $return_element);
@@ -374,7 +374,7 @@ class AirrClone extends Model
         foreach ($clone as $key => $value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                    $result[$response_mapping[$key]] = implode(', or ', $value);
+                    $result[$response_mapping[$key]] = implode(',', $value);
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }

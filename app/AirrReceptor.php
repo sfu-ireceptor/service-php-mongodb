@@ -297,7 +297,7 @@ class AirrReceptor extends Model
                 // mongodb BSON array needs to be serialized or it can't be used in TSV output
                 //  we also want to return a string, not an array, in JSON response
                 if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                    $return_element = implode(', or ', $return_element->jsonSerialize());
+                    $return_element = implode(',', $return_element->jsonSerialize());
                 }
 
                 //make all the requested fields null before populating if there are results
@@ -368,7 +368,7 @@ class AirrReceptor extends Model
         foreach ($receptor as $key => $value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                    $result[$response_mapping[$key]] = implode(', or ', $value);
+                    $result[$response_mapping[$key]] = implode(',', $value);
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }

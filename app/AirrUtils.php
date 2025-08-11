@@ -672,7 +672,7 @@ class AirrUtils extends Model
             //  a string in AIRR
             if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray") &&
                 ($response_type == 'tsv' || (isset($db_to_airr_mapping[$return_key]) && $airr_type[$db_to_airr_mapping[$return_key]] == 'string'))) {
-                $return_element = implode(', or ', $return_element->jsonSerialize());
+                $return_element = implode(',', $return_element->jsonSerialize());
             }
 
             //make all the requested fields null before populating if there are results
