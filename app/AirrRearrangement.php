@@ -172,7 +172,7 @@ class AirrRearrangement extends Model
             $options['noCursorTimeout'] = true;
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions, $options);
-        } else if (isset($params['distinct']) && $params['distinct'] != '') {
+        } elseif (isset($params['distinct']) && $params['distinct'] != '') {
             if (! isset($airr_names[$params['distinct']])) {
                 return 'error';
             }

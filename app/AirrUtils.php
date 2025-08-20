@@ -437,8 +437,8 @@ class AirrUtils extends Model
                 $airr_names['functional'],
                 $airr_names['vgene_gene'], $airr_names['vgene_family'],
                 $airr_names['dgene_gene'], $airr_names['dgene_family'],
-		$airr_names['jgene_gene'], $airr_names['jgene_family'], 
-	        $airr_names['ir_antigen_ref'], $airr_names['ir_species_ref'], $airr_names['ir_epitope_ref']];
+                $airr_names['jgene_gene'], $airr_names['jgene_family'],
+                $airr_names['ir_antigen_ref'], $airr_names['ir_species_ref'], $airr_names['ir_epitope_ref']];
             $filters = '';
             $facets = '';
 
