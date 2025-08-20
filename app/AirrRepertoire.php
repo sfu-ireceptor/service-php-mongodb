@@ -130,7 +130,7 @@ class AirrRepertoire extends Model
             $aggOptions[1]['$group']['count'] = ['$sum' => 1];
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
-        } else if (isset($params['distinct']) && $params['distinct'] != '') {
+        } elseif (isset($params['distinct']) && $params['distinct'] != '') {
             if (! isset($airr_names[$params['distinct']])) {
                 return 'error';
             }
@@ -139,16 +139,15 @@ class AirrRepertoire extends Model
             $options['noCursorTimeout'] = true;
 
             $list = DB::collection($query->getCollection())->raw()->distinct($distinctField, $filter, $options);
-
         } else {
             $list = DB::collection($query->getCollection())->raw()->find(json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string), true), $options);
         }
 
-	if (is_array($list)) {
-	    return $list;
-	} else {
+        if (is_array($list)) {
+            return $list;
+        } else {
             return $list->toArray();
-	}
+        }
     }
 
     public static function airrRepertoireSingle($repertoire_id)
@@ -524,7 +523,4 @@ class AirrRepertoire extends Model
         // AIRR expects the same, an array of field values so we simply return the array.
         return $response_list;
     }
-
 }
-
-

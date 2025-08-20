@@ -210,7 +210,6 @@ class AirrReceptor extends Model
         return $response_list;
     }
 
-
     public static function airrReceptorResponse($response_list, $response_type, $params)
     {
         //method that takes an array of AIRR terms and returns a JSON string
