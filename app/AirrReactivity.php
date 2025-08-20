@@ -203,6 +203,14 @@ class AirrReactivity extends Model
         return $return_array;
     }
 
+    public static function airrReactivityDistinctResponse($response_list)
+    {
+        // MongoDB returns a distinct query as a list of strings ['value1', 'value2', ...]
+        // AIRR expects the same, an array of field values so we simply return the array.
+        return $response_list;
+    }
+
+
     public static function airrReactivityResponse($response_list, $response_type, $params)
     {
         //method that takes an array of AIRR terms and returns a JSON string
