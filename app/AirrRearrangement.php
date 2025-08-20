@@ -172,6 +172,16 @@ class AirrRearrangement extends Model
             $options['noCursorTimeout'] = true;
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions, $options);
+        } else if (isset($params['distinct']) && $params['distinct'] != '') {
+            if (! isset($airr_names[$params['distinct']])) {
+                return 'error';
+            }
+            $distinctField = $airr_names[$params['distinct']];
+            $filter = json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string));
+            $options['maxTimeMS'] = $query->getCountTimeout();
+            $options['noCursorTimeout'] = true;
+
+            $list = DB::collection($query->getCollection())->raw()->distinct($distinctField, $filter, $options);
         } else {
             $options['maxTimeMS'] = $query->getFetchTimeout();
             $options['noCursorTimeout'] = true;
@@ -385,6 +395,13 @@ class AirrRearrangement extends Model
         }
 
         return $return_array;
+    }
+
+    public static function airrRearrangementDistinctResponse($response_list)
+    {
+        // MongoDB returns a distinct query as a list of strings ['value1', 'value2', ...]
+        // AIRR expects the same, an array of field values so we simply return the array.
+        return $response_list;
     }
 
     public static function airrRearrangementResponseSingle($rearrangement)
