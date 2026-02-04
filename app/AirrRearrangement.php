@@ -207,13 +207,13 @@ class AirrRearrangement extends Model
         $db_to_service = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
-	// Initialize our list of fields that we need to return
+        // Initialize our list of fields that we need to return
         $fields_to_display = [];
 
-	// The ADC API allows for three levels of required fields so that users
-	// can limit the set of fields that are returned via the API. These are 
-	// captured in the AIRR Config file. So if a set of fields is specified
-	// in the request then return only those fields in "fields_to_display"
+        // The ADC API allows for three levels of required fields so that users
+        // can limit the set of fields that are returned via the API. These are
+        // captured in the AIRR Config file. So if a set of fields is specified
+        // in the request then return only those fields in "fields_to_display"
         if (isset($params['include_fields'])) {
             $map_fields_column = '';
             switch ($params['include_fields']) {
@@ -230,10 +230,10 @@ class AirrRearrangement extends Model
                     break;
             }
 
-	    // Get the required fields based on the mapping column.
+            // Get the required fields based on the mapping column.
             if ($map_fields_column != '') {
                 $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
-		// If the field is marked as required then mark it as a field to display.
+                // If the field is marked as required then mark it as a field to display.
                 foreach ($required_fields as $name => $value) {
                     if ($value && strtolower($value) != 'false') {
                         $fully_qualified_path = $name;
@@ -243,8 +243,8 @@ class AirrRearrangement extends Model
             }
         }
 
-	// If neither required nor fields is set in the API request, we still want to return all
-	// the AIRR fields
+        // If neither required nor fields is set in the API request, we still want to return all
+        // the AIRR fields
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
             $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             foreach ($required_fields as $name => $value) {
@@ -255,7 +255,7 @@ class AirrRearrangement extends Model
             }
         }
 
-	// Set up the headers, preamble, depending on TSV or JSON request
+        // Set up the headers, preamble, depending on TSV or JSON request
         if ($response_type == 'json') {
             header('Content-Type: application/json; charset=utf-8');
             $response = AirrUtils::airrHeader();
@@ -277,29 +277,29 @@ class AirrRearrangement extends Model
             echo implode(chr(9), array_keys($fields_to_display)) . "\n";
         }
 
-	// Loop over each rearrangement in the response.
+        // Loop over each rearrangement in the response.
         foreach ($response_list as $rearrangement) {
             $return_array = [];
 
-	    // For each field in our display list, null out the value. We
-	    // then populate from database later.
+            // For each field in our display list, null out the value. We
+            // then populate from database later.
             foreach ($fields_to_display as $display_field => $value) {
                 data_set($return_array, $display_field, null);
             }
 
-	    // For each field in this rearrangement, process the field.
+            // For each field in this rearrangement, process the field.
             foreach ($rearrangement as $return_key => $return_element) {
-		// Check to see if this field can be mapped to an AIRR field
+                // Check to see if this field can be mapped to an AIRR field
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
-		    // If it is not in our fields to display, and we are doing a TSV file,
-		    // we need to skip the field. TSV files have headers that are exactly
-		    // what is in fields_to_display, so we can't include it if it doesn't have
-		    // a header.
+                    // If it is not in our fields to display, and we are doing a TSV file,
+                    // we need to skip the field. TSV files have headers that are exactly
+                    // what is in fields_to_display, so we can't include it if it doesn't have
+                    // a header.
                     if ($response_type == 'tsv' && ! array_key_exists($repository_to_airr[$return_key], $fields_to_display)) {
                         continue;
                     }
-		    // Handle some special cases. These should not be required any more
-		    // TODO: Consider refactoring to remove this code.
+                    // Handle some special cases. These should not be required any more
+                    // TODO: Consider refactoring to remove this code.
                     $service_name = $db_to_service[$return_key];
                     if ($service_name == 'rev_comp') {
                         if ($return_element == '+') {
@@ -322,7 +322,7 @@ class AirrRearrangement extends Model
                         $return_element = $return_element->__toString();
                     }
 
-		    // Ensure that if we are processing an ID it is returned as a string.
+                    // Ensure that if we are processing an ID it is returned as a string.
                     if ($service_name == 'ir_project_sample_id') {
                         $return_element = (string) $return_element;
                     }
@@ -343,10 +343,10 @@ class AirrRearrangement extends Model
                     }
                     data_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
-		    // If it is not in our fields to display, and we are doing a TSV file,
-		    // we need to skip the field. TSV files have headers that are exactly
-		    // what is in fields_to_display, so we can't include it if it doesn't have
-		    // a header.
+                    // If it is not in our fields to display, and we are doing a TSV file,
+                    // we need to skip the field. TSV files have headers that are exactly
+                    // what is in fields_to_display, so we can't include it if it doesn't have
+                    // a header.
                     if ($response_type == 'tsv' && ! array_key_exists($return_key, $fields_to_display)) {
                         continue;
                     }
