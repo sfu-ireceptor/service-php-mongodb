@@ -438,23 +438,23 @@ class AirrUtils extends Model
                 $airr_names['vgene_gene'], $airr_names['vgene_family'],
                 $airr_names['dgene_gene'], $airr_names['dgene_family'],
                 $airr_names['jgene_gene'], $airr_names['jgene_family']];
-	    // Check to see if the iReceptor non-AIRR fields are in the mapping file before
-	    // adding them to the indexed field list.
-	    if (array_key_exists('ir_antigen_ref', $airr_names)) {
-		$indexed_fields[] = $airr_names['ir_antigen_ref'];
-	    }
-	    if (array_key_exists('ir_species_ref', $airr_names)) {
-		$indexed_fields[] = $airr_names['ir_species_ref'];
-	    }
-	    if (array_key_exists('ir_epitope_ref', $airr_names)) {
-		$indexed_fields[] = $airr_names['ir_epitope_ref'];
-	    }
-	    if (array_key_exists('ir_mhc_ref', $airr_names)) {
-		$indexed_fields[] = $airr_names['ir_mhc_ref'];
-	    }
-	    if (array_key_exists('ir_mhc_name', $airr_names)) {
-		$indexed_fields[] = $airr_names['ir_mhc_name'];
-	    }
+            // Check to see if the iReceptor non-AIRR fields are in the mapping file before
+            // adding them to the indexed field list.
+            if (array_key_exists('ir_antigen_ref', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_antigen_ref'];
+            }
+            if (array_key_exists('ir_species_ref', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_species_ref'];
+            }
+            if (array_key_exists('ir_epitope_ref', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_epitope_ref'];
+            }
+            if (array_key_exists('ir_mhc_ref', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_mhc_ref'];
+            }
+            if (array_key_exists('ir_mhc_name', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_mhc_name'];
+            }
             $filters = '';
             $facets = '';
 
