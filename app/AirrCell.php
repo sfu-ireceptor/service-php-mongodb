@@ -198,6 +198,13 @@ class AirrCell extends Model
         return $return_array;
     }
 
+    public static function airrCellDistinctResponse($response_list)
+    {
+        // MongoDB returns a distinct query as a list of strings ['value1', 'value2', ...]
+        // AIRR expects the same, an array of field values so we simply return the array.
+        return $response_list;
+    }
+
     public static function airrCellResponse($response_list, $response_type, $params)
     {
         //method that takes an array of AIRR terms and returns a JSON string
@@ -291,7 +298,7 @@ class AirrCell extends Model
                 // mongodb BSON array needs to be serialized or it can't be used in TSV output
                 //  we also want to return a string, not an array, in JSON response
                 if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                    $return_element = implode(', or ', $return_element->jsonSerialize());
+                    $return_element = implode(',', $return_element->jsonSerialize());
                 }
 
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
@@ -362,7 +369,7 @@ class AirrCell extends Model
         foreach ($cell as $key => $value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                    $result[$response_mapping[$key]] = implode(', or ', $value);
+                    $result[$response_mapping[$key]] = implode(',', $value);
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }

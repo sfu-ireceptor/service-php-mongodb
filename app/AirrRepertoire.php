@@ -130,11 +130,24 @@ class AirrRepertoire extends Model
             $aggOptions[1]['$group']['count'] = ['$sum' => 1];
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions);
+        } elseif (isset($params['distinct']) && $params['distinct'] != '') {
+            if (! isset($airr_names[$params['distinct']])) {
+                return 'error';
+            }
+            $distinctField = $airr_names[$params['distinct']];
+            $filter = json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string));
+            $options['noCursorTimeout'] = true;
+
+            $list = DB::collection($query->getCollection())->raw()->distinct($distinctField, $filter, $options);
         } else {
             $list = DB::collection($query->getCollection())->raw()->find(json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string), true), $options);
         }
 
-        return $list->toArray();
+        if (is_array($list)) {
+            return $list;
+        } else {
+            return $list->toArray();
+        }
     }
 
     public static function airrRepertoireSingle($repertoire_id)
@@ -502,5 +515,12 @@ class AirrRepertoire extends Model
         }
 
         return $return_array;
+    }
+
+    public static function airrRepertoireDistinctResponse($response_list)
+    {
+        // MongoDB returns a distinct query as a list of strings ['value1', 'value2', ...]
+        // AIRR expects the same, an array of field values so we simply return the array.
+        return $response_list;
     }
 }

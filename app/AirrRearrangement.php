@@ -101,6 +101,8 @@ class AirrRearrangement extends Model
             foreach ($params['fields'] as $airr_field_name) {
                 if (isset($airr_to_repository[$airr_field_name]) && $airr_to_repository[$airr_field_name] != '') {
                     $fields_to_retrieve[$airr_to_repository[$airr_field_name]] = 1;
+                } else {
+                    $fields_to_retrieve[$airr_field_name] = 1;
                 }
             }
             $options['projection'] = $fields_to_retrieve;
@@ -170,6 +172,16 @@ class AirrRearrangement extends Model
             $options['noCursorTimeout'] = true;
 
             $list = DB::collection($query->getCollection())->raw()->aggregate($aggOptions, $options);
+        } elseif (isset($params['distinct']) && $params['distinct'] != '') {
+            if (! isset($airr_names[$params['distinct']])) {
+                return 'error';
+            }
+            $distinctField = $airr_names[$params['distinct']];
+            $filter = json_decode(preg_replace('/\\\\/', '\\\\\\\\', $query_string));
+            $options['maxTimeMS'] = $query->getCountTimeout();
+            $options['noCursorTimeout'] = true;
+
+            $list = DB::collection($query->getCollection())->raw()->distinct($distinctField, $filter, $options);
         } else {
             $options['maxTimeMS'] = $query->getFetchTimeout();
             $options['noCursorTimeout'] = true;
@@ -190,24 +202,18 @@ class AirrRearrangement extends Model
 
         //first, we need some mappings to convert database values to AIRR terms
         //  and bucket them into appropriate AIRR classes
-        $db_names = FileMapping::createMappingArray('service_name', 'ir_repository', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_names = FileMapping::createMappingArray('service_name', 'ir_adc_api_query', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $repository_to_airr = FileMapping::createMappingArray('ir_repository', 'ir_adc_api_query', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $db_to_service = FileMapping::createMappingArray('ir_repository', 'service_name', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
         $airr_type = FileMapping::createMappingArray('ir_adc_api_query', 'airr_type', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
-        $airr_to_service_mapping = FileMapping::createMappingArray('ir_adc_api_query', 'service_name', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
 
-        // rev_comp and functional field are sometimes stored with annotation values
-        //  of + and 1 but AIRR standard requires them to be boolean. Scan the airr to service mapping
-        //  for those two values here so we don't have to do it on every sequence.
-        // For similar reason, we want a translation of ir_project_sample_id value, which connects
-        //  rearrangement with repertoire
-        $rev_comp_airr_name = $airr_names['rev_comp'];
-        $functional_arr_name = $airr_names['functional'];
+        // Initialize our list of fields that we need to return
         $fields_to_display = [];
 
-        //if required fields are set, map the appropriate column to the return
-        // if neither required nor fields is set, we still want to return required
+        // The ADC API allows for three levels of required fields so that users
+        // can limit the set of fields that are returned via the API. These are
+        // captured in the AIRR Config file. So if a set of fields is specified
+        // in the request then return only those fields in "fields_to_display"
         if (isset($params['include_fields'])) {
             $map_fields_column = '';
             switch ($params['include_fields']) {
@@ -224,8 +230,10 @@ class AirrRearrangement extends Model
                     break;
             }
 
+            // Get the required fields based on the mapping column.
             if ($map_fields_column != '') {
                 $required_fields = FileMapping::createMappingArray('ir_adc_api_response', $map_fields_column, ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
+                // If the field is marked as required then mark it as a field to display.
                 foreach ($required_fields as $name => $value) {
                     if ($value && strtolower($value) != 'false') {
                         $fully_qualified_path = $name;
@@ -235,8 +243,8 @@ class AirrRearrangement extends Model
             }
         }
 
-        $first = true;
-        // if neither required nor fields is set, we still want to return all the AIRR fields
+        // If neither required nor fields is set in the API request, we still want to return all
+        // the AIRR fields
         if (! isset($params['include_fields']) && ! isset($params['fields'])) {
             $required_fields = FileMapping::createMappingArray('ir_adc_api_response', 'ir_adc_api_response', ['ir_class' => ['rearrangement', 'ir_rearrangement', 'Rearrangement', 'IR_Rearrangement']]);
             foreach ($required_fields as $name => $value) {
@@ -247,6 +255,7 @@ class AirrRearrangement extends Model
             }
         }
 
+        // Set up the headers, preamble, depending on TSV or JSON request
         if ($response_type == 'json') {
             header('Content-Type: application/json; charset=utf-8');
             $response = AirrUtils::airrHeader();
@@ -259,27 +268,38 @@ class AirrRearrangement extends Model
             header('Content-Type: text/tsv; charset=utf-8');
             header('Content-Disposition: attachment;filename="data.tsv"');
         }
-        //have to put commas between JSON elements, but not on the last one, so figure out if this is the first time through
 
-        // if we have tsv, dump the return array's keys as headers
+        // Have to put commas between JSON elements, but not on the last one, so figure out if this is the first time through
+        $first = true;
+
+        // If we have tsv, dump the return array's keys as TSV headers
         if ($response_type == 'tsv') {
             echo implode(chr(9), array_keys($fields_to_display)) . "\n";
         }
+
+        // Loop over each rearrangement in the response.
         foreach ($response_list as $rearrangement) {
             $return_array = [];
 
-            //null out the required fields, then populate from database.
+            // For each field in our display list, null out the value. We
+            // then populate from database later.
             foreach ($fields_to_display as $display_field => $value) {
                 data_set($return_array, $display_field, null);
             }
 
+            // For each field in this rearrangement, process the field.
             foreach ($rearrangement as $return_key => $return_element) {
-                //make all the requested fields null before populating if there are results
+                // Check to see if this field can be mapped to an AIRR field
                 if (isset($repository_to_airr[$return_key]) && $repository_to_airr[$return_key] != '') {
-                    //skip over
+                    // If it is not in our fields to display, and we are doing a TSV file,
+                    // we need to skip the field. TSV files have headers that are exactly
+                    // what is in fields_to_display, so we can't include it if it doesn't have
+                    // a header.
                     if ($response_type == 'tsv' && ! array_key_exists($repository_to_airr[$return_key], $fields_to_display)) {
                         continue;
                     }
+                    // Handle some special cases. These should not be required any more
+                    // TODO: Consider refactoring to remove this code.
                     $service_name = $db_to_service[$return_key];
                     if ($service_name == 'rev_comp') {
                         if ($return_element == '+') {
@@ -297,16 +317,17 @@ class AirrRearrangement extends Model
                         }
                     }
 
-                    //flatten any MongoDB ObjectId types
+                    // Flatten any MongoDB ObjectId types
                     if (is_a($return_element, "MongoDB\BSON\ObjectId")) {
                         $return_element = $return_element->__toString();
                     }
 
+                    // Ensure that if we are processing an ID it is returned as a string.
                     if ($service_name == 'ir_project_sample_id') {
                         $return_element = (string) $return_element;
                     }
 
-                    //in TSV we want our boolean values to be 'T' and 'F'
+                    // In TSV we want our boolean values to be 'T' and 'F'
                     if ($airr_type[$repository_to_airr[$return_key]] == 'boolean' && $response_type == 'tsv') {
                         if (strtolower($return_element) == 'true' || $return_element == true) {
                             $return_element = 'T';
@@ -315,26 +336,27 @@ class AirrRearrangement extends Model
                         }
                     }
 
-                    // mongodb BSON array needs to be serialized or it can't be used in TSV output
-                    //  we also want to return a string, not an array, in JSON response
+                    // Mongodb BSON array needs to be serialized or it can't be used in TSV output
+                    // we also want to return a string, not an array, in JSON response
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")) {
-                        $return_element = implode(', or ', $return_element->jsonSerialize());
+                        $return_element = implode(',', $return_element->jsonSerialize());
                     }
                     data_set($return_array, $repository_to_airr[$return_key], $return_element);
                 } else {
-                    //problem with TSV download is that there are fields not in the database but it's hard to
-                    //  put them into headers - for now skip them in the TSV
-
-                    if ($response_type == 'tsv') {
+                    // If it is not in our fields to display, and we are doing a TSV file,
+                    // we need to skip the field. TSV files have headers that are exactly
+                    // what is in fields_to_display, so we can't include it if it doesn't have
+                    // a header.
+                    if ($response_type == 'tsv' && ! array_key_exists($return_key, $fields_to_display)) {
                         continue;
                     }
-                    //if there are fields not in AIRR standard but in database, we want to
-                    //  send those along too, provided they don't override AIRR elements already mapped
+                    // If there are fields not in AIRR standard but in database, we want to
+                    // send those along too, provided they don't override AIRR elements already mapped
                     // mongodb BSON array needs to be serialized or it can't be used in TSV output
                     //
                     if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray")
                         && $response_type == 'tsv') {
-                        $return_element = implode(', ', $return_element->jsonSerialize());
+                        $return_element = implode(',', $return_element->jsonSerialize());
                     }
                     if (! isset($return_array[$return_key])) {
                         $return_array[$return_key] = $return_element;
@@ -385,6 +407,13 @@ class AirrRearrangement extends Model
         return $return_array;
     }
 
+    public static function airrRearrangementDistinctResponse($response_list)
+    {
+        // MongoDB returns a distinct query as a list of strings ['value1', 'value2', ...]
+        // AIRR expects the same, an array of field values so we simply return the array.
+        return $response_list;
+    }
+
     public static function airrRearrangementResponseSingle($rearrangement)
     {
         //take a single rearrangement from database query and create a response as per
@@ -410,7 +439,7 @@ class AirrRearrangement extends Model
         foreach ($rearrangement as $key => $value) {
             if (isset($response_mapping[$key]) && $response_mapping[$key] != '') {
                 if (is_array($value)) {
-                    $result[$response_mapping[$key]] = implode(', or ', $value);
+                    $result[$response_mapping[$key]] = implode(',', $value);
                 } else {
                     $result[$response_mapping[$key]] = $value;
                 }
@@ -670,9 +699,9 @@ class AirrRearrangement extends Model
                         foreach ($fields_to_display as $current_header) {
                             if (isset($airr_list[$current_header])) {
                                 if (is_array($airr_list[$current_header])) {
-                                    $new_line[$current_header] = implode(', or', $airr_list[$current_header]);
+                                    $new_line[$current_header] = implode(',', $airr_list[$current_header]);
                                 } elseif ($airr_list[$current_header] != null && is_a($airr_list[$current_header], "MongoDB\Model\BSONArray")) {
-                                    $new_line[$current_header] = implode(', or ', $airr_list[$current_header]->jsonSerialize());
+                                    $new_line[$current_header] = implode(',', $airr_list[$current_header]->jsonSerialize());
                                 } else {
                                     //the database id should be converted to string using the BSON function
                                     if (is_a($airr_list[$current_header], "MongoDB\BSON\ObjectId")) {

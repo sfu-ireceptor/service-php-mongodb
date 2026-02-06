@@ -170,7 +170,8 @@ class AirrUtils extends Model
                 && $airr_to_db_array[$content['field']] != '') {
                 $field = $airr_to_db_array[$content['field']];
             } else {
-                return;
+                $field = $content['field'];
+                //return;
             }
 
             // check if the field provided exists in the mapping file
@@ -178,7 +179,9 @@ class AirrUtils extends Model
                 $type = $airr_types_array[$content['field']];
                 $db_type = $db_types_array[$content['field']];
             } else {
-                return;
+                $type = 'string';
+                $db_type = 'string';
+                //return;
             }
         }
 
@@ -430,12 +433,28 @@ class AirrUtils extends Model
             // array of indexed fields - as usual, hard-coded terms are in 'service_name' column of the mapping file
             //  note that indexed fields on non-AIRR terms can and do exist
             $indexed_fields = [$airr_names['ir_project_sample_id'], $airr_names['junction_aa_length'],
-                $airr_names['junction_aa'], $airr_names['v_call'], $airr_names['d_call'],
-                $airr_names['j_call'],
+                $airr_names['junction_aa'], $airr_names['v_call'], $airr_names['d_call'], $airr_names['j_call'],
                 $airr_names['functional'],
                 $airr_names['vgene_gene'], $airr_names['vgene_family'],
                 $airr_names['dgene_gene'], $airr_names['dgene_family'],
-                $airr_names['jgene_gene'], $airr_names['jgene_family'], ];
+                $airr_names['jgene_gene'], $airr_names['jgene_family']];
+            // Check to see if the iReceptor non-AIRR fields are in the mapping file before
+            // adding them to the indexed field list.
+            if (array_key_exists('ir_antigen_ref', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_antigen_ref'];
+            }
+            if (array_key_exists('ir_species_ref', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_species_ref'];
+            }
+            if (array_key_exists('ir_epitope_ref', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_epitope_ref'];
+            }
+            if (array_key_exists('ir_mhc_ref', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_mhc_ref'];
+            }
+            if (array_key_exists('ir_mhc_name', $airr_names)) {
+                $indexed_fields[] = $airr_names['ir_mhc_name'];
+            }
             $filters = '';
             $facets = '';
 
@@ -669,7 +688,7 @@ class AirrUtils extends Model
             //  a string in AIRR
             if ($return_element != null && is_a($return_element, "MongoDB\Model\BSONArray") &&
                 ($response_type == 'tsv' || (isset($db_to_airr_mapping[$return_key]) && $airr_type[$db_to_airr_mapping[$return_key]] == 'string'))) {
-                $return_element = implode(', or ', $return_element->jsonSerialize());
+                $return_element = implode(',', $return_element->jsonSerialize());
             }
 
             //make all the requested fields null before populating if there are results

@@ -98,6 +98,8 @@ class AirrApiController extends Controller
                 if (isset($params['facets'])) {
                     //facets have different formatting requirements
                     $response['Facet'] = AirrRepertoire::airrRepertoireFacetsResponse($l);
+                } elseif (isset($params['distinct'])) {
+                    $response['Distinct'] = AirrRepertoire::airrRepertoireDistinctResponse($l);
                 } else {
                     //regular response, needs to be formatted as per AIRR standard, as
                     //	iReceptor repertoires are flat collections in MongoDB
@@ -184,6 +186,13 @@ class AirrApiController extends Controller
 
                         //facets have different formatting requirements
                         $response['Facet'] = AirrRearrangement::airrRearrangementFacetsResponse($l);
+
+                        return response($response)->header('Content-Type', 'application/json');
+                    } elseif (isset($params['distinct'])) {
+                        $response = AirrUtils::airrHeader();
+
+                        //facets have different formatting requirements
+                        $response['Distinct'] = AirrRearrangement::airrRearrangementDistinctResponse($l);
 
                         return response($response)->header('Content-Type', 'application/json');
                     } else {
@@ -293,6 +302,13 @@ class AirrApiController extends Controller
                         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
                         return response($return_response)->header('Content-Type', 'application/json');
+                    } elseif (isset($params['distinct'])) {
+                        $response = AirrUtils::airrHeader();
+
+                        //distinct has different formatting requirements
+                        $response['Distinct'] = AirrClone::airrCloneDistinctResponse($l);
+
+                        return response($response)->header('Content-Type', 'application/json');
                     } else {
                         //regular response, needs to be formatted as per AIRR standard, as
                         //  iReceptor repertoires are flat collections in MongoDB
@@ -386,6 +402,13 @@ class AirrApiController extends Controller
                         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
                         return response($return_response)->header('Content-Type', 'application/json');
+                    } elseif (isset($params['distinct'])) {
+                        $response = AirrUtils::airrHeader();
+
+                        //distinct has different formatting requirements
+                        $response['Distinct'] = AirrCell::airrCellDistinctResponse($l);
+
+                        return response($response)->header('Content-Type', 'application/json');
                     } else {
                         //regular response, needs to be formatted as per AIRR standard, as
                         //  iReceptor repertoires are flat collections in MongoDB
@@ -465,6 +488,13 @@ class AirrApiController extends Controller
                         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
                         return response($return_response)->header('Content-Type', 'application/json');
+                    } elseif (isset($params['distinct'])) {
+                        $response = AirrUtils::airrHeader();
+
+                        //distinct has different formatting requirements
+                        $response['Distinct'] = AirrGeneExpression::airrGeneExpressionDistinctResponse($l);
+
+                        return response($response)->header('Content-Type', 'application/json');
                     } else {
                         //regular response, needs to be formatted as per AIRR standard, as
                         //  iReceptor repertoires are flat collections in MongoDB
@@ -544,6 +574,13 @@ class AirrApiController extends Controller
                         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
                         return response($return_response)->header('Content-Type', 'application/json');
+                    } elseif (isset($params['distinct'])) {
+                        $response = AirrUtils::airrHeader();
+
+                        //distinct has different formatting requirements
+                        $response['Distinct'] = AirrReceptor::airrReceptorDistinctResponse($l);
+
+                        return response($response)->header('Content-Type', 'application/json');
                     } else {
                         //regular response, needs to be formatted as per AIRR standard, as
                         //  iReceptor repertoires are flat collections in MongoDB
@@ -622,6 +659,13 @@ class AirrApiController extends Controller
                         $return_response = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
                         return response($return_response)->header('Content-Type', 'application/json');
+                    } elseif (isset($params['distinct'])) {
+                        $response = AirrUtils::airrHeader();
+
+                        //distinct has different formatting requirements
+                        $response['Distinct'] = AirrReactivity::airrReactivityDistinctResponse($l);
+
+                        return response($response)->header('Content-Type', 'application/json');
                     } else {
                         //regular response, needs to be formatted as per AIRR standard, as
                         //  iReceptor repertoires are flat collections in MongoDB
