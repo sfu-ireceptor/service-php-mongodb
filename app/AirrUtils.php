@@ -103,6 +103,61 @@ class AirrUtils extends Model
         return $return_value;
     }
 
+    //method to convert a value returned from the database to a given AIRR type
+    //  for the response. BSON arrays and documents are converted element by element,
+    //  keeping document keys, so they come back as JSON arrays and objects
+    public static function typeConvertHelperResponse($value, $type)
+    {
+        if ($value instanceof \MongoDB\Model\BSONArray || $value instanceof \MongoDB\Model\BSONDocument) {
+            // MongoDB arrays and embedded documents arrive as BSONArray/BSONDocument objects.
+            //  getArrayCopy() turns them into plain PHP arrays (a list for BSONArray, keyed
+            //  for BSONDocument). Don't use jsonSerialize(), which returns a stdClass for
+            //  BSONDocument that array_map() can't handle. Nested values are unwrapped by
+            //  the recursive call below
+            $value = $value->getArrayCopy();
+        } elseif ($value instanceof \MongoDB\BSON\Decimal128) {
+            // high-precision decimals arrive as Decimal128 objects, whose jsonSerialize()
+            //  gives {"$numberDecimal": ...}. Use the string form so it can be cast
+            //  to a number like any other value below
+            $value = (string) $value;
+        }
+
+        if (is_array($value)) {
+            // convert every element to the requested type, keeping the keys so
+            //  embedded documents stay JSON objects, and recursing so nested arrays
+            //  keep their structure instead of being cast as a whole
+            return array_map(function ($element) use ($type) {
+                return self::typeConvertHelperResponse($element, $type);
+            }, $value);
+        }
+
+        if (is_object($value)) {
+            // any other BSON type (ObjectId, UTCDateTime...) can't be cast to a number or
+            //  boolean. For string fields use its string form (e.g. the ObjectId hex value),
+            //  so the list and single repertoire endpoints agree; otherwise return it
+            //  unchanged rather than guess a value
+            return ($type == 'string' && method_exists($value, '__toString')) ? strval($value) : $value;
+        }
+        if (is_null($value)) {
+            // null means the field has no value, and casting would turn it into 0, false
+            //  or "", so keep it as null
+            return $value;
+        }
+
+        switch ($type) {
+            case 'integer':
+                return intval(self::stringToNumber($value));
+            case 'number':
+                return floatval(self::stringToNumber($value));
+            case 'boolean':
+                return boolval($value);
+            case 'string':
+                return strval($value);
+            default:
+                return $value;
+        }
+    }
+
     //method to convert a value to a given type and encode in a way
     //  suitable for raw query
     public static function typeConvertHelperRaw($value, $type)
